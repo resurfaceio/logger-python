@@ -20,22 +20,22 @@ Installation
 ------------
 The easiest way to install the Resurface Labs logger is to use `pip`_ in a ``virtualenv``::
 
-    $ pip install resurfaceio-logger
+    $ pip install resurfaceio_logger
 
 or, if you are not installing in a ``virtualenv``, to install globally::
 
-    $ sudo pip install resurfaceio-logger
+    $ sudo pip install resurfaceio_logger
 
 or for your user::
 
-    $ pip install --user resurfaceio-logger
+    $ pip install --user resurfaceio_logger
 
 If you have the logger installed and want to upgrade to the latest version
 you can run::
 
-    $ pip install --upgrade resurfaceio-logger
+    $ pip install --upgrade resurfaceio_logger
 
-This will install the resurfaceio-logger package as well as all dependencies.  You can
+This will install the resurfaceio_logger package as well as all dependencies.  You can
 also just `download the tarball`_.  Once you have the logger directory structure on your workstation, you can just run::
 
     $ cd <path_to_logger>
