@@ -1,8 +1,8 @@
 # Copyright (c) 2016-2019, Resurface Labs Inc. All Rights Reserved.
 
 import json
-import resurfaceio_logger
-from resurfaceio_logger.usage_loggers import UsageLoggers
+import usagelogger
+from usagelogger.usage_loggers import UsageLoggers
 from urllib.parse import urlparse
 import urllib.request
 
@@ -85,4 +85,4 @@ class BaseLogger(object):
 
     @staticmethod
     def _version_lookup():
-        return resurfaceio_logger.__version__
+        return usagelogger.__version__

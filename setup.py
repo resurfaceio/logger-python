@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='resurfaceio_logger',
+    name='usagelogger',
     version='0.1.0',
     description='Logging usage of Python cloud apps.',
     long_description=long_description,
