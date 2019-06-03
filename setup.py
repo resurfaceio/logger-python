@@ -13,7 +13,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='usagelogger',
-    version='0.1.0',
+    version='0.1.1',
     description='Logging usage of Python cloud apps.',
     long_description=long_description,
     long_description_content_type='text/x-rst',
