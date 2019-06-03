@@ -2,7 +2,8 @@
 
 from io import open
 from os import path
-from setuptools import setup, find_packages
+
+from setuptools import setup
 
 here = path.abspath(path.dirname(__file__))
 
@@ -32,12 +33,10 @@ setup(
         'Programming Language :: Python :: 3.7'
     ],
     keywords='logging resurface',
-    packages=find_packages(exclude=['tests']),
+    packages=['usagelogger'],
     python_requires='>=3.4, <4',
-    extras_require={
-        'test': ['coverage'],
-    },
     install_requires=[],
+    tests_require=['expects', 'mamba'],
     project_urls={
         'Bug Reports': 'https://github.com/resurfaceio/logger-python/issues',
         'Source': 'https://github.com/resurfaceio/logger-python'
