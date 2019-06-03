@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2019, Resurface Labs Inc. All Rights Reserved.
+# © 2016-2019 Resurface Labs Inc.
 
 __version__ = '0.1.0'
 
