@@ -1,18 +1,10 @@
-from io import open
-from os import path
 from setuptools import setup
-
-# Get the long description from the README file
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
 
 setup(
     name='usagelogger',
     version='0.1.5',
-    description='Logging usage of Python cloud apps.',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+    description='Logging usage of Python cloud apps',
+    long_description='© 2016-2019 Resurface Labs Inc.\n\nLogging usage of Python cloud apps, with user privacy by design.',
     url='https://github.com/resurfaceio/logger-python',
     author='Resurface Labs',
     author_email='admin@resurface.io',
