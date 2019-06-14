@@ -5,6 +5,7 @@ setup(
     version='0.1.5',
     description='Logging usage of Python cloud apps',
     long_description='© 2016-2019 Resurface Labs Inc.\n\nLogging usage of Python cloud apps, with user privacy by design.',
+    long_description_content_type='text/plain',
     url='https://github.com/resurfaceio/logger-python',
     author='Resurface Labs',
     author_email='admin@resurface.io',
