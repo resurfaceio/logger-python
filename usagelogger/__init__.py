@@ -1,3 +1,3 @@
 from .usage_loggers import UsageLoggers
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
