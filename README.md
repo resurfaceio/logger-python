@@ -13,13 +13,13 @@ Logging usage of Python cloud apps, with user privacy by design.
 <li><a href="#privacy">Protecting User Privacy</a></li>
 </ul>
 
-<a name="dependencies"/>
+<a name="dependencies"></a>
 
 ## Dependencies
 
 Requires Python 3.x. No other dependencies to conflict with your app.
 
-<a name="installing_with_pip"/>
+<a name="installing_with_pip"></a>
 
 ## Installing With pip
 
@@ -27,11 +27,11 @@ Requires Python 3.x. No other dependencies to conflict with your app.
 pip install --upgrade usagelogger
 ```
 
-<a name="logging_from_django"/>
+<a name="logging_from_django"></a>
 
 ## Logging From Django
 
-<a name="logging_with_api"/>
+<a name="logging_with_api"></a>
 
 ## Logging With API
 
@@ -40,7 +40,7 @@ the options described above, but also offers the greatest flexibility and contro
 
 [API documentation](API.md)
 
-<a name="privacy"/>
+<a name="privacy"></a>
 
 ## Protecting User Privacy
 
