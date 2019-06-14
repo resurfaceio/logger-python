@@ -2,8 +2,7 @@
 
 from expects import *
 from mamba import description, it
-
-from usagelogger.usage_loggers import UsageLoggers
+from usagelogger import UsageLoggers
 
 with description('UsageLoggers') as self:
     with it('provides default url'):
