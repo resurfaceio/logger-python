@@ -17,7 +17,7 @@ pip install --upgrade setuptools wheel twine mamba
 Running unit tests:
 
 ```
-mamba
+mamba --format=documentation
 ```
 
 Committing changes:
