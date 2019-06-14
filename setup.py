@@ -4,7 +4,7 @@ from setuptools import setup
 
 # Get the long description from the README file
 here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
@@ -12,7 +12,7 @@ setup(
     version='0.1.3',
     description='Logging usage of Python cloud apps.',
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     url='https://github.com/resurfaceio/logger-python',
     author='Resurface Labs',
     author_email='admin@resurface.io',
