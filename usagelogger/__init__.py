@@ -1,6 +1,6 @@
 # © 2016-2019 Resurface Labs Inc.
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 import usagelogger.base_logger
 import usagelogger.http_logger
