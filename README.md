@@ -23,7 +23,7 @@ Requires Python 3.x. No other dependencies to conflict with your app.
 
 ## Installing With pip
 
-```python
+```
 pip install --upgrade usagelogger
 ```
 
