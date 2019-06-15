@@ -13,7 +13,7 @@ class BaseLogger(object):
                  url=UsageLoggers.url_by_default(), enabled=True):
 
         self.agent = agent
-        self.version = self._version_lookup()
+        self.version = self.version_lookup()
         self.skip_compression = False
         self.skip_submission = False
         self._enabled = enabled
@@ -84,5 +84,5 @@ class BaseLogger(object):
             self._enabled = False
 
     @staticmethod
-    def _version_lookup():
+    def version_lookup():
         return usagelogger.__version__
