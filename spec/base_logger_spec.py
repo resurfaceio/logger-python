@@ -17,6 +17,8 @@ with description('BaseLogger') as self:
         expect(logger.agent).to(equal(MOCK_AGENT))
         expect(logger.enableable).to(be_false)
         expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
 
     with it('creates multiple instances'):
         agent1 = 'agent1'
@@ -69,7 +71,13 @@ with description('BaseLogger') as self:
         expect(logger.url).to(equal(DEMO_URL))
         logger.enable()
         expect(logger.enabled).to(be_true)
-        # todo add queue example
+
+        logger = BaseLogger(MOCK_AGENT, queue=[], enabled=False)
+        expect(logger.enableable).to(be_true)
+        expect(logger.enabled).to(be_false)
+        expect(logger.url).to(be_none)
+        logger.enable().disable().enable()
+        expect(logger.enabled).to(be_true)
 
     with it('skips enabling for invalid urls'):
         for invalid_url in MOCK_URLS_INVALID:
@@ -98,8 +106,7 @@ with description('BaseLogger') as self:
 
     with it('skips logging when disabled'):
         for denied_url in MOCK_URLS_DENIED:
-            logger = BaseLogger(MOCK_AGENT, url=denied_url)
-            logger.disable()
+            logger = BaseLogger(MOCK_AGENT, url=denied_url).disable()
             expect(logger.enableable).to(be_true)
             expect(logger.enabled).to(be_false)
             expect(logger.submit(None)).to(be_true)  # would fail if enabled
@@ -110,7 +117,6 @@ with description('BaseLogger') as self:
         # todo add agent, version, now, protocol
         # todo convert to json
         expect(logger.submit('{}')).to(be_true)
-        # todo try again with skip compression
 
     with it('submits to demo url via http'):
         logger = BaseLogger(MOCK_AGENT, url=DEMO_URL.replace('https', 'http', 1))
@@ -118,7 +124,6 @@ with description('BaseLogger') as self:
         # todo add agent, version, now, protocol
         # todo convert to json
         expect(logger.submit('{}')).to(be_true)
-        # todo try again with skip compression
 
     with it('submits to demo url without compression'):
         expect(None).to(be_none)  # todo finish
@@ -131,10 +136,77 @@ with description('BaseLogger') as self:
             expect(logger.submit('{}')).to(be_false)
 
     with it('submits to queue'):
-        expect(None).to(be_none)  # todo finish
+        queue = []
+        logger = BaseLogger(MOCK_AGENT, queue=queue, url=MOCK_URLS_DENIED[0])
+        expect(logger.queue).to(be(queue))
+        expect(logger.url).to(be_none)
+        expect(logger.enableable).to(be_true)
+        expect(logger.enabled).to(be_true)
+        expect(len(queue)).to(equal(0))
+        expect(logger.submit('{}')).to(be_true)
+        expect(len(queue)).to(equal(1))
+        expect(logger.submit('{}')).to(be_true)
+        expect(len(queue)).to(equal(2))
+
+    with it('silently ignores unexpected option classes'):
+        logger = BaseLogger(MOCK_AGENT, DEMO_URL)
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, True)
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, [])
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, url=[])
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, url=23)
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, queue='asdf')
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, queue=45)
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
+
+        logger = BaseLogger(MOCK_AGENT, enabled=2)
+        expect(logger.enableable).to(be_false)
+        expect(logger.enabled).to(be_false)
+        expect(logger.queue).to(be_none)
+        expect(logger.url).to(be_none)
 
     with it('uses skip options'):
-        expect(None).to(be_none)  # todo finish
+        logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
+        expect(logger.skip_compression).to(be_false)
+        expect(logger.skip_submission).to(be_false)
 
-# todo test unexpected types (array as url)
-# todo test url passed forgetting 'url=' prefix
+        logger.skip_compression = True
+        expect(logger.skip_compression).to(be_true)
+        expect(logger.skip_submission).to(be_false)
+
+        logger.skip_compression = False
+        logger.skip_submission = True
+        expect(logger.skip_compression).to(be_false)
+        expect(logger.skip_submission).to(be_true)

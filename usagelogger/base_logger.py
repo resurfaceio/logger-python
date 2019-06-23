@@ -9,39 +9,52 @@ import urllib.request
 
 class BaseLogger(object):
 
-    def __init__(self, agent, queue=None,
-                 url=UsageLoggers.url_by_default(), enabled=True):
+    def __init__(self, agent, enabled=True, queue=None, url=UsageLoggers.url_by_default(),
+                 skip_compression=False, skip_submission=False):
 
         self.agent = agent
+        self.skip_compression = skip_compression
+        self.skip_submission = skip_submission
         self.version = self.version_lookup()
-        self.skip_compression = False
-        self.skip_submission = False
-        self._enabled = enabled
-        self._url = None
 
-        self.queue = queue
-        # queue takes precedence over url
+        # set options in priority order
+        self._enabled = enabled
+        self._queue = queue if isinstance(queue, list) else None
         if self.queue is not None:
-            self.url = None
-        elif url is not None:
-            self.url = url
+            self._url = None
+        elif url is not None and isinstance(url, str):
+            try:
+                if 'http' not in urlparse(url).scheme:
+                    raise TypeError('incorrect URL scheme')
+                self._url = url
+            except TypeError:
+                self._enabled = False
+                self._url = None
         else:
             self._enabled = False
+            self._url = None
+        self._enableable = self.queue is not None or self.url is not None
 
     def disable(self):
         self._enabled = False
+        return self
 
     def enable(self):
         if self.enableable:
             self._enabled = True
+        return self
 
     @property
     def enableable(self):
-        return self.queue is not None or self.url is not None
+        return self._enableable
 
     @property
     def enabled(self):
         return self._enabled and UsageLoggers.is_enabled()
+
+    @property
+    def queue(self):
+        return self._queue
 
     def submit(self, submission):
         if submission is None or self.skip_submission is True or self.enabled is False:
@@ -68,20 +81,6 @@ class BaseLogger(object):
     @property
     def url(self):
         return self._url
-
-    @url.setter
-    def url(self, value):
-        # Validate URL
-        try:
-            # urlparse will return a byte type for a scheme it doesn't
-            # understand which will raise a TypeError when compared to a
-            # string, so we will raise the same for no http and catch both
-            if 'http' not in urlparse(value).scheme:
-                raise TypeError('incorrect URL scheme')
-            self._url = value
-        except TypeError:
-            self._url = None
-            self._enabled = False
 
     @staticmethod
     def version_lookup():
