@@ -23,19 +23,18 @@ pip-log.txt
 #Translations
 *.mo
 
-#Mr Developer
-.mr.developer.cfg
-
 # Emacs backup files
 *~
 
 # IDEA / PyCharm IDE
 .idea/
 
+# VS Code
+.vscode
+
 # Virtualenvs
 env
-env2
-env3
+venv
 
 docs/source/reference/services
 tests/coverage.xml
