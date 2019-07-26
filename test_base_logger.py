@@ -1,3 +1,4 @@
+# coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
 
 from test_helper import *
