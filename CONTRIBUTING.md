@@ -11,13 +11,13 @@ If you don't use PyCharm, that's ok, but your code may get reformatted.
 ```
 git clone git@github.com:resurfaceio/logger-python.git resurfaceio-logger-python
 cd resurfaceio-logger-python
-pip install --upgrade setuptools wheel twine mamba
+pip install --upgrade setuptools wheel twine pytest
 ```
 
 Running unit tests:
 
 ```
-mamba --format=documentation
+pytest
 ```
 
 Committing changes:

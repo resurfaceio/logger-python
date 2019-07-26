@@ -25,7 +25,7 @@ setup(
     packages=['usagelogger'],
     python_requires='>=3.4, <4',
     install_requires=[],
-    tests_require=['expects', 'mamba'],
+    tests_require=['pytest'],
     project_urls={
         'Bug Reports': 'https://github.com/resurfaceio/logger-python/issues',
         'Source': 'https://github.com/resurfaceio/logger-python'

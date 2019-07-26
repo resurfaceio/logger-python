@@ -12,6 +12,7 @@ var
 sdist
 develop-eggs
 .installed.cfg
+.pytest_cache
 
 # Installer logs
 pip-log.txt
