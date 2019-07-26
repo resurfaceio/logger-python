@@ -116,10 +116,9 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
         # finish validating rules
         if len(self.rules_sample) > 1:
             raise RuntimeError('Multiple sample rules')
-
-        if url is None \
-                or not url.startswith('https') \
-                or not self.rules_allow_http_url:
+        if self._enabled and url is not None \
+                and url.startswith('http:') \
+                and not self.rules_allow_http_url:
             self._enableable = False
             self._enabled = False
 
@@ -131,8 +130,9 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
         if self.enabled:
             return self.submit(
                 self.format(request, response, response_body, request_body))
+        return True
 
-    def format(self,request, response,
+    def format(self, request, response,
                response_body: Optional[str] = None,
                request_body: Optional[str] = None,
                now: Optional[int] = None) -> str:
