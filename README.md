@@ -17,7 +17,7 @@ Logging usage of Python cloud apps, with user privacy by design.
 
 ## Dependencies
 
-Requires Python 3.x. No other dependencies to conflict with your app.
+Requires Python 3.5 or higher. No other dependencies to conflict with your app.
 
 <a name="installing_with_pip"/>
 
