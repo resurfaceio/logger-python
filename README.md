@@ -1,6 +1,8 @@
 # resurfaceio-logger-python
 Logging usage of Python-based services, with user privacy by design.
 
+[![PyPI version](https://badge.fury.io/py/usagelogger.svg)](https://badge.fury.io/py/usagelogger)
+
 ## Contents
 
 <ul>
