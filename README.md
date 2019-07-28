@@ -1,7 +1,5 @@
 # resurfaceio-logger-python
-&copy; 2016-2019 Resurface Labs Inc.
-
-Logging usage of Python cloud apps, with user privacy by design.
+Logging usage of Python-based services, with user privacy by design.
 
 ## Contents
 
@@ -49,3 +47,6 @@ and how sensitive data is masked. All of the examples above apply a predefined s
 but logging rules are easily customized to meet the needs of any application.
 
 <a href="https://resurface.io/rules.html">Logging rules documentation</a>
+
+---
+<small>&copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a></small>

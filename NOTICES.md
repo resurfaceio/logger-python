@@ -1,5 +1,4 @@
-# Legal notices
-Acknowledgements and copyrights
+# Notices
 
 ## Use of open source
 

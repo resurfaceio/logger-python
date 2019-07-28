@@ -1,5 +1,4 @@
-# Contributing to resurfaceio-logger-python
-&copy; 2016-2019 Resurface Labs Inc.
+# Contributing
 
 ## Coding Conventions
 
