@@ -115,7 +115,7 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
 
         # finish validating rules
         if len(self.rules_sample) > 1:
-            raise RuntimeError('Multiple sample rules')
+            raise SyntaxError('Multiple sample rules')
         if self._enabled and url is not None \
                 and url.startswith('http:') \
                 and not self.rules_allow_http_url:
