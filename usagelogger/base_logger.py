@@ -31,7 +31,7 @@ class BaseLogger(object):
             self._url = None
         elif url is not None and isinstance(url, str):
             try:
-                if 'http' in urlsplit(url).scheme:
+                if urlsplit(url).scheme in {'http', 'https'}:
                     self._url_scheme: str = urlsplit(url).scheme
                     self._url = url
                 else:

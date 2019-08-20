@@ -122,7 +122,8 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
             self._enableable = False
             self._enabled = False
 
-    def log(self, request, response,
+    def log(self, request: usagelogger.HttpRequestImpl,
+            response: usagelogger.HttpResponseImpl,
             response_body: Optional[str] = None,
             request_body: Optional[str] = None) -> bool:
         """Logs HTTP request and response to intended destination."""
@@ -132,7 +133,8 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
                 self.format(request, response, response_body, request_body))
         return True
 
-    def format(self, request, response,
+    def format(self, request: usagelogger.HttpRequestImpl,
+               response: usagelogger.HttpResponseImpl,
                response_body: Optional[str] = None,
                request_body: Optional[str] = None,
                now: Optional[int] = None) -> str:
