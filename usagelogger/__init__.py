@@ -7,4 +7,4 @@ from .http_logger import HttpLogger
 from .http_message import HttpMessage
 
 
-__version__ = '0.1.7'
+__version__ = '0.1.6'
