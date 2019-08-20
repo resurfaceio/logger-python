@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='usagelogger',
-    version='0.1.6',
+    version='0.1.7',
     description='Logging usage of Python cloud apps',
     long_description='© 2016-2019 Resurface Labs Inc.\n\nLogging usage of Python cloud apps, with user privacy by design.',
     long_description_content_type='text/plain',
