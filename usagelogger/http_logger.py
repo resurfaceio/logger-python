@@ -154,4 +154,4 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
             round(time() * 1000))])
         details.append(['agent', self.AGENT])
         details.append(['version', self.version])
-        return json.dumps(details)
+        return json.dumps(details, separators=(',', ':'))
