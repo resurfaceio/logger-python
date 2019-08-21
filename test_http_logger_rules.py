@@ -75,72 +75,72 @@ def test_uses_allow_http_url_rules():
 
 
 def test_uses_copy_session_field_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_copy_session_field_and_remove_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_copy_session_field_and_stop_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_remove_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_remove_if_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_remove_if_found_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_remove_unless_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_remove_unless_found_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_replace_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_replace_rules_with_complex_expressions():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_sample_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_skip_compression_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_skip_submission_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_stop_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_stop_if_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_stop_if_found_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_stop_unless_rules():
-    assert True
+    assert None is None  # todo finish
 
 
 def test_uses_stop_unless_found_rules():
-    assert True
+    assert None is None  # todo finish
