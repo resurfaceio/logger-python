@@ -65,24 +65,22 @@ class BaseLogger(object):
     def queue(self) -> List[str]:
         return self._queue
 
-    def submit(self, submission: Optional[str]) -> bool:
+    def submit(self, msg: Optional[str]) -> bool:
         """Submits JSON message to intended destination."""
 
-        if (submission is None or
-                self.skip_submission is True or
-                self.enabled is False):
+        if msg is None or self.skip_submission is True or self.enabled is False:
             return True
         elif self._queue is not None:
-            self._queue.append(submission)
+            self._queue.append(msg)
             return True
         else:
             try:
                 # TODO: implement compression
                 url_parser = urlsplit(self.url)
-                hostname = url_parser.hostname
-                url_path = url_parser.path + url_parser.query
+                hostname = url_parser.hostname  # todo cache this!
+                url_path = url_parser.path + url_parser.query  # cache todo this!
 
-                body: str = json.dumps(submission).encode('utf8')
+                body: str = json.dumps(msg).encode('utf8')
                 headers: Dict[str, str] = {'Content-Type': 'application/json'}
 
                 if self._url_scheme == "http":
@@ -92,7 +90,7 @@ class BaseLogger(object):
 
                 conn.request("POST", url_path, body, headers)
                 response = conn.getresponse()
-                conn.close()
+                conn.close()  # todo keep alive? (or should be closed in except handler?)
 
                 return response.status == 204
 
