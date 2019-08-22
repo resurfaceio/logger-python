@@ -52,7 +52,23 @@ logger.log(request, response, 'my-response-body', 'my-request-body')
 If standard request and response objects aren't available in your case, create mock implementations to pass instead.
 
 ```python
-# tbd
+from usagelogger import HttpLogger, HttpRequestImpl, HttpResponseImpl
+
+# define request to log
+request = HttpRequestImpl()
+request.body = 'some json'
+request.headers['Content-Type'] = 'Application/JSON'
+request.method = 'GET'
+request.request_url = 'http://google.com'
+
+# define response to log
+response = HttpResponseImpl()
+response.body = 'some html'
+response.headers['Content-Type'] = 'text/html; charset=utf-8'
+response.status = 200
+
+# log objects defined above
+logger.log(request, response)
 ```
 
 <a name="setting_default_rules"/>
@@ -102,6 +118,8 @@ All loggers for an application can be enabled or disabled at once with the `Usag
 loggers that have not yet been created by the application.
 
 ```python
+from usagelogger import UsageLoggers
+
 UsageLoggers.disable()    # disable all loggers
 UsageLoggers.enable()     # enable all loggers
 ```

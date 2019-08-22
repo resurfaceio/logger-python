@@ -1,5 +1,6 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
+
 from typing import Dict, List, ItemsView, Optional, Set, Tuple, Union
 from urllib.parse import parse_qsl, urlsplit, SplitResult
 
@@ -75,10 +76,14 @@ class HttpRequestImpl(object):
 
     @body.setter
     def body(self, value: Optional[Union[bytes, str]]):
-        if isinstance(value, str):
+        if not value:
+            self._body = None
+        elif isinstance(value, str):
             self._body = bytes(value, 'utf8')
         elif isinstance(value, bytes):
             self._body = value
+        else:
+            self._body = None
 
     # self.base_url getter/setter
     @property

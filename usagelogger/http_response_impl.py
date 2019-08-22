@@ -1,5 +1,6 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
+
 from typing import Dict, Optional, Union
 
 
@@ -21,10 +22,14 @@ class HttpResponseImpl(object):
 
     @body.setter
     def body(self, value: Optional[Union[bytes, str]]):
-        if isinstance(value, str):
+        if not value:
+            self._body = None
+        elif isinstance(value, str):
             self._body = bytes(value, 'utf8')
         elif isinstance(value, bytes):
             self._body = value
+        else:
+            self._body = None
 
     def get_headers(self):
         return self.headers.items()

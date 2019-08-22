@@ -31,6 +31,8 @@ pip install --upgrade usagelogger
 
 ## Logging From Django
 
+(coming soon!)
+
 <a name="logging_with_api"/>
 
 ## Logging With API
