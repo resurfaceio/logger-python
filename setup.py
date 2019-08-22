@@ -6,6 +6,8 @@ setup(
     description='Logging usage of Python-based services, with user privacy by design.',
     long_description="""Logging usage of Python-based services, with user privacy by design.
 
+Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
+
 ## Middleware Integrations
 
 These integrations allow usage logging from existing applications with only minor configuration changes.
@@ -25,7 +27,7 @@ and how sensitive data is masked. By default, loggers apply a strict set of pred
 customized to meet the needs of any application.
 
 ---
-<small>&copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
+&copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a>
 """,
     long_description_content_type='text/markdown',
     url='https://github.com/resurfaceio/logger-python',

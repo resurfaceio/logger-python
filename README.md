@@ -1,6 +1,8 @@
 # resurfaceio-logger-python
 Logging usage of Python-based services, with user privacy by design.
 
+Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
+
 [![PyPI version](https://badge.fury.io/py/usagelogger.svg)](https://badge.fury.io/py/usagelogger)
 
 ## Contents
@@ -17,7 +19,7 @@ Logging usage of Python-based services, with user privacy by design.
 
 ## Dependencies
 
-Requires Python 3.5 or higher. No other dependencies to conflict with your app.
+Requires Python 3.6 or higher. No other dependencies to conflict with your app.
 
 <a name="installing_with_pip"/>
 
