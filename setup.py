@@ -30,7 +30,7 @@ customized to meet the needs of any application.
 &copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a>
 """,
     long_description_content_type='text/markdown',
-    url='https://github.com/resurfaceio/logger-python',
+    url='https://resurface.io',
     author='Resurface Labs',
     author_email='admin@resurface.io',
     license="Apache License 2.0",
