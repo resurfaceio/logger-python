@@ -1,7 +1,6 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
 
-import json
 import http.client
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
@@ -80,7 +79,6 @@ class BaseLogger(object):
                 hostname = url_parser.hostname  # todo cache this!
                 url_path = url_parser.path + url_parser.query  # cache todo this!
 
-                body: str = json.dumps(msg).encode('utf8')
                 headers: Dict[str, str] = {'Content-Type': 'application/json'}
 
                 if self._url_scheme == "http":
@@ -88,7 +86,7 @@ class BaseLogger(object):
                 else:
                     conn = http.client.HTTPSConnection(hostname)
 
-                conn.request("POST", url_path, body, headers)
+                conn.request("POST", url_path, msg, headers)
                 response = conn.getresponse()
                 conn.close()  # todo keep alive? (or should be closed in except handler?)
 
