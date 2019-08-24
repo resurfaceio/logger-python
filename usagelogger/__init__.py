@@ -7,4 +7,4 @@ from .http_logger import HttpLogger
 from .http_message import HttpMessage
 from .http_logger_for_django import HttpLoggerForDjango
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
