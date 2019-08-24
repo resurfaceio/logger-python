@@ -6,7 +6,7 @@ import os
 
 class UsageLoggers(object):
 
-    DISABLED: bool = os.getenv('USAGE_LOGGERS_DISABLE') == 'True'
+    DISABLED: bool = os.getenv('USAGE_LOGGERS_DISABLE') == 'true'
     _disabled: bool = DISABLED
 
     @classmethod
