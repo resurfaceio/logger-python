@@ -8,19 +8,28 @@ from usagelogger import HttpRequestImpl, HttpResponseImpl
 class HttpMessage(object):
 
     @classmethod
-    def build(cls, request: HttpRequestImpl, response: HttpResponseImpl,
+    def build(cls, request: HttpRequestImpl, response: HttpResponseImpl,  # todo not respecting type hints
               response_body: Optional[str] = None, request_body: Optional[str] = None):
         message: List[List[str]] = []
-        if request.method: message.append(['request_method', request.method])
-        if request.request_url: message.append(['request_url', request.request_url])
-        if response.status: message.append(['response_code', str(response.status)])
-        cls._append_request_headers(message, request)
-        cls._append_request_params(message, request)
-        cls._append_response_headers(message, response)
-        final_request_body = request_body if (request_body is not None) else request.body
-        if final_request_body: message.append(['request_body', final_request_body])
-        final_response_body = response_body if (response_body is not None) else response.body
-        if final_response_body: message.append(['response_body', final_response_body])
+        if request.__class__.__name__ == "WSGIRequest":  # todo reflection cheat
+            message.append(['request_method', request.method])
+            message.append(['request_url', request.build_absolute_uri()])
+            message.append(['response_code', str(response.status_code)])
+            message.append(['response_body', response.content.decode('utf8')])
+            # todo append request body and honor body param overrides
+            # todo append headers and params
+        else:
+            if request.method: message.append(['request_method', request.method])
+            if request.request_url: message.append(['request_url', request.request_url])
+            if response.status: message.append(['response_code', str(response.status)])
+            cls._append_request_headers(message, request)
+            cls._append_request_params(message, request)
+            cls._append_response_headers(message, response)
+            final_request_body = request_body if (request_body is not None) else request.body
+            if final_request_body: message.append(['request_body', final_request_body])
+            final_response_body = response_body if (response_body is not None) else response.body
+            if final_response_body: message.append(['response_body', final_response_body])
+
         return message
 
     @classmethod
