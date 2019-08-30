@@ -97,7 +97,7 @@ class HttpRules(object):
         try:
             return re.compile(s)
         except:
-            raise SyntaxError('Invalid regex ({regex}) in rule: {r}'.format(r=rule, regex=regex))
+            raise SyntaxError(f'Invalid regex ({regex}) in rule: {rule}')
 
     @classmethod
     def _parse_regex_find(cls, rule: str, regex: str) -> Pattern:
@@ -105,20 +105,20 @@ class HttpRules(object):
         try:
             return re.compile(HttpRules._parse_string(rule, regex)) # todo need flags here?
         except:
-            raise SyntaxError('Invalid regex ({regex}) in rule: {r}'.format(r=rule, regex=regex))
+            raise SyntaxError(f'Invalid regex ({regex}) in rule: {rule}')
 
     @classmethod
-    def _parse_string(cls, rule: str, string: str) -> str:
+    def _parse_string(cls, rule: str, expr: str) -> str:
         """Parses delimited string expression."""
         for sep in ['~', '!', '%', '|', '/']:
             p: Pattern = re.compile(r'^[{s}](.*)[{s}]$'.format(s=sep))
-            m = p.match(string)
+            m = p.match(expr)
             if m:
                 m1: str = m.group(1)
                 m1p: Pattern = re.compile(r'^[{s}].*|.*[^\\\\][{s}].*'.format(s=sep))
-                if m1p.match(m1): raise SyntaxError('Unescaped separator ({s}) in rule: {r}'.format(r=rule, s=sep))
+                if m1p.match(m1): raise SyntaxError(f'Unescaped separator ({sep}) in rule: {rule}')
                 return sep.join(m1.split('\\' + sep))
-        raise SyntaxError('Invalid expression ({s}) in rule: {r}'.format(r=rule, s=string))
+        raise SyntaxError(f'Invalid expression ({expr}) in rule: {rule}')
 
     _REGEX_ALLOW_HTTP_URL: Pattern = re.compile(
         r'^\s*allow_http_url\s*(#.*)?$')

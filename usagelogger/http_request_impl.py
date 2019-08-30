@@ -65,7 +65,7 @@ class HttpRequestImpl(object):
         """Splits given URL and updates base_url, path, query_string"""
         if value:
             u: SplitResult = urlsplit(value)
-            self.base_url = '{0}://{1}'.format(u.scheme, u.netloc)
+            self.base_url = f'{u.scheme}://{u.netloc}'
             self.path = u.path
             self.query_string = u.query
 
@@ -91,9 +91,9 @@ class HttpRequestImpl(object):
         """Rebuilds and returns the base URL using scheme, host, port"""
         url_builder = ''
         if self._scheme and self.host:
-            url_builder = "{0}://{1}".format(self._scheme, self.host)
+            url_builder = f"{self._scheme}://{self.host}"
             if self._port and self._port not in {80, 443}:
-                url_builder = url_builder + ":{0}".format(str(self._port))
+                url_builder = f"{url_builder}:{str(self._port)}"
         return url_builder
 
     @base_url.setter
@@ -148,7 +148,7 @@ class HttpRequestImpl(object):
             path_builder = path_builder + self.path
         # Unlike URL methods, process query string even if path is blank
         if self.query_string:
-            path_builder = "{0}?{1}".format(path_builder, self.query_string)
+            path_builder = f"{path_builder}?{self.query_string}"
         return path_builder
 
     # formatters

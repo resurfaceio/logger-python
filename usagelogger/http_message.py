@@ -36,7 +36,7 @@ class HttpMessage(object):
     def _append_request_headers(cls, message: List[List[str]],
                                 request: HttpRequestImpl) -> None:
         for k, v in request.get_headers():
-            message.append(["request_header:{0}".format(k).lower(), v])
+            message.append([f"request_header:{k}".lower(), v])
 
     @classmethod
     def _append_request_params(cls, message: List[List[str]],
@@ -48,4 +48,4 @@ class HttpMessage(object):
     def _append_response_headers(cls, message: List[List[str]],
                                  response: HttpResponseImpl) -> None:
         for k, v in response.get_headers():
-            message.append(["response_header:{0}".format(k).lower(), v])
+            message.append([f"response_header:{k}".lower(), v])
