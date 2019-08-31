@@ -11,5 +11,7 @@ class HttpLoggerForDjango:
 
     def __call__(self, request):
         response = self.get_response(request)
-        self.logger.log(request=request, response=response)  # todo filter by response code & content-type
+        status = response.status_code
+        if (status < 300 or status == 302) and HttpLogger.is_string_content_type(response['Content-Type']):
+            self.logger.log(request=request, response=response)
         return response
