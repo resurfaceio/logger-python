@@ -10,9 +10,8 @@ Visit <a href="https://resurface.io">resurface.io</a> for general information on
 
 ## Middleware Integrations
 
-These integrations allow usage logging from existing applications with only minor configuration changes.
-
-* Django - coming soon!
+Loggers can be added to <a href="https://github.com/resurfaceio/logger-python#logging-from-django">Django</a> 
+applications with only minor configuration changes.
 
 ## Logging With API
 
