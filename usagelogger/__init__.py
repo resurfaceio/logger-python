@@ -5,6 +5,7 @@ from .http_rules import HttpRules
 from .base_logger import BaseLogger
 from .http_logger import HttpLogger
 from .http_message import HttpMessage
-from .http_logger_for_django import HttpLoggerForDjango
+
+# don't import django logger here! (optional, not required)
 
 __version__ = '0.2.3'

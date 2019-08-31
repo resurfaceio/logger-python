@@ -33,7 +33,23 @@ pip install --upgrade usagelogger
 
 ## Logging From Django
 
-(coming soon!)
+After <a href="#installing_with_pip">installing the package</a>, edit `settings.py` to register middleware.
+
+```python
+MIDDLEWARE = [
+    "django.middleware...",
+    "usagelogger.HttpLoggerForDjango",
+]
+```
+
+Now add a new section to `settings.py` for logging configuration.
+
+```python
+USAGELOGGER = {
+    'url': 'https://...',
+    'rules': 'include strict'
+}
+```
 
 <a name="logging_with_api"/>
 

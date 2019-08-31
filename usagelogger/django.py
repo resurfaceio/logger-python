@@ -1,13 +1,21 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
 
+from django.conf import settings
 from usagelogger import HttpLogger
+
+
+def __read_settings__(key):
+    try:
+        return settings.USAGELOGGER[key]
+    except Exception as e:
+        return None
 
 
 class HttpLoggerForDjango:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.logger = HttpLogger()  # todo some way to set url & rules?
+        self.logger = HttpLogger(url=__read_settings__('url'), rules=__read_settings__('rules'))
 
     def __call__(self, request):
         response = self.get_response(request)
