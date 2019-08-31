@@ -56,7 +56,7 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
     def __init__(self, _agent_unused=None,
                  enabled: Optional[bool] = True,
                  queue: Optional[List[str]] = None,
-                 url: Optional[str] = usagelogger.UsageLoggers.url_by_default(),
+                 url: Optional[str] = None,
                  skip_compression: Optional[bool] = False,
                  skip_submission: Optional[bool] = False,
                  rules: Optional[str] = None) -> None:
@@ -64,6 +64,8 @@ class HttpLogger(usagelogger.BaseLogger, metaclass=MetaHttpLogger):
         Initialize enabled/disabled logger
         using specified url and default rules.
         """
+
+        if url is None: url = usagelogger.UsageLoggers.url_by_default()
 
         super().__init__(self.AGENT, enabled=enabled, queue=queue, url=url,
                          skip_compression=skip_compression,
