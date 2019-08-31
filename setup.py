@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='usagelogger',
-    version='0.2.3',
+    version='0.3.0',
     description='Logging usage of Python-based services, with user privacy by design.',
     long_description="""Logging usage of Python-based services, with user privacy by design.
 
