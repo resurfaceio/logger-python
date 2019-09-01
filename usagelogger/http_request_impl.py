@@ -23,7 +23,7 @@ class HttpRequestImpl(object):
     def __init__(self, method: Optional[str] = None,
                  request_url: Optional[str] = None,
                  headers: Optional[Dict[str, str]] = None,
-                 body: Optional[Union[bytes, str]] = None) -> None:
+                 body: Optional[str] = None) -> None:
 
         self._scheme: Optional[str] = None
         self._port: Optional[int] = None
@@ -68,22 +68,6 @@ class HttpRequestImpl(object):
             self.base_url = f'{u.scheme}://{u.netloc}'
             self.path = u.path
             self.query_string = u.query
-
-    # self.body getter/setter
-    @property
-    def body(self):
-        return self._body
-
-    @body.setter
-    def body(self, value: Optional[Union[bytes, str]]):
-        if not value:
-            self._body = None
-        elif isinstance(value, str):
-            self._body = bytes(value, 'utf8')
-        elif isinstance(value, bytes):
-            self._body = value
-        else:
-            self._body = None
 
     # self.base_url getter/setter
     @property

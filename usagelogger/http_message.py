@@ -18,9 +18,8 @@ class HttpMessage(object):
             for k, v in request.headers.items(): message.append([f"request_header:{k}".lower(), v])
             # todo append request params
             for k, v in response.items(): message.append([f"response_header:{k}".lower(), v])
-            # todo append request body and honor body param overrides
+            # todo append request body
             message.append(['response_body', response.content.decode('utf8')])
-            # todo honor body param overrides
         else:
             if request.method: message.append(['request_method', request.method])
             if request.request_url: message.append(['request_url', request.request_url])
