@@ -4,7 +4,7 @@
 import http.client
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
-import usagelogger
+import usagelogger  # just to read version
 from usagelogger.usage_loggers import UsageLoggers
 
 
@@ -14,7 +14,7 @@ class BaseLogger(object):
     def __init__(self, agent: str,
                  enabled: Optional[bool] = True,
                  queue: Optional[List[str]] = None,
-                 url: Optional[str] = UsageLoggers.url_by_default(),
+                 url: Optional[str] = None,
                  skip_compression: Optional[bool] = False,
                  skip_submission: Optional[bool] = False) -> None:
 
@@ -22,6 +22,9 @@ class BaseLogger(object):
         self.skip_compression = skip_compression
         self.skip_submission = skip_submission
         self.version = self.version_lookup()
+
+        # read provided options
+        if url is None: url = UsageLoggers.url_by_default()
 
         # set options in priority order
         self._enabled = enabled
