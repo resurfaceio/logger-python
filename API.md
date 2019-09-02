@@ -79,16 +79,16 @@ If no <a href="https://resurface.io/rules.html">rules</a> are provided when crea
 `include strict` will be applied. A different default value can be specified as shown below.
 
 ```python
-HttpLogger.default_rules = 'include debug'
+HttpLogger.set_default_rules('include debug')
 ```
 
 When specifying multiple default rules, put each on a separate line. This is most easily done with a multi-line string.
 
 ```python
-HttpLogger.default_rules = """
+HttpLogger.set_default_rules("""
     include debug
     sample 10
-"""
+""")
 ```
 
 <a name="setting_default_url"/>

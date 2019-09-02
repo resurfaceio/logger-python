@@ -3,6 +3,7 @@
 
 import re
 from typing import List, Pattern
+
 from usagelogger.http_rule import HttpRule
 
 
@@ -45,45 +46,45 @@ class HttpRules(object):
     @classmethod
     def parse_rule(cls, rule: str) -> HttpRule:
         """Parses rule from single line."""
-        if rule is None or HttpRules._REGEX_BLANK_OR_COMMENT.match(rule): return None
-        m = HttpRules._REGEX_ALLOW_HTTP_URL.match(rule)
+        if rule is None or HttpRules.__REGEX_BLANK_OR_COMMENT.match(rule): return None
+        m = HttpRules.__REGEX_ALLOW_HTTP_URL.match(rule)
         if m: return HttpRule('allow_http_url')
-        m = HttpRules._REGEX_COPY_SESSION_FIELD.match(rule)
+        m = HttpRules.__REGEX_COPY_SESSION_FIELD.match(rule)
         if m: return HttpRule('copy_session_field', None, HttpRules._parse_regex(rule, m.group(1)))
-        m = HttpRules._REGEX_REMOVE.match(rule)
+        m = HttpRules.__REGEX_REMOVE.match(rule)
         if m: return HttpRule('remove', HttpRules._parse_regex(rule, m.group(1)))
-        m = HttpRules._REGEX_REMOVE_IF.match(rule)
+        m = HttpRules.__REGEX_REMOVE_IF.match(rule)
         if m: return HttpRule('remove_if', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
-        m = HttpRules._REGEX_REMOVE_IF_FOUND.match(rule)
+        m = HttpRules.__REGEX_REMOVE_IF_FOUND.match(rule)
         if m: return HttpRule('remove_if_found', HttpRules._parse_regex(rule, m.group(1)),
                               HttpRules._parse_regex_find(rule, m.group(2)))
-        m = HttpRules._REGEX_REMOVE_UNLESS.match(rule)
+        m = HttpRules.__REGEX_REMOVE_UNLESS.match(rule)
         if m: return HttpRule('remove_unless', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
-        m = HttpRules._REGEX_REMOVE_UNLESS_FOUND.match(rule)
+        m = HttpRules.__REGEX_REMOVE_UNLESS_FOUND.match(rule)
         if m: return HttpRule('remove_unless_found', HttpRules._parse_regex(rule, m.group(1)),
                               HttpRules._parse_regex_find(rule, m.group(2)))
-        m = HttpRules._REGEX_REPLACE.match(rule)
+        m = HttpRules.__REGEX_REPLACE.match(rule)
         if m: return HttpRule('replace', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex_find(rule, m.group(2)),
                               HttpRules._parse_string(rule, m.group(3)))
-        m = HttpRules._REGEX_SAMPLE.match(rule)
+        m = HttpRules.__REGEX_SAMPLE.match(rule)
         if m:
             m1 = int(m.group(1))
             if m1 < 1 or m1 > 99: raise SyntaxError('Invalid sample percent: ' + m.group(1))
             return HttpRule('sample', None, m1)
-        m = HttpRules._REGEX_SKIP_COMPRESSION.match(rule)
+        m = HttpRules.__REGEX_SKIP_COMPRESSION.match(rule)
         if m: return HttpRule('skip_compression')
-        m = HttpRules._REGEX_SKIP_SUBMISSION.match(rule)
+        m = HttpRules.__REGEX_SKIP_SUBMISSION.match(rule)
         if m: return HttpRule('skip_submission')
-        m = HttpRules._REGEX_STOP.match(rule)
+        m = HttpRules.__REGEX_STOP.match(rule)
         if m: return HttpRule('stop', HttpRules._parse_regex(rule, m.group(1)))
-        m = HttpRules._REGEX_STOP_IF.match(rule)
+        m = HttpRules.__REGEX_STOP_IF.match(rule)
         if m: return HttpRule('stop_if', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
-        m = HttpRules._REGEX_STOP_IF_FOUND.match(rule)
+        m = HttpRules.__REGEX_STOP_IF_FOUND.match(rule)
         if m: return HttpRule('stop_if_found', HttpRules._parse_regex(rule, m.group(1)),
                               HttpRules._parse_regex_find(rule, m.group(2)))
-        m = HttpRules._REGEX_STOP_UNLESS.match(rule)
+        m = HttpRules.__REGEX_STOP_UNLESS.match(rule)
         if m: return HttpRule('stop_unless', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
-        m = HttpRules._REGEX_STOP_UNLESS_FOUND.match(rule)
+        m = HttpRules.__REGEX_STOP_UNLESS_FOUND.match(rule)
         if m: return HttpRule('stop_unless_found', HttpRules._parse_regex(rule, m.group(1)),
                               HttpRules._parse_regex_find(rule, m.group(2)))
         raise SyntaxError('Invalid rule: ' + rule)
@@ -103,7 +104,7 @@ class HttpRules(object):
     def _parse_regex_find(cls, rule: str, regex: str) -> Pattern:
         """Parses regex for finding."""
         try:
-            return re.compile(HttpRules._parse_string(rule, regex)) # todo need flags here?
+            return re.compile(HttpRules._parse_string(rule, regex))  # todo need flags here?
         except:
             raise SyntaxError(f'Invalid regex ({regex}) in rule: {rule}')
 
@@ -120,43 +121,43 @@ class HttpRules(object):
                 return sep.join(m1.split('\\' + sep))
         raise SyntaxError(f'Invalid expression ({expr}) in rule: {rule}')
 
-    _REGEX_ALLOW_HTTP_URL: Pattern = re.compile(
+    __REGEX_ALLOW_HTTP_URL: Pattern = re.compile(
         r'^\s*allow_http_url\s*(#.*)?$')
-    _REGEX_BLANK_OR_COMMENT: Pattern = re.compile(
+    __REGEX_BLANK_OR_COMMENT: Pattern = re.compile(
         r'^\s*([#].*)*$')
-    _REGEX_COPY_SESSION_FIELD: Pattern = re.compile(
+    __REGEX_COPY_SESSION_FIELD: Pattern = re.compile(
         r'^\s*copy_session_field\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_REMOVE: Pattern = re.compile(
+    __REGEX_REMOVE: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*remove\s*(#.*)?$')
-    _REGEX_REMOVE_IF: Pattern = re.compile(
+    __REGEX_REMOVE_IF: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*remove_if\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_REMOVE_IF_FOUND: Pattern = re.compile(
+    __REGEX_REMOVE_IF_FOUND: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*'
         r'remove_if_found\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_REMOVE_UNLESS: Pattern = re.compile(
+    __REGEX_REMOVE_UNLESS: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*'
         r'remove_unless\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_REMOVE_UNLESS_FOUND: Pattern = re.compile(
+    __REGEX_REMOVE_UNLESS_FOUND: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*'
         r'remove_unless_found\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_REPLACE: Pattern = re.compile(
+    __REGEX_REPLACE: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*'
         r'replace[\s]+([~!%|/].+[~!%|/]),[\s]+([~!%|/].*[~!%|/])\s*(#.*)?$')
-    _REGEX_SAMPLE: Pattern = re.compile(
+    __REGEX_SAMPLE: Pattern = re.compile(
         r'^\s*sample\s+(\d+)\s*(#.*)?$')
-    _REGEX_SKIP_COMPRESSION: Pattern = re.compile(
+    __REGEX_SKIP_COMPRESSION: Pattern = re.compile(
         r'^\s*skip_compression\s*(#.*)?$')
-    _REGEX_SKIP_SUBMISSION: Pattern = re.compile(
+    __REGEX_SKIP_SUBMISSION: Pattern = re.compile(
         r'^\s*skip_submission\s*(#.*)?$')
-    _REGEX_STOP: Pattern = re.compile(
+    __REGEX_STOP: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*stop\s*(#.*)?$')
-    _REGEX_STOP_IF: Pattern = re.compile(
+    __REGEX_STOP_IF: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*stop_if\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_STOP_IF_FOUND: Pattern = re.compile(
+    __REGEX_STOP_IF_FOUND: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*'
         r'stop_if_found\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_STOP_UNLESS: Pattern = re.compile(
+    __REGEX_STOP_UNLESS: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*stop_unless\s+([~!%|/].+[~!%|/])\s*(#.*)?$')
-    _REGEX_STOP_UNLESS_FOUND: Pattern = re.compile(
+    __REGEX_STOP_UNLESS_FOUND: Pattern = re.compile(
         r'^\s*([~!%|/].+[~!%|/])\s*'
         r'stop_unless_found\s+([~!%|/].+[~!%|/])\s*(#.*)?$')

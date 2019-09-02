@@ -83,7 +83,7 @@ def parseable(msg):
     try:
         json.loads(msg)
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 

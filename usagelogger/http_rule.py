@@ -7,7 +7,7 @@ class HttpRule(object):
 
     def __init__(self, verb: str,
                  scope: Optional[Pattern] = None,
-                 param1: Optional[Union[Pattern, str]] = None,
+                 param1: Optional[Union[Pattern, str, int]] = None,
                  param2: Optional[Union[Pattern, str]] = None) -> None:
         self._verb = verb
         self._scope = scope

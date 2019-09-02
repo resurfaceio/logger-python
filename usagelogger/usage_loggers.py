@@ -5,22 +5,21 @@ import os
 
 
 class UsageLoggers(object):
+    __BRICKED: bool = os.getenv('USAGE_LOGGERS_DISABLE') == 'true'
 
-    DISABLED: bool = os.getenv('USAGE_LOGGERS_DISABLE') == 'true'
-    _disabled: bool = DISABLED
+    __disabled: bool = __BRICKED
 
     @classmethod
     def disable(cls) -> None:
-        cls._disabled = True
+        cls.__disabled = True
 
     @classmethod
     def enable(cls) -> None:
-        if cls.DISABLED is False:
-            cls._disabled = False
+        if cls.__BRICKED is False: cls.__disabled = False
 
     @classmethod
     def is_enabled(cls) -> bool:
-        return not cls._disabled
+        return not cls.__disabled
 
     @staticmethod
     def url_by_default() -> str:

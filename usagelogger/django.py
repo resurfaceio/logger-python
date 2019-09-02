@@ -2,13 +2,14 @@
 # © 2016-2019 Resurface Labs Inc.
 
 from django.conf import settings
+
 from usagelogger import HttpLogger
 
 
 def __read_settings__(key):
     try:
         return settings.USAGELOGGER[key]
-    except Exception as e:
+    except Exception:
         return None
 
 
