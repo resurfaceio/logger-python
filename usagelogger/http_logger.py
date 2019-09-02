@@ -98,15 +98,62 @@ class HttpLogger(BaseLogger):
         details: List[List[str]] = HttpMessage.build(request, response, response_body, request_body)
 
         # TODO: copy data from session if configured
-        # TODO: quit early based on stop rules if configured
+
+        # quit early based on stop rules if configured
+        for r in self.rules_stop:
+            for d in details:
+                if r.scope.match(d[0]): return None
+        for r in self.rules_stop_if_found:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.search(d[1]): return None
+        for r in self.rules_stop_if:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.match(d[1]): return None
+        passed = 0
+        for r in self.rules_stop_unless_found:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.search(d[1]): passed += 1
+        if passed != len(self.rules_stop_unless_found): return None
+        passed = 0
+        for r in self.rules_stop_unless:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.match(d[1]): passed += 1
+        if passed != len(self.rules_stop_unless): return None
 
         # do sampling if configured
         if len(self.rules_sample) == 1 and random.randrange(100) >= int(self.rules_sample[0].param1): return None
 
-        # TODO: winnow sensitive details based on remove rules if configured
-        # TODO: mask sensitive details based on replace rules if configured
-        # TODO: remove any details with empty values
+        # winnow sensitive details based on remove rules if configured
+        for r in self.rules_remove:
+            for d in details:
+                if r.scope.match(d[0]): d[1] = ''
+        for r in self.rules_remove_unless_found:
+            for d in details:
+                if r.scope.match(d[0]) and not r.param1.search(d[1]): d[1] = ''
+        for r in self.rules_remove_if_found:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.search(d[1]): d[1] = ''
+        for r in self.rules_remove_unless:
+            for d in details:
+                if r.scope.match(d[0]) and not r.param1.match(d[1]): d[1] = ''
+        for r in self.rules_remove_if:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.match(d[1]): d[1] = ''
 
+        # remove any details with empty values
+        details = [x for x in details if x[1] != '']
+        if len(details) == 0: return None
+
+        # mask sensitive details based on replace rules if configured
+        for r in self.rules_replace:
+            for d in details:
+                if r.scope.match(d[0]): d[1] = re.sub(r.param1, r.param2, d[1])
+
+        # remove any details with empty values
+        details = [x for x in details if x[1] != '']
+        if len(details) == 0: return None
+
+        # finish message
         details.append(['now', str(now) if now is not None else str(round(time() * 1000))])
         details.append(['agent', self.AGENT])
         details.append(['version', self.version])
