@@ -40,8 +40,7 @@ class HttpLogger(BaseLogger):
     def is_string_content_type(cls, s: str) -> bool:
         return s is not None and cls.__STRING_TYPES_REGEX.match(s) is not None
 
-    def __init__(self, _agent_unused=None,  # todo what is this?
-                 enabled: Optional[bool] = True,
+    def __init__(self, enabled: Optional[bool] = True,
                  queue: Optional[List[str]] = None,
                  url: Optional[str] = None,
                  skip_compression: Optional[bool] = False,
@@ -57,7 +56,7 @@ class HttpLogger(BaseLogger):
             if len(self.rules.strip()) == 0: self.rules: str = self.default_rules()
         else:
             self.rules: str = self.default_rules()
-        # todo rules should be immutable!
+        # todo rules should be immutable (Clubhouse #37)
 
         # parse and break rules out by verb
         prs: List[HttpRule] = HttpRules.parse(self.rules)
@@ -77,7 +76,7 @@ class HttpLogger(BaseLogger):
         self.rules_stop_unless_found: List[HttpRule] = [r for r in prs if 'stop_unless_found' == r.verb]
         self.skip_compression: bool = len([r for r in prs if r.verb == 'skip_compression']) > 0
         self.skip_submission: bool = len([r for r in prs if r.verb == 'skip_submission']) > 0
-        # todo again, rules should be immutable!
+        # todo parsed rules should be immutable (Clubhouse #37)
 
         # finish validating rules
         if len(self.rules_sample) > 1: raise SyntaxError('Multiple sample rules')
@@ -97,7 +96,7 @@ class HttpLogger(BaseLogger):
 
         details: List[List[str]] = HttpMessage.build(request, response, response_body, request_body)
 
-        # TODO: copy data from session if configured
+        # todo copy data from session if configured (Clubhouse #151)
 
         # quit early based on stop rules if configured
         for r in self.rules_stop:

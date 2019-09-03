@@ -50,22 +50,22 @@ class HttpRules(object):
         m = HttpRules.__REGEX_ALLOW_HTTP_URL.match(rule)
         if m: return HttpRule('allow_http_url')
         m = HttpRules.__REGEX_COPY_SESSION_FIELD.match(rule)
-        if m: return HttpRule('copy_session_field', None, HttpRules._parse_regex(rule, m.group(1)))
+        if m: return HttpRule('copy_session_field', None, HttpRules.parse_regex(rule, m.group(1)))
         m = HttpRules.__REGEX_REMOVE.match(rule)
-        if m: return HttpRule('remove', HttpRules._parse_regex(rule, m.group(1)))
+        if m: return HttpRule('remove', HttpRules.parse_regex(rule, m.group(1)))
         m = HttpRules.__REGEX_REMOVE_IF.match(rule)
-        if m: return HttpRule('remove_if', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
+        if m: return HttpRule('remove_if', HttpRules.parse_regex(rule, m.group(1)), HttpRules.parse_regex(rule, m.group(2)))
         m = HttpRules.__REGEX_REMOVE_IF_FOUND.match(rule)
-        if m: return HttpRule('remove_if_found', HttpRules._parse_regex(rule, m.group(1)),
-                              HttpRules._parse_regex_find(rule, m.group(2)))
+        if m: return HttpRule('remove_if_found', HttpRules.parse_regex(rule, m.group(1)),
+                              HttpRules.parse_regex_find(rule, m.group(2)))
         m = HttpRules.__REGEX_REMOVE_UNLESS.match(rule)
-        if m: return HttpRule('remove_unless', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
+        if m: return HttpRule('remove_unless', HttpRules.parse_regex(rule, m.group(1)), HttpRules.parse_regex(rule, m.group(2)))
         m = HttpRules.__REGEX_REMOVE_UNLESS_FOUND.match(rule)
-        if m: return HttpRule('remove_unless_found', HttpRules._parse_regex(rule, m.group(1)),
-                              HttpRules._parse_regex_find(rule, m.group(2)))
+        if m: return HttpRule('remove_unless_found', HttpRules.parse_regex(rule, m.group(1)),
+                              HttpRules.parse_regex_find(rule, m.group(2)))
         m = HttpRules.__REGEX_REPLACE.match(rule)
-        if m: return HttpRule('replace', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex_find(rule, m.group(2)),
-                              HttpRules._parse_string(rule, m.group(3)))
+        if m: return HttpRule('replace', HttpRules.parse_regex(rule, m.group(1)), HttpRules.parse_regex_find(rule, m.group(2)),
+                              HttpRules.parse_string(rule, m.group(3)))
         m = HttpRules.__REGEX_SAMPLE.match(rule)
         if m:
             m1 = int(m.group(1))
@@ -76,23 +76,23 @@ class HttpRules(object):
         m = HttpRules.__REGEX_SKIP_SUBMISSION.match(rule)
         if m: return HttpRule('skip_submission')
         m = HttpRules.__REGEX_STOP.match(rule)
-        if m: return HttpRule('stop', HttpRules._parse_regex(rule, m.group(1)))
+        if m: return HttpRule('stop', HttpRules.parse_regex(rule, m.group(1)))
         m = HttpRules.__REGEX_STOP_IF.match(rule)
-        if m: return HttpRule('stop_if', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
+        if m: return HttpRule('stop_if', HttpRules.parse_regex(rule, m.group(1)), HttpRules.parse_regex(rule, m.group(2)))
         m = HttpRules.__REGEX_STOP_IF_FOUND.match(rule)
-        if m: return HttpRule('stop_if_found', HttpRules._parse_regex(rule, m.group(1)),
-                              HttpRules._parse_regex_find(rule, m.group(2)))
+        if m: return HttpRule('stop_if_found', HttpRules.parse_regex(rule, m.group(1)),
+                              HttpRules.parse_regex_find(rule, m.group(2)))
         m = HttpRules.__REGEX_STOP_UNLESS.match(rule)
-        if m: return HttpRule('stop_unless', HttpRules._parse_regex(rule, m.group(1)), HttpRules._parse_regex(rule, m.group(2)))
+        if m: return HttpRule('stop_unless', HttpRules.parse_regex(rule, m.group(1)), HttpRules.parse_regex(rule, m.group(2)))
         m = HttpRules.__REGEX_STOP_UNLESS_FOUND.match(rule)
-        if m: return HttpRule('stop_unless_found', HttpRules._parse_regex(rule, m.group(1)),
-                              HttpRules._parse_regex_find(rule, m.group(2)))
+        if m: return HttpRule('stop_unless_found', HttpRules.parse_regex(rule, m.group(1)),
+                              HttpRules.parse_regex_find(rule, m.group(2)))
         raise SyntaxError('Invalid rule: ' + rule)
 
     @classmethod
-    def _parse_regex(cls, rule: str, regex: str) -> Pattern:
+    def parse_regex(cls, rule: str, regex: str) -> Pattern:
         """Parses regex for matching."""
-        s: str = HttpRules._parse_string(rule, regex)
+        s: str = HttpRules.parse_string(rule, regex)
         if not s.startswith('^'): s = '^' + s
         if not s.endswith('$'): s = s + '$'
         try:
@@ -101,15 +101,15 @@ class HttpRules(object):
             raise SyntaxError(f'Invalid regex ({regex}) in rule: {rule}')
 
     @classmethod
-    def _parse_regex_find(cls, rule: str, regex: str) -> Pattern:
+    def parse_regex_find(cls, rule: str, regex: str) -> Pattern:
         """Parses regex for finding."""
         try:
-            return re.compile(HttpRules._parse_string(rule, regex))  # todo need flags here?
+            return re.compile(HttpRules.parse_string(rule, regex))
         except:
             raise SyntaxError(f'Invalid regex ({regex}) in rule: {rule}')
 
     @classmethod
-    def _parse_string(cls, rule: str, expr: str) -> str:
+    def parse_string(cls, rule: str, expr: str) -> str:
         """Parses delimited string expression."""
         for sep in ['~', '!', '%', '|', '/']:
             p: Pattern = re.compile(r'^[{s}](.*)[{s}]$'.format(s=sep))

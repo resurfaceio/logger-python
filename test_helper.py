@@ -2,6 +2,7 @@
 # © 2016-2019 Resurface Labs Inc.
 
 import json
+
 from usagelogger import HttpRequestImpl, HttpResponseImpl
 
 DEMO_URL = 'https://demo.resurface.io/ping'
@@ -50,7 +51,7 @@ def mock_request():
 def mock_request_with_json():
     r = HttpRequestImpl()
     r.body = MOCK_JSON
-    # todo missing form_hash
+    # todo missing request params (Clubhouse #149)
     r.headers['Content-Type'] = 'Application/JSON'  # direct accessor for content-type?
     r.method = 'POST'
     r.request_url = f"{MOCK_URL}?{MOCK_QUERY_STRING}"
@@ -60,8 +61,8 @@ def mock_request_with_json():
 def mock_request_with_json2():
     r = mock_request_with_json()
     r.headers['ABC'] = '123'
-    r.headers['A'] = "1, 2"  # todo use addHeader
-    # todo missing query_hash
+    r.headers['A'] = "1, 2"
+    # todo missing request params (Clubhouse #149)
     return r
 
 

@@ -76,15 +76,15 @@ def test_uses_allow_http_url_rules():
 
 
 def test_uses_copy_session_field_rules():
-    assert None is None  # todo finish
+    assert None is None  # todo finish (Clubhouse #151)
 
 
 def test_uses_copy_session_field_and_remove_rules():
-    assert None is None  # todo finish
+    assert None is None  # todo finish (Clubhouse #151)
 
 
 def test_uses_copy_session_field_and_stop_rules():
-    assert None is None  # todo finish
+    assert None is None  # todo finish (Clubhouse #151)
 
 
 def test_uses_remove_rules():
@@ -389,7 +389,7 @@ def test_uses_replace_rules_with_complex_expressions():
     assert len(queue) == 1
     assert "[\"response_body\",\"<html>Hello xyxy!</html>\"]," in queue[0]
 
-    # todo this specific case not working...
+    # todo this specific case not working (Clubhouse #150)
     # queue = []
     # logger = HttpLogger(queue=queue, rules="!response_body! replace !World!, !<b>\\0</b>!")
     # logger.log(request=mock_request_with_json2(), response=mock_response_with_html())

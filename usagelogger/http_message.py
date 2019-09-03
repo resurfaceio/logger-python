@@ -9,7 +9,7 @@ from usagelogger import HttpRequestImpl, HttpResponseImpl
 class HttpMessage(object):
 
     @classmethod
-    def build(cls, request: HttpRequestImpl, response: HttpResponseImpl,  # todo not respecting type hints
+    def build(cls, request: HttpRequestImpl, response: HttpResponseImpl,  # todo not respecting type hints (Clubhouse #152)
               response_body: Optional[str] = None, request_body: Optional[str] = None):
         message: List[List[str]] = None
 
@@ -33,7 +33,7 @@ class HttpMessage(object):
             if request.request_url: message.append(['request_url', request.request_url])
             if response.status: message.append(['response_code', str(response.status)])
             for k, v in request.get_headers(): message.append([f"request_header:{k}".lower(), v])
-            # todo request params
+            # todo request params (Clubhouse #149)
             for k, v in response.get_headers(): message.append([f"response_header:{k}".lower(), v])
             final_request_body = request_body if (request_body is not None) else request.body
             if final_request_body: message.append(['request_body', final_request_body])

@@ -26,7 +26,7 @@ def test_formats_request_with_body():
     assert f"[\"request_body\",\"{MOCK_HTML}\"]" in msg
     assert f"[\"request_header:content-type\",\"Application/JSON\"]" in msg
     assert f"[\"request_method\",\"POST\"]" in msg
-    # todo assert f"[\"request_param:message\",\"{MOCK_JSON_ESCAPED}\"]" in msg
+    # todo assert f"[\"request_param:message\",\"{MOCK_JSON_ESCAPED}\"]" in msg (Clubhouse #149)
     assert f"[\"request_url\",\"{MOCK_URL}?{MOCK_QUERY_STRING}\"]" in msg
     assert "request_param:foo" not in msg
 
@@ -38,8 +38,8 @@ def test_formats_request_with_empty_body():
     assert f"[\"request_header:abc\",\"123\"]" in msg
     assert f"[\"request_header:content-type\",\"Application/JSON\"]" in msg
     assert f"[\"request_method\",\"POST\"]" in msg
-    # todo assert f"[\"request_param:abc\",\"123, 234\"]" in msg
-    # todo assert f"[\"request_param:message\",\"{MOCK_JSON_ESCAPED}\"]" in msg
+    # todo assert f"[\"request_param:abc\",\"123, 234\"]" in msg (Clubhouse #149)
+    # todo assert f"[\"request_param:message\",\"{MOCK_JSON_ESCAPED}\"]" in msg (Clubhouse #149)
     assert f"[\"request_url\",\"{MOCK_URL}?{MOCK_QUERY_STRING}\"]" in msg
     assert f"request_body" not in msg
     assert "request_param:foo" not in msg

@@ -3,4 +3,4 @@
 
 
 def test_none():
-    assert None is None  # todo finish
+    assert None is None  # todo finish (Clubhouse #149)

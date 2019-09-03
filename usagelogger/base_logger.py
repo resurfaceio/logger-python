@@ -4,6 +4,7 @@
 import http.client
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
+
 import usagelogger  # just to read version
 from usagelogger.usage_loggers import UsageLoggers
 
@@ -77,10 +78,10 @@ class BaseLogger(object):
             return True
         else:
             try:
-                # TODO: implement compression
+                # todo implement compression (Clubhouse #49)
                 url_parser = urlsplit(self.url)
-                hostname = url_parser.hostname  # todo cache this!
-                url_path = url_parser.path + url_parser.query  # cache todo this!
+                hostname = url_parser.hostname  # todo cache this (Clubhouse #49)
+                url_path = url_parser.path + url_parser.query  # todo cache this (Clubhouse #49)
 
                 headers: Dict[str, str] = {'Content-Type': 'application/json'}
 
@@ -91,7 +92,7 @@ class BaseLogger(object):
 
                 conn.request("POST", url_path, msg, headers)
                 response = conn.getresponse()
-                conn.close()  # todo keep alive? (or should be closed in except handler?)
+                conn.close()  # todo keep connection alive? (Clubhouse #49)
 
                 return response.status == 204
 

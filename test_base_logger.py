@@ -1,6 +1,8 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
 
+from typing import List
+
 from test_helper import *
 from usagelogger import BaseLogger, UsageLoggers
 
@@ -116,19 +118,32 @@ def test_skips_logging_when_disabled():
 def test_submits_to_demo_url():
     logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
     assert logger.url == DEMO_URL
-    # todo add agent, version, now, protocol --> convert to json
-    assert logger.submit('{}') is True
+    message: List[List[str]] = [['agent', logger.agent], ['version', logger.version],
+                                ['now', str(MOCK_NOW)], ['prototol', 'https']]
+    msg = json.dumps(message, separators=(',', ':'))
+    assert parseable(msg) is True
+    assert logger.submit(msg) is True
 
 
 def test_submits_to_demo_url_via_http():
     logger = BaseLogger(MOCK_AGENT, url=DEMO_URL.replace('https', 'http', 1))
     assert logger.url.startswith('http://') is True
-    # todo add agent, version, now, protocol --> convert to json
-    assert logger.submit('{}') is True
+    message: List[List[str]] = [['agent', logger.agent], ['version', logger.version],
+                                ['now', str(MOCK_NOW)], ['prototol', 'http']]
+    msg = json.dumps(message, separators=(',', ':'))
+    assert parseable(msg) is True
+    assert logger.submit(msg) is True
 
 
 def test_submits_to_demo_url_without_compression():
-    assert None is None
+    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
+    logger.skip_compression = True
+    assert logger.skip_compression is True
+    message: List[List[str]] = [['agent', logger.agent], ['version', logger.version],
+                                ['now', str(MOCK_NOW)], ['prototol', 'https'], ['skip_compression', 'true']]
+    msg = json.dumps(message, separators=(',', ':'))
+    assert parseable(msg) is True
+    assert logger.submit(msg) is True
 
 
 def test_submits_to_denied_url_and_fails():
