@@ -44,17 +44,17 @@ MOCK_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:26.0) Gecko/2
 def mock_request():
     r = HttpRequestImpl()
     r.method = 'GET'
-    r.request_url = MOCK_URL
+    r.url = MOCK_URL
     return r
 
 
 def mock_request_with_json():
     r = HttpRequestImpl()
-    r.body = MOCK_JSON
-    # todo missing request params (Clubhouse #149)
-    r.headers['Content-Type'] = 'Application/JSON'  # direct accessor for content-type?
     r.method = 'POST'
-    r.request_url = f"{MOCK_URL}?{MOCK_QUERY_STRING}"
+    r.url = f"{MOCK_URL}?{MOCK_QUERY_STRING}"
+    r.headers['Content-Type'] = 'Application/JSON'
+    r.params['message'] = MOCK_JSON
+    r.body = MOCK_JSON
     return r
 
 
@@ -62,7 +62,7 @@ def mock_request_with_json2():
     r = mock_request_with_json()
     r.headers['ABC'] = '123'
     r.headers['A'] = "1, 2"
-    # todo missing request params (Clubhouse #149)
+    r.params['ABC'] = "123, 234"
     return r
 
 

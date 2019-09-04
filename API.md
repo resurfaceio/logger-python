@@ -57,9 +57,10 @@ from usagelogger import HttpLogger, HttpRequestImpl, HttpResponseImpl
 # define request to log
 request = HttpRequestImpl()
 request.body = 'some json'
-request.headers['Content-Type'] = 'Application/JSON'
-request.method = 'GET'
-request.request_url = 'http://google.com'
+request.headers['Content-Type'] = 'application/json'
+request.method = 'POST'
+request.params['B'] = '234'  # POST param
+request.url = 'http://resurface.io'
 
 # define response to log
 response = HttpResponseImpl()

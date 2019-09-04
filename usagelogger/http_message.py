@@ -30,11 +30,11 @@ class HttpMessage(object):
         elif request.__class__.__name__ == "HttpRequestImpl":
             message = []
             if request.method: message.append(['request_method', request.method])
-            if request.request_url: message.append(['request_url', request.request_url])
+            if request.url: message.append(['request_url', request.url])
             if response.status: message.append(['response_code', str(response.status)])
-            for k, v in request.get_headers(): message.append([f"request_header:{k}".lower(), v])
-            # todo request params (Clubhouse #149)
-            for k, v in response.get_headers(): message.append([f"response_header:{k}".lower(), v])
+            for k, v in request.headers.items(): message.append([f"request_header:{k}".lower(), v])
+            for k, v in request.params.items(): message.append([f"request_param:{k}".lower(), v])
+            for k, v in response.headers.items(): message.append([f"response_header:{k}".lower(), v])
             final_request_body = request_body if (request_body is not None) else request.body
             if final_request_body: message.append(['request_body', final_request_body])
             final_response_body = response_body if (response_body is not None) else response.body
