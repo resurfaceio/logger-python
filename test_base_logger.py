@@ -56,7 +56,7 @@ def test_has_valid_version():
     version = BaseLogger.version_lookup()
     assert version is not None
     assert len(version) > 0
-    assert version.startswith('0.4.')
+    assert version.startswith('0.5.')
     assert ('\\' in version) is False
     assert ('\"' in version) is False
     assert ("'" in version) is False
