@@ -52,6 +52,13 @@ def test_creates_multiple_instances():
     assert logger3.enabled is True
 
 
+def test_has_valid_host():
+    host = BaseLogger.host_lookup()
+    assert host is not None
+    assert len(host) > 0
+    assert host != 'unknown'
+
+
 def test_has_valid_version():
     version = BaseLogger.version_lookup()
     assert version is not None

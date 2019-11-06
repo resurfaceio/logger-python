@@ -2,6 +2,8 @@
 # © 2016-2019 Resurface Labs Inc.
 
 import http.client
+import os
+import socket
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
 
@@ -20,6 +22,7 @@ class BaseLogger(object):
                  skip_submission: Optional[bool] = False) -> None:
 
         self.agent = agent
+        self.host = self.host_lookup()
         self.skip_compression = skip_compression
         self.skip_submission = skip_submission
         self.version = self.version_lookup()
@@ -106,6 +109,15 @@ class BaseLogger(object):
     @property
     def url(self) -> str:
         return self._url
+
+    @staticmethod
+    def host_lookup() -> str:
+        dyno = os.getenv('DYNO')
+        if dyno is not None: return dyno
+        try:
+            return socket.gethostname()
+        except:
+            return 'unknown'
 
     @staticmethod
     def version_lookup() -> str:

@@ -11,6 +11,7 @@ def test_formats_request():
     msg = logger.format(request=mock_request(), response=mock_response(), now=MOCK_NOW)
     assert parseable(msg) is True
     assert f"[\"agent\",\"{HttpLogger.AGENT}\"]" in msg
+    assert f"[\"host\",\"{HttpLogger.host_lookup()}\"]" in msg
     assert f"[\"version\",\"{HttpLogger.version_lookup()}\"]" in msg
     assert f"[\"now\",\"{MOCK_NOW}\"]" in msg
     assert f"[\"request_method\",\"GET\"]" in msg

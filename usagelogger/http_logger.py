@@ -155,5 +155,6 @@ class HttpLogger(BaseLogger):
         # finish message
         details.append(['now', str(now) if now is not None else str(round(time() * 1000))])
         details.append(['agent', self.AGENT])
+        details.append(['host', self.host])
         details.append(['version', self.version])
         return json.dumps(details, separators=(',', ':'))
