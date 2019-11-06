@@ -57,6 +57,7 @@ def test_has_valid_host():
     assert host is not None
     assert len(host) > 0
     assert host != 'unknown'
+    assert host == BaseLogger(MOCK_AGENT).host
 
 
 def test_has_valid_version():
