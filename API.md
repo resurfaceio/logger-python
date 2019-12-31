@@ -39,20 +39,22 @@ Now that you have a logger instance, let's do some logging. Here you can pass st
 as response body and request body content when these are available. 
 
 ```python
+from usagelogger import HttpMessage
+
 # with standard objects
-logger.log(request, response)
+HttpMessage.send(logger, request, response)
 
 # with response body
-logger.log(request, response, 'my-response-body')
+HttpMessage.send(logger, request, response, response_body='my-response-body')
 
 # log with response and request body
-logger.log(request, response, 'my-response-body', 'my-request-body')
+HttpMessage.send(logger, request, response, response_body='my-response-body', request_body='my-request-body')
 ```
 
 If standard request and response objects aren't available in your case, create mock implementations to pass instead.
 
 ```python
-from usagelogger import HttpLogger, HttpRequestImpl, HttpResponseImpl
+from usagelogger import HttpRequestImpl, HttpResponseImpl
 
 # define request to log
 request = HttpRequestImpl()
@@ -69,7 +71,7 @@ response.headers['Content-Type'] = 'text/html; charset=utf-8'
 response.status = 200
 
 # log objects defined above
-logger.log(request, response)
+HttpMessage.send(logger, request, response)
 ```
 
 <a name="setting_default_rules"/>
@@ -80,13 +82,13 @@ If no <a href="https://resurface.io/rules.html">rules</a> are provided when crea
 `include strict` will be applied. A different default value can be specified as shown below.
 
 ```python
-HttpLogger.set_default_rules('include debug')
+HttpRules.set_default_rules('include debug')
 ```
 
 When specifying multiple default rules, put each on a separate line. This is most easily done with a multi-line string.
 
 ```python
-HttpLogger.set_default_rules("""
+HttpRules.set_default_rules("""
     include debug
     sample 10
 """)

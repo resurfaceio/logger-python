@@ -1,50 +1,53 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
 
+import random
 import re
-from typing import List, Pattern
+from typing import List, Optional, Pattern, Sized
 
 from usagelogger.http_rule import HttpRule
 
 
-class HttpRules(object):
+class HttpRules(Sized):
+    __DEBUG_RULES: str = (r"allow_http_url" "\n"
+                          r"copy_session_field /.*/" "\n")
+
+    __STANDARD_RULES: str = ("/request_header:cookie|response_header:set-cookie/ remove\n"
+                             r'/(request|response)_body|request_param/ replace '
+                             r'/[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+'
+                             r'(?:\.[a-zA-Z0-9-]+)/, /x@y.com/' "\n"
+                             r'/request_body|request_param|response_body/ replace '
+                             r'/[0-9\.\-\/]{9,}/, /xyxy/' "\n")
+
+    __STRICT_RULES: str = (r'/request_url/ replace /([^\?;]+).*/, !\\1!' "\n"
+                           r'/request_body|response_body|request_param:.*|'
+                           r'request_header:(?!user-agent).*|response_header:'
+                           r'(?!(content-length)|(content-type)).*/ remove' "\n")
+
+    __default_rules: str = __STRICT_RULES
+
+    @classmethod
+    def default_rules(cls) -> str:
+        return cls.__default_rules
+
+    @classmethod
+    def set_default_rules(cls, rules: str) -> None:
+        cls.__default_rules: str = re.sub(r'^\s*include default\s*$', '', rules, flags=re.MULTILINE)
 
     @classmethod
     def debug_rules(cls) -> str:
-        return (r"allow_http_url" "\n"
-                r"copy_session_field /.*/" "\n")
+        return cls.__DEBUG_RULES
 
     @classmethod
     def standard_rules(cls) -> str:
-        return ("/request_header:cookie|response_header:set-cookie/ remove\n"
-                r'/(request|response)_body|request_param/ replace '
-                r'/[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+'
-                r'(?:\.[a-zA-Z0-9-]+)/, /x@y.com/' "\n"
-                r'/request_body|request_param|response_body/ replace '
-                r'/[0-9\.\-\/]{9,}/, /xyxy/' "\n")
+        return cls.__STANDARD_RULES
 
     @classmethod
     def strict_rules(cls) -> str:
-        return (r'/request_url/ replace /([^\?;]+).*/, !\\1!' "\n"
-                r'/request_body|response_body|request_param:.*|'
-                r'request_header:(?!user-agent).*|response_header:'
-                r'(?!(content-length)|(content-type)).*/ remove' "\n")
+        return cls.__STRICT_RULES
 
     @classmethod
-    def parse(cls, rules: str) -> List[HttpRule]:
-        """Parses rules from multi-line string."""
-        result: List = []
-        if rules is not None:
-            rules = re.sub(r'(?m)^\s*include debug\s*$', HttpRules.debug_rules(), rules)
-            rules = re.sub(r'(?m)^\s*include standard\s*$', HttpRules.standard_rules(), rules)
-            rules = re.sub(r'(?m)^\s*include strict\s*$', HttpRules.strict_rules(), rules)
-            for rule in rules.split("\n"):
-                parsed: HttpRule = HttpRules.parse_rule(rule)
-                if parsed is not None: result.append(parsed)
-        return result
-
-    @classmethod
-    def parse_rule(cls, rule: str) -> HttpRule:
+    def parse_rule(cls, rule: str) -> Optional[HttpRule]:
         """Parses rule from single line."""
         if rule is None or HttpRules.__REGEX_BLANK_OR_COMMENT.match(rule): return None
         m = HttpRules.__REGEX_ALLOW_HTTP_URL.match(rule)
@@ -120,6 +123,175 @@ class HttpRules(object):
                 if m1p.match(m1): raise SyntaxError(f'Unescaped separator ({sep}) in rule: {rule}')
                 return sep.join(m1.split('\\' + sep))
         raise SyntaxError(f'Invalid expression ({expr}) in rule: {rule}')
+
+    def __init__(self, rules: str) -> None:
+        if rules is None: rules = HttpRules.default_rules()
+
+        # todo load rules from external files
+
+        # force default rules if necessary
+        rules = re.sub(r'^\s*include default\s*$', str(HttpRules.default_rules()), rules, flags=re.MULTILINE)
+        if len(rules.strip()) == 0: rules = HttpRules.default_rules()
+
+        # expand rule includes
+        rules = re.sub(r'(?m)^\s*include debug\s*$', HttpRules.debug_rules(), rules)
+        rules = re.sub(r'(?m)^\s*include standard\s*$', HttpRules.standard_rules(), rules)
+        rules = re.sub(r'(?m)^\s*include strict\s*$', HttpRules.strict_rules(), rules)
+        self._text = rules
+
+        # parse all rules
+        prs: List = []
+        for rule in rules.split("\n"):
+            parsed: HttpRule = HttpRules.parse_rule(rule)
+            if parsed is not None: prs.append(parsed)
+        self._length = len(prs)
+
+        # break out rules by verb
+        self._allow_http_url: bool = len([r for r in prs if 'allow_http_url' == r.verb]) > 0
+        self._copy_session_field: List[HttpRule] = [r for r in prs if 'copy_session_field' == r.verb]
+        self._remove: List[HttpRule] = [r for r in prs if 'remove' == r.verb]
+        self._remove_if: List[HttpRule] = [r for r in prs if 'remove_if' == r.verb]
+        self._remove_if_found: List[HttpRule] = [r for r in prs if 'remove_if_found' == r.verb]
+        self._remove_unless: List[HttpRule] = [r for r in prs if 'remove_unless' == r.verb]
+        self._remove_unless_found: List[HttpRule] = [r for r in prs if 'remove_unless_found' == r.verb]
+        self._replace: List[HttpRule] = [r for r in prs if 'replace' == r.verb]
+        self._sample: List[HttpRule] = [r for r in prs if 'sample' == r.verb]
+        self._skip_compression: bool = len([r for r in prs if r.verb == 'skip_compression']) > 0
+        self._skip_submission: bool = len([r for r in prs if r.verb == 'skip_submission']) > 0
+        self._stop: List[HttpRule] = [r for r in prs if 'stop' == r.verb]
+        self._stop_if: List[HttpRule] = [r for r in prs if 'stop_if' == r.verb]
+        self._stop_if_found: List[HttpRule] = [r for r in prs if 'stop_if_found' == r.verb]
+        self._stop_unless: List[HttpRule] = [r for r in prs if 'stop_unless' == r.verb]
+        self._stop_unless_found: List[HttpRule] = [r for r in prs if 'stop_unless_found' == r.verb]
+
+        # validate rules
+        if len(self._sample) > 1: raise SyntaxError('Multiple sample rules')
+
+    def __len__(self) -> int:
+        return self._length
+
+    @property
+    def allow_http_url(self) -> bool:
+        return self._allow_http_url
+
+    @property
+    def copy_session_field(self) -> List[HttpRule]:
+        return self._copy_session_field
+
+    @property
+    def remove(self) -> List[HttpRule]:
+        return self._remove
+
+    @property
+    def remove_if(self) -> List[HttpRule]:
+        return self._remove_if
+
+    @property
+    def remove_if_found(self) -> List[HttpRule]:
+        return self._remove_if_found
+
+    @property
+    def remove_unless(self) -> List[HttpRule]:
+        return self._remove_unless
+
+    @property
+    def remove_unless_found(self) -> List[HttpRule]:
+        return self._remove_unless_found
+
+    @property
+    def replace(self) -> List[HttpRule]:
+        return self._replace
+
+    @property
+    def sample(self) -> List[HttpRule]:
+        return self._sample
+
+    @property
+    def skip_compression(self) -> bool:
+        return self._skip_compression
+
+    @property
+    def skip_submission(self) -> bool:
+        return self._skip_submission
+
+    @property
+    def stop(self) -> List[HttpRule]:
+        return self._stop
+
+    @property
+    def stop_if(self) -> List[HttpRule]:
+        return self._stop_if
+
+    @property
+    def stop_if_found(self) -> List[HttpRule]:
+        return self._stop_if_found
+
+    @property
+    def stop_unless(self) -> List[HttpRule]:
+        return self._stop_unless
+
+    @property
+    def stop_unless_found(self) -> List[HttpRule]:
+        return self._stop_unless_found
+
+    @property
+    def text(self) -> str:
+        return self._text
+
+    def apply(self, details: List[List[str]]) -> Optional[List[List[str]]]:
+        # stop rules come first
+        for r in self._stop:
+            for d in details:
+                if r.scope.match(d[0]): return None
+        for r in self._stop_if_found:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.search(d[1]): return None
+        for r in self._stop_if:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.match(d[1]): return None
+        passed = 0
+        for r in self._stop_unless_found:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.search(d[1]): passed += 1
+        if passed != len(self._stop_unless_found): return None
+        passed = 0
+        for r in self._stop_unless:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.match(d[1]): passed += 1
+        if passed != len(self._stop_unless): return None
+
+        # do sampling if configured
+        if len(self._sample) == 1 and random.randrange(100) >= int(self._sample[0].param1): return None
+
+        # winnow sensitive details based on remove rules if configured
+        for r in self._remove:
+            for d in details:
+                if r.scope.match(d[0]): d[1] = ''
+        for r in self._remove_unless_found:
+            for d in details:
+                if r.scope.match(d[0]) and not r.param1.search(d[1]): d[1] = ''
+        for r in self._remove_if_found:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.search(d[1]): d[1] = ''
+        for r in self._remove_unless:
+            for d in details:
+                if r.scope.match(d[0]) and not r.param1.match(d[1]): d[1] = ''
+        for r in self._remove_if:
+            for d in details:
+                if r.scope.match(d[0]) and r.param1.match(d[1]): d[1] = ''
+
+        # remove any details with empty values
+        details = [x for x in details if x[1] != '']
+        if len(details) == 0: return None
+
+        # mask sensitive details based on replace rules if configured
+        for r in self._replace:
+            for d in details:
+                if r.scope.match(d[0]): d[1] = re.sub(r.param1, r.param2, d[1])
+
+        # remove any details with empty values
+        details = [x for x in details if x[1] != '']
+        return None if len(details) == 0 else details
 
     __REGEX_ALLOW_HTTP_URL: Pattern = re.compile(
         r'^\s*allow_http_url\s*(#.*)?$')

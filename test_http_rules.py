@@ -2,61 +2,120 @@
 # © 2016-2019 Resurface Labs Inc.
 
 import re
+
 from usagelogger import HttpRules
 
 
+def test_changes_default_rules():
+    assert HttpRules.default_rules() == HttpRules.strict_rules()
+    try:
+        HttpRules.set_default_rules('')
+        assert HttpRules.default_rules() == ''
+        assert len(HttpRules(HttpRules.default_rules())) == 0
+
+        HttpRules.set_default_rules(' include default')
+        assert HttpRules.default_rules() == ''
+
+        HttpRules.set_default_rules('include default\n')
+        assert HttpRules.default_rules() == ''
+
+        HttpRules.set_default_rules(' include default\ninclude default\n')
+        assert len(HttpRules(HttpRules.default_rules())) == 0
+
+        HttpRules.set_default_rules(' include default\ninclude default\nsample 42')
+        rules = HttpRules(HttpRules.default_rules())
+        assert len(rules) == 1
+        assert len(rules.sample) == 1
+    finally:
+        HttpRules.set_default_rules(HttpRules.strict_rules())
+
+
 def test_includes_debug_rules():
-    rules = HttpRules.parse('include debug')
+    rules = HttpRules('include debug')
     assert len(rules) == 2
-    assert len(list(filter(lambda rule: rule.verb == 'allow_http_url', rules))) == 1
-    assert len(list(filter(lambda rule: rule.verb == 'copy_session_field', rules))) == 1
+    assert rules.allow_http_url is True
+    assert len(rules.copy_session_field) == 1
 
-    rules = HttpRules.parse('include debug\n')
+    rules = HttpRules('include debug\n')
     assert len(rules) == 2
-    rules = HttpRules.parse('include debug\nsample 50')
+    rules = HttpRules('include debug\nsample 50')
     assert len(rules) == 3
-    assert len(list(filter(lambda rule: rule.verb == 'sample', rules))) == 1
+    assert len(rules.sample) == 1
 
-    rules = HttpRules.parse('include debug\ninclude debug\n')
+    rules = HttpRules('include debug\ninclude debug\n')
     assert len(rules) == 4
-    rules = HttpRules.parse('include debug\nsample 50\ninclude debug\n')
+    rules = HttpRules('include debug\nsample 50\ninclude debug\n')
     assert len(rules) == 5
+
+    assert HttpRules.default_rules() == HttpRules.strict_rules()
+    try:
+        HttpRules.set_default_rules('include debug')
+        rules = HttpRules('')
+        assert len(rules) == 2
+        assert rules.allow_http_url is True
+        assert len(rules.copy_session_field) == 1
+    finally:
+        HttpRules.set_default_rules(HttpRules.strict_rules())
 
 
 def test_includes_standard_rules():
-    rules = HttpRules.parse('include standard')
+    rules = HttpRules('include standard')
     assert len(rules) == 3
-    assert len(list(filter(lambda rule: rule.verb == 'remove', rules))) == 1
-    assert len(list(filter(lambda rule: rule.verb == 'replace', rules))) == 2
+    assert len(rules.remove) == 1
+    assert len(rules.replace) == 2
 
-    rules = HttpRules.parse('include standard\n')
+    rules = HttpRules('include standard\n')
     assert len(rules) == 3
-    rules = HttpRules.parse('include standard\nsample 50')
+    rules = HttpRules('include standard\nsample 50')
     assert len(rules) == 4
-    assert len(list(filter(lambda rule: rule.verb == 'sample', rules))) == 1
+    assert len(rules.sample) == 1
 
-    rules = HttpRules.parse('include standard\ninclude standard\n')
+    rules = HttpRules('include standard\ninclude standard\n')
     assert len(rules) == 6
-    rules = HttpRules.parse('include standard\nsample 50\ninclude standard\n')
+    rules = HttpRules('include standard\nsample 50\ninclude standard\n')
     assert len(rules) == 7
+
+    assert HttpRules.default_rules() == HttpRules.strict_rules()
+    try:
+        HttpRules.set_default_rules('include standard')
+        rules = HttpRules('')
+        assert len(rules) == 3
+        assert len(rules.remove) == 1
+        assert len(rules.replace) == 2
+    finally:
+        HttpRules.set_default_rules(HttpRules.strict_rules())
 
 
 def test_includes_strict_rules():
-    rules = HttpRules.parse('include strict')
+    rules = HttpRules('include strict')
     assert len(rules) == 2
-    assert len(list(filter(lambda rule: rule.verb == 'remove', rules))) == 1
-    assert len(list(filter(lambda rule: rule.verb == 'replace', rules))) == 1
+    assert len(rules.remove) == 1
+    assert len(rules.replace) == 1
 
-    rules = HttpRules.parse('include strict\n')
+    rules = HttpRules('include strict\n')
     assert len(rules) == 2
-    rules = HttpRules.parse('include strict\nsample 50')
+    rules = HttpRules('include strict\nsample 50')
     assert len(rules) == 3
-    assert len(list(filter(lambda rule: rule.verb == 'sample', rules))) == 1
+    assert len(rules.sample) == 1
 
-    rules = HttpRules.parse('include strict\ninclude strict\n')
+    rules = HttpRules('include strict\ninclude strict\n')
     assert len(rules) == 4
-    rules = HttpRules.parse('include strict\nsample 50\ninclude strict\n')
+    rules = HttpRules('include strict\nsample 50\ninclude strict\n')
     assert len(rules) == 5
+
+    assert HttpRules.default_rules() == HttpRules.strict_rules()
+    try:
+        HttpRules.set_default_rules('include strict')
+        rules = HttpRules('')
+        assert len(rules) == 2
+        assert len(rules.remove) == 1
+        assert len(rules.replace) == 1
+    finally:
+        HttpRules.set_default_rules(HttpRules.strict_rules())
+
+
+def test_load_rules_from_file():
+    pass  # todo finish
 
 
 def parse_fail(line):
@@ -92,11 +151,11 @@ def parse_ok(line, verb, scope, param1, param2):
 
 
 def test_parses_empty_rules():
-    assert len(HttpRules.parse(None)) == 0
-    assert len(HttpRules.parse("")) == 0
-    assert len(HttpRules.parse(" ")) == 0
-    assert len(HttpRules.parse("\t")) == 0
-    assert len(HttpRules.parse("\n")) == 0
+    assert len(HttpRules(None)) == 2
+    assert len(HttpRules("")) == 2
+    assert len(HttpRules(" ")) == 2
+    assert len(HttpRules("\t")) == 2
+    assert len(HttpRules("\n")) == 2
 
     assert HttpRules.parse_rule(None) is None
     assert HttpRules.parse_rule("") is None
@@ -764,32 +823,34 @@ def test_parses_stop_unless_found_rules():
 
 
 def test_raises_expected_errors():
+    # todo test invalid file
+
     try:
-        HttpRules.parse("/*! stop")
+        HttpRules("/*! stop")
         assert False
     except SyntaxError as e:
         assert str(e) == 'Invalid expression (/*!) in rule: /*! stop'
 
     try:
-        HttpRules.parse("/*/ stop")
+        HttpRules("/*/ stop")
         assert False
     except SyntaxError as e:
         assert str(e) == 'Invalid regex (/*/) in rule: /*/ stop'
 
     try:
-        HttpRules.parse("/boo")
+        HttpRules("/boo")
         assert False
     except SyntaxError as e:
         assert str(e) == 'Invalid rule: /boo'
 
     try:
-        HttpRules.parse("sample 123")
+        HttpRules("sample 123")
         assert False
     except SyntaxError as e:
         assert str(e) == 'Invalid sample percent: 123'
 
     try:
-        HttpRules.parse("!!! stop")
+        HttpRules("!!! stop")
         assert False
     except SyntaxError as e:
         assert str(e) == 'Unescaped separator (!) in rule: !!! stop'

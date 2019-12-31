@@ -2,13 +2,15 @@
 # © 2016-2019 Resurface Labs Inc.
 
 from test_helper import *
-from usagelogger import HttpLogger, HttpRequestImpl, HttpResponseImpl
-
-logger = HttpLogger(rules="include standard")
+from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
 
 
 def test_formats_request():
-    msg = logger.format(request=mock_request(), response=mock_response(), now=MOCK_NOW)
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request(), response=mock_response(), now=MOCK_NOW)
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"[\"agent\",\"{HttpLogger.AGENT}\"]" in msg
     assert f"[\"host\",\"{HttpLogger.host_lookup()}\"]" in msg
@@ -19,10 +21,15 @@ def test_formats_request():
     assert f"request_body" not in msg
     assert f"request_header" not in msg
     assert f"request_param" not in msg
+    assert f"interval" not in msg
 
 
 def test_formats_request_with_body():
-    msg = logger.format(request=mock_request_with_json(), response=mock_response(), request_body=MOCK_HTML)
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request_with_json(), response=mock_response(), request_body=MOCK_HTML)
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"[\"request_body\",\"{MOCK_HTML}\"]" in msg
     assert f"[\"request_header:content-type\",\"Application/JSON\"]" in msg
@@ -33,7 +40,11 @@ def test_formats_request_with_body():
 
 
 def test_formats_request_with_empty_body():
-    msg = logger.format(request=mock_request_with_json2(), response=mock_response(), request_body='')
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request_with_json2(), response=mock_response(), request_body='')
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"[\"request_header:a\",\"1, 2\"]" in msg
     assert f"[\"request_header:abc\",\"123\"]" in msg
@@ -47,17 +58,27 @@ def test_formats_request_with_empty_body():
 
 
 def test_formats_request_with_missing_details():
-    msg = logger.format(request=HttpRequestImpl(), response=mock_response())
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=HttpRequestImpl(), response=mock_response(), response_body=None, request_body=None,
+                     now=None, interval=None)
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"request_body" not in msg
     assert f"request_header" not in msg
     assert f"request_method" not in msg
     assert f"request_param" not in msg
     assert f"request_url" not in msg
+    assert f"interval" not in msg
 
 
 def test_formats_response():
-    msg = logger.format(request=mock_request(), response=mock_response())
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request(), response=mock_response())
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"[\"response_code\",\"200\"]" in msg
     assert f"response_body" not in msg
@@ -65,7 +86,11 @@ def test_formats_response():
 
 
 def test_formats_response_with_body():
-    msg = logger.format(request=mock_request(), response=mock_response_with_html(), response_body=MOCK_HTML2)
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request(), response=mock_response_with_html(), response_body=MOCK_HTML2)
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"[\"response_body\",\"{MOCK_HTML2}\"]" in msg
     assert f"[\"response_code\",\"200\"]" in msg
@@ -73,7 +98,11 @@ def test_formats_response_with_body():
 
 
 def test_formats_response_with_empty_body():
-    msg = logger.format(request=mock_request(), response=mock_response_with_html(), response_body='')
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request(), response=mock_response_with_html(), response_body='')
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"[\"response_code\",\"200\"]" in msg
     assert f"[\"response_header:content-type\",\"text/html; charset=utf-8\"]" in msg
@@ -81,8 +110,14 @@ def test_formats_response_with_empty_body():
 
 
 def test_formats_response_with_missing_details():
-    msg = logger.format(request=mock_request(), response=HttpResponseImpl())
+    queue = []
+    logger = HttpLogger(queue=queue, rules="include debug")
+    HttpMessage.send(logger, request=mock_request(), response=HttpResponseImpl(), response_body=None, request_body=None,
+                     now=None, interval=None)
+    assert len(queue) == 1
+    msg = queue[0]
     assert parseable(msg) is True
     assert f"response_body" not in msg
     assert f"response_code" not in msg
     assert f"response_header" not in msg
+    assert f"interval" not in msg

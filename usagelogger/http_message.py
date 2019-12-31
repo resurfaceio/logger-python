@@ -1,17 +1,36 @@
 # coding: utf-8
 # © 2016-2019 Resurface Labs Inc.
 
+from time import time
 from typing import List, Optional
 
-from usagelogger import HttpRequestImpl, HttpResponseImpl
+from usagelogger import HttpLogger
 
 
 class HttpMessage(object):
 
     @classmethod
-    def build(cls, request: HttpRequestImpl, response: HttpResponseImpl,  # todo not respecting type hints (Clubhouse #152)
-              response_body: Optional[str] = None, request_body: Optional[str] = None):
-        message: List[List[str]] = None
+    def send(cls, logger: HttpLogger, request, response, response_body: Optional[str] = None,
+             request_body: Optional[str] = None, now=None, interval=None) -> None:  # todo missing type hints
+
+        if not logger.enabled: return
+
+        # copy details from request & resonse
+        message = cls.build(request, response, response_body, request_body)
+
+        # todo copy details from active session
+
+        # add timing details
+        message.append(['now', str(now) if now is not None else str(round(time() * 1000))])
+        if interval is not None: message.append(['interval', interval])
+
+        logger.submit_if_passing(message)
+
+    @classmethod
+    def build(cls, request, response, response_body: Optional[str] = None,
+              request_body: Optional[str] = None) -> Optional[List[List[str]]]:
+
+        message: Optional[List[List[str]]] = None
 
         if request.__class__.__name__ == "WSGIRequest":
             message = []

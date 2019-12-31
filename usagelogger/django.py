@@ -3,7 +3,7 @@
 
 from django.conf import settings
 
-from usagelogger import HttpLogger
+from usagelogger import HttpLogger, HttpMessage
 
 
 def __read_settings__(key):
@@ -22,5 +22,5 @@ class HttpLoggerForDjango:
         response = self.get_response(request)
         status = response.status_code
         if (status < 300 or status == 302) and HttpLogger.is_string_content_type(response['Content-Type']):
-            self.logger.log(request=request, response=response)
+            HttpMessage.send(self.logger, request=request, response=response)  # todo add timing details
         return response
