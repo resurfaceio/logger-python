@@ -4,6 +4,7 @@
 import http.client
 import os
 import socket
+import threading
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
 
@@ -48,7 +49,13 @@ class BaseLogger(object):
         else:
             self._enabled = False
             self._url = None
+
+        # finalize internal properties
         self._enableable = self.queue is not None or self.url is not None
+        self._submit_failures = 0
+        self._submit_failures_lock = threading.Lock()
+        self._submit_successes = 0
+        self._submit_successes_lock = threading.Lock()
 
     def disable(self):
         self._enabled = False
@@ -71,14 +78,15 @@ class BaseLogger(object):
     def queue(self) -> List[str]:
         return self._queue
 
-    def submit(self, msg: Optional[str]) -> bool:
+    def submit(self, msg: Optional[str]):
         """Submits JSON message to intended destination."""
 
         if msg is None or self.skip_submission is True or self.enabled is False:
-            return True
+            pass
         elif self._queue is not None:
             self._queue.append(msg)
-            return True
+            with self._submit_successes_lock:
+                self._submit_successes += 1
         else:
             try:
                 # todo implement compression (Clubhouse #49)
@@ -97,14 +105,29 @@ class BaseLogger(object):
                 response = conn.getresponse()
                 conn.close()  # todo keep connection alive? (Clubhouse #49)
 
-                return response.status == 204
+                if response.status == 204:
+                    with self._submit_successes_lock:
+                        self._submit_successes += 1
+                else:
+                    with self._submit_failures_lock:
+                        self._submit_failures += 1
 
             # http errors
             except (http.client.HTTPException, IOError, OSError):
-                return False
+                with self._submit_failures_lock:
+                    self._submit_failures += 1
             # JSON errors
             except (OverflowError, TypeError, ValueError):
-                return False
+                with self._submit_failures_lock:
+                    self._submit_failures += 1
+
+    @property
+    def submit_failures(self) -> int:
+        return self._submit_failures
+
+    @property
+    def submit_successes(self) -> int:
+        return self._submit_successes
 
     @property
     def url(self) -> str:

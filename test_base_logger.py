@@ -115,14 +115,6 @@ def test_skips_enabling_for_undefined_url():
     assert logger.enabled is False
 
 
-def test_skips_logging_when_disabled():
-    for denied_url in MOCK_URLS_DENIED:
-        logger = BaseLogger(MOCK_AGENT, url=denied_url).disable()
-        assert logger.enableable is True
-        assert logger.enabled is False
-        assert logger.submit(None) is True  # would fail if enabled
-
-
 def test_submits_to_demo_url():
     logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
     assert logger.url == DEMO_URL
@@ -130,7 +122,9 @@ def test_submits_to_demo_url():
                                 ['now', str(MOCK_NOW)], ['prototol', 'https']]
     msg = json.dumps(message, separators=(',', ':'))
     assert parseable(msg) is True
-    assert logger.submit(msg) is True
+    logger.submit(msg)
+    assert logger.submit_failures == 0
+    assert logger.submit_successes == 1
 
 
 def test_submits_to_demo_url_via_http():
@@ -140,7 +134,9 @@ def test_submits_to_demo_url_via_http():
                                 ['now', str(MOCK_NOW)], ['prototol', 'http']]
     msg = json.dumps(message, separators=(',', ':'))
     assert parseable(msg) is True
-    assert logger.submit(msg) is True
+    logger.submit(msg)
+    assert logger.submit_failures == 0
+    assert logger.submit_successes == 1
 
 
 def test_submits_to_demo_url_without_compression():
@@ -151,15 +147,19 @@ def test_submits_to_demo_url_without_compression():
                                 ['now', str(MOCK_NOW)], ['prototol', 'https'], ['skip_compression', 'true']]
     msg = json.dumps(message, separators=(',', ':'))
     assert parseable(msg) is True
-    assert logger.submit(msg) is True
+    logger.submit(msg)
+    assert logger.submit_failures == 0
+    assert logger.submit_successes == 1
 
 
-def test_submits_to_denied_url_and_fails():
+def test_submits_to_denied_url():
     for denied_url in MOCK_URLS_DENIED:
         logger = BaseLogger(MOCK_AGENT, url=denied_url)
         assert logger.enableable is True
         assert logger.enabled is True
-        assert logger.submit('{}') is False
+        logger.submit('{}')
+        assert logger.submit_failures == 1
+        assert logger.submit_successes == 0
 
 
 def test_submits_to_queue():
@@ -170,10 +170,12 @@ def test_submits_to_queue():
     assert logger.enableable is True
     assert logger.enabled is True
     assert len(queue) == 0
-    assert logger.submit('{}') is True
+    logger.submit('{}')
     assert len(queue) == 1
-    assert logger.submit('{}') is True
+    logger.submit('{}')
     assert len(queue) == 2
+    assert logger.submit_failures == 0
+    assert logger.submit_successes == 2
 
 
 def test_silently_ignores_unexpected_option_classes():

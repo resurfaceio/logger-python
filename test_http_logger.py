@@ -127,11 +127,3 @@ def test_silently_ignores_unexpected_option_classes():
     assert logger.enabled is False
     assert logger.queue is None
     assert logger.url is None
-
-
-def test_skips_logging_when_disabled():
-    for denied_url in MOCK_URLS_DENIED:
-        logger = HttpLogger(url=denied_url).disable()
-        assert logger.enableable is True
-        assert logger.enabled is False
-        assert logger.log(None, None, None, None) is True  # would fail if enabled
