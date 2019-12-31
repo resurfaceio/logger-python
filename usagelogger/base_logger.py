@@ -78,7 +78,7 @@ class BaseLogger(object):
     def queue(self) -> List[str]:
         return self._queue
 
-    def submit(self, msg: Optional[str]):
+    def submit(self, msg: Optional[str]) -> None:
         """Submits JSON message to intended destination."""
 
         if msg is None or self.skip_submission is True or self.enabled is False:
