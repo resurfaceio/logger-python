@@ -26,7 +26,7 @@ and how sensitive data is masked. By default, loggers apply a strict set of pred
 customized to meet the needs of any application.
 
 ---
-&copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a>
+&copy; 2016-2020 <a href="https://resurface.io">Resurface Labs Inc.</a>
 """,
     long_description_content_type='text/markdown',
     url='https://resurface.io',

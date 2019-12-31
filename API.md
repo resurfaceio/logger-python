@@ -140,4 +140,4 @@ heroku config:set USAGE_LOGGERS_DISABLE=true
 ```
 
 ---
-<small>&copy; 2016-2019 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
+<small>&copy; 2016-2020 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
