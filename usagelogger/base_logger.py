@@ -94,13 +94,12 @@ class BaseLogger(object):
                 hostname = url_parser.hostname  # todo cache this (Clubhouse #49)
                 url_path = url_parser.path + url_parser.query  # todo cache this (Clubhouse #49)
 
-                headers: Dict[str, str] = {'Content-Type': 'application/json'}
-
                 if self._url_scheme == "http":
                     conn = http.client.HTTPConnection(hostname)
                 else:
                     conn = http.client.HTTPSConnection(hostname)
 
+                headers: Dict[str, str] = {'Content-Type': 'application/json; charset=UTF-8'}
                 conn.request("POST", url_path, msg, headers)
                 response = conn.getresponse()
                 conn.close()  # todo keep connection alive? (Clubhouse #49)
