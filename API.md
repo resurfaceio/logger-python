@@ -29,6 +29,9 @@ logger = HttpLogger(url='https://...')
 
 # with specific url and rules
 logger = HttpLogger(url='https://...', rules='include strict')
+
+# with specific url and rules from local file
+logger = HttpLogger(url='https://...', rules='file://./rules.txt')
 ```
 
 <a name="logging_http"/>

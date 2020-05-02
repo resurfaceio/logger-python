@@ -3,6 +3,7 @@
 
 import random
 import re
+from pathlib import Path
 from typing import List, Optional, Pattern, Sized
 
 from usagelogger.http_rule import HttpRule
@@ -127,7 +128,13 @@ class HttpRules(Sized):
     def __init__(self, rules: str) -> None:
         if rules is None: rules = HttpRules.default_rules()
 
-        # todo load rules from external files
+        # load rules from external files
+        if rules.startswith('file://'):
+            rfile = rules[7:]
+            try:
+                rules = Path(rfile).read_text()
+            except:
+                raise FileNotFoundError(f'Failed to load rules: {rfile}')
 
         # force default rules if necessary
         rules = re.sub(r'^\s*include default\s*$', str(HttpRules.default_rules()), rules, flags=re.MULTILINE)

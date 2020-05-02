@@ -115,7 +115,23 @@ def test_includes_strict_rules():
 
 
 def test_load_rules_from_file():
-    pass  # todo finish
+    rules = HttpRules('file://./test_rules1.txt')
+    assert len(rules) == 1
+    assert len(rules.sample) == 1
+    assert rules.sample[0].param1 == 55
+
+    rules = HttpRules('file://./test_rules2.txt')
+    assert len(rules) == 3
+    assert rules.allow_http_url is True
+    assert len(rules.copy_session_field) == 1
+    assert len(rules.sample) == 1
+    assert rules.sample[0].param1 == 56
+
+    rules = HttpRules('file://./test_rules3.txt')
+    assert len(rules.remove) == 1
+    assert len(rules.replace) == 1
+    assert len(rules.sample) == 1
+    assert rules.sample[0].param1 == 57
 
 
 def parse_fail(line):
@@ -823,7 +839,11 @@ def test_parses_stop_unless_found_rules():
 
 
 def test_raises_expected_errors():
-    # todo test invalid file
+    try:
+        HttpRules("file://~/bleepblorpbleepblorp12345")
+        assert False
+    except FileNotFoundError as e:
+        assert str(e) == 'Failed to load rules: ~/bleepblorpbleepblorp12345'
 
     try:
         HttpRules("/*! stop")
