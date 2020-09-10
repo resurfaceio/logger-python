@@ -60,6 +60,15 @@ def test_has_valid_host():
     assert host == BaseLogger(MOCK_AGENT).host
 
 
+def test_has_valid_metadata_id():
+    metadata_id = BaseLogger(MOCK_AGENT).metadata_id
+    assert metadata_id is not None
+    assert len(metadata_id) == 32
+    assert ('\\' in metadata_id) is False
+    assert ('\"' in metadata_id) is False
+    assert ("'" in metadata_id) is False
+
+
 def test_has_valid_version():
     version = BaseLogger.version_lookup()
     assert version is not None

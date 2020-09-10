@@ -35,21 +35,20 @@ class HttpLogger(BaseLogger):
             self._enableable = False
             self._enabled = False
 
+        # submit metadata message
+        if self._enabled:
+            details = [['message_type', 'metadata'], ['agent', self.AGENT], ['host', self.host],
+                       ['version', self.version], ['metadata_id', self.metadata_id]]
+            self.submit(json.dumps(details, separators=(',', ':')))
+
     @property
     def rules(self) -> HttpRules:
         return self._rules
 
     def submit_if_passing(self, details: List[List[str]]) -> None:
-        # apply active rules
         details = self._rules.apply(details)
         if details is None: return
-
-        # finalize message
-        details.append(['agent', self.AGENT])
-        details.append(['host', self.host])
-        details.append(['version', self.version])
-
-        # let's do this thing
+        details.append(['metadata_id', self.metadata_id])
         self.submit(json.dumps(details, separators=(',', ':')))
 
     @classmethod
