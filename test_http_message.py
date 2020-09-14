@@ -17,6 +17,7 @@ def test_formats_metadata():
     assert f"[\"message_type\",\"metadata\"]" in msg
     assert f"[\"metadata_id\",\"{logger.metadata_id}\"]" in msg
     assert f"[\"version\",\"{HttpLogger.version_lookup()}\"]" in msg
+    assert f"[\"graphql_schema" not in msg
     assert f"[\"interval" not in msg
     assert f"[\"now" not in msg
     assert f"[\"request_" not in msg
