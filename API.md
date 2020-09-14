@@ -32,6 +32,12 @@ logger = HttpLogger(url='https://...', rules='include strict')
 
 # with specific url and rules from local file
 logger = HttpLogger(url='https://...', rules='file://./rules.txt')
+
+# with specific url and rules/schemas as strings
+logger = HttpLogger(url='https://...', rules='include strict', schema='type Foo { bar: String }')
+
+# with specific url and rules/schema from local files
+logger = HttpLogger(url='https://...', rules='file://./rules.txt', schema='file://./schema.txt')
 ```
 
 <a name="logging_http"/>
