@@ -16,8 +16,7 @@ def __read_settings__(key):
 class HttpLoggerForDjango:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.logger = HttpLogger(url=__read_settings__('url'), rules=__read_settings__('rules'),
-                                 schema=__read_settings__('schema'))
+        self.logger = HttpLogger(url=__read_settings__('url'), rules=__read_settings__('rules'))
 
     def __call__(self, request):
         response = self.get_response(request)

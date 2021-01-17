@@ -3,7 +3,6 @@
 
 import json
 import re
-from pathlib import Path
 from typing import List, Optional, Pattern
 
 from usagelogger.base_logger import BaseLogger
@@ -21,8 +20,7 @@ class HttpLogger(BaseLogger):
                  url: Optional[str] = None,
                  skip_compression: Optional[bool] = False,
                  skip_submission: Optional[bool] = False,
-                 rules: Optional[str] = None,
-                 schema: Optional[str] = None) -> None:
+                 rules: Optional[str] = None) -> None:
 
         super().__init__(self.AGENT, enabled=enabled, queue=queue, url=url,
                          skip_compression=skip_compression, skip_submission=skip_submission)
@@ -37,39 +35,21 @@ class HttpLogger(BaseLogger):
             self._enableable = False
             self._enabled = False
 
-        # load schema if present
-        schema_exists = schema is not None
-        if schema_exists:
-            if schema.startswith('file://'):
-                rfile = schema[7:]
-                try:
-                    self._schema = Path(rfile).read_text()
-                except:
-                    raise FileNotFoundError(f'Failed to load schema: {rfile}')
-            else:
-                self._schema = schema
-        else:
-            self._schema = None
-
-        # submit metadata message
-        if self._enabled:
-            details = [['message_type', 'metadata'], ['agent', self.AGENT], ['host', self.host],
-                       ['version', self.version], ['metadata_id', self.metadata_id]]
-            if schema_exists: details.append(['graphql_schema', self.schema])
-            self.submit(json.dumps(details, separators=(',', ':')))
-
     @property
     def rules(self) -> HttpRules:
         return self._rules
 
-    @property
-    def schema(self) -> str:
-        return self._schema
-
     def submit_if_passing(self, details: List[List[str]]) -> None:
+        # apply active rules
         details = self._rules.apply(details)
         if details is None: return
-        details.append(['metadata_id', self.metadata_id])
+
+        # finalize message
+        details.append(['agent', self.AGENT])
+        details.append(['host', self.host])
+        details.append(['version', self.version])
+
+        # let's do this thing
         self.submit(json.dumps(details, separators=(',', ':')))
 
     @classmethod

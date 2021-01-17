@@ -8,4 +8,4 @@ from .http_message import HttpMessage
 
 # don't import django logger here! (optional, not required)
 
-__version__ = '2.1.0'
+__version__ = '2.0.2'

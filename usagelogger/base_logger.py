@@ -3,7 +3,6 @@
 
 import http.client
 import os
-import secrets
 import socket
 import threading
 from typing import Dict, List, Optional
@@ -53,7 +52,6 @@ class BaseLogger(object):
 
         # finalize internal properties
         self._enableable = self.queue is not None or self.url is not None
-        self._metadata_id = secrets.token_hex(16)
         self._submit_failures = 0
         self._submit_failures_lock = threading.Lock()
         self._submit_successes = 0
@@ -75,10 +73,6 @@ class BaseLogger(object):
     @property
     def enabled(self) -> bool:
         return self._enabled and UsageLoggers.is_enabled()
-
-    @property
-    def metadata_id(self) -> str:
-        return self._metadata_id
 
     @property
     def queue(self) -> List[str]:
