@@ -29,6 +29,7 @@ pip-log.txt
 
 # IDEA / PyCharm IDE
 .idea/
+*.iml
 
 # VS Code
 .vscode
