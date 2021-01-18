@@ -1,6 +1,6 @@
 # License
 
-&copy; 2016-2020 Resurface Labs Inc.
+&copy; 2016-2021 Resurface Labs Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this software except in compliance with
 the License. You may obtain a copy of the License here: http://www.apache.org/licenses/LICENSE-2.0
