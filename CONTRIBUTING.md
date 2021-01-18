@@ -10,7 +10,7 @@ If you don't use PyCharm, that's ok, but your code may get reformatted.
 ```
 git clone git@github.com:resurfaceio/logger-python.git resurfaceio-logger-python
 cd resurfaceio-logger-python
-pip install --upgrade setuptools wheel twine pytest
+pip3 install --upgrade setuptools wheel twine pytest
 ```
 
 Running unit tests:
@@ -43,7 +43,7 @@ twine upload dist/*
 Tag release version:
 
 ```
-git tag v1.x.x
+git tag v2.x.x
 git push origin master --tags
 ```
 

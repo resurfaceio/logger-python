@@ -26,7 +26,7 @@ Requires Python 3.7 or higher. No other dependencies to conflict with your app.
 ## Installing With pip
 
 ```
-pip install --upgrade usagelogger
+pip3 install --upgrade usagelogger
 ```
 
 <a name="logging_from_django"/>
