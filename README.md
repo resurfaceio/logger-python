@@ -19,7 +19,7 @@ Visit <a href="https://resurface.io">resurface.io</a> for general information on
 
 ## Dependencies
 
-Requires Python 3.6 or higher. No other dependencies to conflict with your app.
+Requires Python 3.7 or higher. No other dependencies to conflict with your app.
 
 <a name="installing_with_pip"/>
 
