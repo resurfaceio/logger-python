@@ -89,10 +89,10 @@ class BaseLogger(object):
                 self._submit_successes += 1
         else:
             try:
-                # todo implement compression (Clubhouse #49)
+                # todo implement compression
                 url_parser = urlsplit(self.url)
-                hostname = url_parser.hostname  # todo cache this (Clubhouse #49)
-                url_path = url_parser.path + url_parser.query  # todo cache this (Clubhouse #49)
+                hostname = url_parser.hostname  # todo cache this
+                url_path = url_parser.path + url_parser.query  # todo cache this
 
                 if self._url_scheme == "http":
                     conn = http.client.HTTPConnection(hostname, url_parser.port)
@@ -102,7 +102,7 @@ class BaseLogger(object):
                 headers: Dict[str, str] = {'Content-Type': 'application/json; charset=UTF-8'}
                 conn.request("POST", url_path, msg, headers)
                 response = conn.getresponse()
-                conn.close()  # todo keep connection alive? (Clubhouse #49)
+                conn.close()  # todo keep connection alive
 
                 if response.status == 204:
                     with self._submit_successes_lock:
