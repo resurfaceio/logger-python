@@ -95,9 +95,9 @@ class BaseLogger(object):
                 url_path = url_parser.path + url_parser.query  # todo cache this (Clubhouse #49)
 
                 if self._url_scheme == "http":
-                    conn = http.client.HTTPConnection(hostname)
+                    conn = http.client.HTTPConnection(hostname, url_parser.port)
                 else:
-                    conn = http.client.HTTPSConnection(hostname)
+                    conn = http.client.HTTPSConnection(hostname, url_parser.port)
 
                 headers: Dict[str, str] = {'Content-Type': 'application/json; charset=UTF-8'}
                 conn.request("POST", url_path, msg, headers)
