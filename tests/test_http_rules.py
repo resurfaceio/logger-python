@@ -9,20 +9,20 @@ from usagelogger import HttpRules
 def test_changes_default_rules():
     assert HttpRules.default_rules() == HttpRules.strict_rules()
     try:
-        HttpRules.set_default_rules('')
-        assert HttpRules.default_rules() == ''
+        HttpRules.set_default_rules("")
+        assert HttpRules.default_rules() == ""
         assert len(HttpRules(HttpRules.default_rules())) == 0
 
-        HttpRules.set_default_rules(' include default')
-        assert HttpRules.default_rules() == ''
+        HttpRules.set_default_rules(" include default")
+        assert HttpRules.default_rules() == ""
 
-        HttpRules.set_default_rules('include default\n')
-        assert HttpRules.default_rules() == ''
+        HttpRules.set_default_rules("include default\n")
+        assert HttpRules.default_rules() == ""
 
-        HttpRules.set_default_rules(' include default\ninclude default\n')
+        HttpRules.set_default_rules(" include default\ninclude default\n")
         assert len(HttpRules(HttpRules.default_rules())) == 0
 
-        HttpRules.set_default_rules(' include default\ninclude default\nsample 42')
+        HttpRules.set_default_rules(" include default\ninclude default\nsample 42")
         rules = HttpRules(HttpRules.default_rules())
         assert len(rules) == 1
         assert len(rules.sample) == 1
@@ -31,26 +31,26 @@ def test_changes_default_rules():
 
 
 def test_includes_debug_rules():
-    rules = HttpRules('include debug')
+    rules = HttpRules("include debug")
     assert len(rules) == 2
     assert rules.allow_http_url is True
     assert len(rules.copy_session_field) == 1
 
-    rules = HttpRules('include debug\n')
+    rules = HttpRules("include debug\n")
     assert len(rules) == 2
-    rules = HttpRules('include debug\nsample 50')
+    rules = HttpRules("include debug\nsample 50")
     assert len(rules) == 3
     assert len(rules.sample) == 1
 
-    rules = HttpRules('include debug\ninclude debug\n')
+    rules = HttpRules("include debug\ninclude debug\n")
     assert len(rules) == 4
-    rules = HttpRules('include debug\nsample 50\ninclude debug\n')
+    rules = HttpRules("include debug\nsample 50\ninclude debug\n")
     assert len(rules) == 5
 
     assert HttpRules.default_rules() == HttpRules.strict_rules()
     try:
-        HttpRules.set_default_rules('include debug')
-        rules = HttpRules('')
+        HttpRules.set_default_rules("include debug")
+        rules = HttpRules("")
         assert len(rules) == 2
         assert rules.allow_http_url is True
         assert len(rules.copy_session_field) == 1
@@ -59,26 +59,26 @@ def test_includes_debug_rules():
 
 
 def test_includes_standard_rules():
-    rules = HttpRules('include standard')
+    rules = HttpRules("include standard")
     assert len(rules) == 3
     assert len(rules.remove) == 1
     assert len(rules.replace) == 2
 
-    rules = HttpRules('include standard\n')
+    rules = HttpRules("include standard\n")
     assert len(rules) == 3
-    rules = HttpRules('include standard\nsample 50')
+    rules = HttpRules("include standard\nsample 50")
     assert len(rules) == 4
     assert len(rules.sample) == 1
 
-    rules = HttpRules('include standard\ninclude standard\n')
+    rules = HttpRules("include standard\ninclude standard\n")
     assert len(rules) == 6
-    rules = HttpRules('include standard\nsample 50\ninclude standard\n')
+    rules = HttpRules("include standard\nsample 50\ninclude standard\n")
     assert len(rules) == 7
 
     assert HttpRules.default_rules() == HttpRules.strict_rules()
     try:
-        HttpRules.set_default_rules('include standard')
-        rules = HttpRules('')
+        HttpRules.set_default_rules("include standard")
+        rules = HttpRules("")
         assert len(rules) == 3
         assert len(rules.remove) == 1
         assert len(rules.replace) == 2
@@ -87,26 +87,26 @@ def test_includes_standard_rules():
 
 
 def test_includes_strict_rules():
-    rules = HttpRules('include strict')
+    rules = HttpRules("include strict")
     assert len(rules) == 2
     assert len(rules.remove) == 1
     assert len(rules.replace) == 1
 
-    rules = HttpRules('include strict\n')
+    rules = HttpRules("include strict\n")
     assert len(rules) == 2
-    rules = HttpRules('include strict\nsample 50')
+    rules = HttpRules("include strict\nsample 50")
     assert len(rules) == 3
     assert len(rules.sample) == 1
 
-    rules = HttpRules('include strict\ninclude strict\n')
+    rules = HttpRules("include strict\ninclude strict\n")
     assert len(rules) == 4
-    rules = HttpRules('include strict\nsample 50\ninclude strict\n')
+    rules = HttpRules("include strict\nsample 50\ninclude strict\n")
     assert len(rules) == 5
 
     assert HttpRules.default_rules() == HttpRules.strict_rules()
     try:
-        HttpRules.set_default_rules('include strict')
-        rules = HttpRules('')
+        HttpRules.set_default_rules("include strict")
+        rules = HttpRules("")
         assert len(rules) == 2
         assert len(rules.remove) == 1
         assert len(rules.replace) == 1
@@ -115,19 +115,19 @@ def test_includes_strict_rules():
 
 
 def test_load_rules_from_file():
-    rules = HttpRules('file://./test_rules1.txt')
+    rules = HttpRules("file://./tests/test_rules1.txt")
     assert len(rules) == 1
     assert len(rules.sample) == 1
     assert rules.sample[0].param1 == 55
 
-    rules = HttpRules('file://./test_rules2.txt')
+    rules = HttpRules("file://./tests/test_rules2.txt")
     assert len(rules) == 3
     assert rules.allow_http_url is True
     assert len(rules.copy_session_field) == 1
     assert len(rules.sample) == 1
     assert rules.sample[0].param1 == 56
 
-    rules = HttpRules('file://./test_rules3.txt')
+    rules = HttpRules("file://./tests/test_rules3.txt")
     assert len(rules.remove) == 1
     assert len(rules.replace) == 1
     assert len(rules.sample) == 1
@@ -153,14 +153,14 @@ def parse_ok(line, verb, scope, param1, param2):
 
     if param1 is None:
         assert True
-    elif hasattr(rule.param1, 'match'):
+    elif hasattr(rule.param1, "match"):
         assert rule.param1.pattern == re.compile(param1).pattern
     else:
         assert rule.param1 == param1
 
     if param2 is None:
         assert True
-    elif hasattr(rule.param2, 'match'):
+    elif hasattr(rule.param2, "match"):
         assert rule.param2.pattern == re.compile(param2).pattern
     else:
         assert rule.param2 == param2
@@ -182,54 +182,54 @@ def test_parses_empty_rules():
 
 def test_parses_rules_with_bad_verbs():
     for v in ["b", "bozo", "*", ".*"]:
-        parse_fail(f'{v}')
-        parse_fail(f'!.*! {v}')
-        parse_fail(f'/.*/ {v}')
-        parse_fail(f'%request_body% {v}')
-        parse_fail(f'/^request_header:.*/ {v}')
+        parse_fail(f"{v}")
+        parse_fail(f"!.*! {v}")
+        parse_fail(f"/.*/ {v}")
+        parse_fail(f"%request_body% {v}")
+        parse_fail(f"/^request_header:.*/ {v}")
 
 
 def test_parses_rules_with_invalid_scopes():
     for s in ["request_body", "*", ".*"]:
-        parse_fail(f'/{s}')
-        parse_fail(f'/{s}# 1')
-        parse_fail(f'/{s} # 1')
-        parse_fail(f'/{s}/')
-        parse_fail(f'/{s}/ # 1')
-        parse_fail(f' / {s}')
-        parse_fail(f'// {s}')
-        parse_fail(f'/// {s}')
-        parse_fail(f'/* {s}')
-        parse_fail(f'/? {s}')
-        parse_fail(f'/+ {s}')
-        parse_fail(f'/( {s}')
-        parse_fail(f'/(.* {s}')
-        parse_fail(f'/(.*)) {s}')
+        parse_fail(f"/{s}")
+        parse_fail(f"/{s}# 1")
+        parse_fail(f"/{s} # 1")
+        parse_fail(f"/{s}/")
+        parse_fail(f"/{s}/ # 1")
+        parse_fail(f" / {s}")
+        parse_fail(f"// {s}")
+        parse_fail(f"/// {s}")
+        parse_fail(f"/* {s}")
+        parse_fail(f"/? {s}")
+        parse_fail(f"/+ {s}")
+        parse_fail(f"/( {s}")
+        parse_fail(f"/(.* {s}")
+        parse_fail(f"/(.*)) {s}")
 
-        parse_fail(f'~{s}')
-        parse_fail(f'!{s}# 1')
-        parse_fail(f'|{s} # 1')
-        parse_fail(f'|{s}|')
-        parse_fail(f'%{s}% # 1')
-        parse_fail(f' % {s}')
-        parse_fail(f'%% {s}')
-        parse_fail(f'%%% {s}')
-        parse_fail(f'%* {s}')
-        parse_fail(f'%? {s}')
-        parse_fail(f'%+ {s}')
-        parse_fail(f'%( {s}')
-        parse_fail(f'%(.* {s}')
-        parse_fail(f'%(.*)) {s}')
+        parse_fail(f"~{s}")
+        parse_fail(f"!{s}# 1")
+        parse_fail(f"|{s} # 1")
+        parse_fail(f"|{s}|")
+        parse_fail(f"%{s}% # 1")
+        parse_fail(f" % {s}")
+        parse_fail(f"%% {s}")
+        parse_fail(f"%%% {s}")
+        parse_fail(f"%* {s}")
+        parse_fail(f"%? {s}")
+        parse_fail(f"%+ {s}")
+        parse_fail(f"%( {s}")
+        parse_fail(f"%(.* {s}")
+        parse_fail(f"%(.*)) {s}")
 
-        parse_fail(f'~{s}%')
-        parse_fail(f'!{s}%# 1')
-        parse_fail(f'|{s}% # 1')
-        parse_fail(f'|{s}%')
-        parse_fail(f'%{s}| # 1')
-        parse_fail(f'~(.*! {s}')
-        parse_fail(f'~(.*))! {s}')
-        parse_fail(f'/(.*! {s}')
-        parse_fail(f'/(.*))! {s}')
+        parse_fail(f"~{s}%")
+        parse_fail(f"!{s}%# 1")
+        parse_fail(f"|{s}% # 1")
+        parse_fail(f"|{s}%")
+        parse_fail(f"%{s}| # 1")
+        parse_fail(f"~(.*! {s}")
+        parse_fail(f"~(.*))! {s}")
+        parse_fail(f"/(.*! {s}")
+        parse_fail(f"/(.*))! {s}")
 
 
 def test_parses_allow_http_url_rules():
@@ -281,8 +281,12 @@ def test_parses_copy_session_field_rules():
     # with valid regexes and escape sequences
     parse_ok("copy_session_field !A\\!|B!", "copy_session_field", None, "^A!|B$", None)
     parse_ok("copy_session_field |A\\|B|", "copy_session_field", None, "^A|B$", None)
-    parse_ok("copy_session_field |A\\|B\\|C|", "copy_session_field", None, "^A|B|C$", None)
-    parse_ok("copy_session_field /A\\/B\\/C/", "copy_session_field", None, "^A/B/C$", None)
+    parse_ok(
+        "copy_session_field |A\\|B\\|C|", "copy_session_field", None, "^A|B|C$", None
+    )
+    parse_ok(
+        "copy_session_field /A\\/B\\/C/", "copy_session_field", None, "^A/B/C$", None
+    )
 
 
 def test_parses_remove_rules():
@@ -303,20 +307,50 @@ def test_parses_remove_rules():
     parse_fail("%.*% remove /1/, /2/, /3/ # blah")
 
     # with valid regexes
-    parse_ok("%request_header:cookie|response_header:set-cookie% remove",
-             "remove", "^request_header:cookie|response_header:set-cookie$", None, None)
-    parse_ok("/request_header:cookie|response_header:set-cookie/ remove",
-             "remove", "^request_header:cookie|response_header:set-cookie$", None, None)
+    parse_ok(
+        "%request_header:cookie|response_header:set-cookie% remove",
+        "remove",
+        "^request_header:cookie|response_header:set-cookie$",
+        None,
+        None,
+    )
+    parse_ok(
+        "/request_header:cookie|response_header:set-cookie/ remove",
+        "remove",
+        "^request_header:cookie|response_header:set-cookie$",
+        None,
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_header\\!|response_header:set-cookie! remove",
-             "remove", "^request_header!|response_header:set-cookie$", None, None)
-    parse_ok("|request_header:cookie\\|response_header:set-cookie| remove",
-             "remove", "^request_header:cookie|response_header:set-cookie$", None, None)
-    parse_ok("|request_header:cookie\\|response_header:set-cookie\\|boo| remove",
-             "remove", "^request_header:cookie|response_header:set-cookie|boo$", None, None)
-    parse_ok("/request_header:cookie\\/response_header:set-cookie\\/boo/ remove",
-             "remove", "^request_header:cookie/response_header:set-cookie/boo$", None, None)
+    parse_ok(
+        "!request_header\\!|response_header:set-cookie! remove",
+        "remove",
+        "^request_header!|response_header:set-cookie$",
+        None,
+        None,
+    )
+    parse_ok(
+        "|request_header:cookie\\|response_header:set-cookie| remove",
+        "remove",
+        "^request_header:cookie|response_header:set-cookie$",
+        None,
+        None,
+    )
+    parse_ok(
+        "|request_header:cookie\\|response_header:set-cookie\\|boo| remove",
+        "remove",
+        "^request_header:cookie|response_header:set-cookie|boo$",
+        None,
+        None,
+    )
+    parse_ok(
+        "/request_header:cookie\\/response_header:set-cookie\\/boo/ remove",
+        "remove",
+        "^request_header:cookie/response_header:set-cookie/boo$",
+        None,
+        None,
+    )
 
 
 def test_parses_remove_if_rules():
@@ -353,20 +387,50 @@ def test_parses_remove_if_rules():
     parse_fail("/.*/ remove_if /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% remove_if %<!--SKIP_BODY_LOGGING-->%",
-             "remove_if", "^response_body$", "^<!--SKIP_BODY_LOGGING-->$", None)
-    parse_ok("/response_body/ remove_if /<!--SKIP_BODY_LOGGING-->/",
-             "remove_if", "^response_body$", "^<!--SKIP_BODY_LOGGING-->$", None)
+    parse_ok(
+        "%response_body% remove_if %<!--SKIP_BODY_LOGGING-->%",
+        "remove_if",
+        "^response_body$",
+        "^<!--SKIP_BODY_LOGGING-->$",
+        None,
+    )
+    parse_ok(
+        "/response_body/ remove_if /<!--SKIP_BODY_LOGGING-->/",
+        "remove_if",
+        "^response_body$",
+        "^<!--SKIP_BODY_LOGGING-->$",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "remove_if", "^request_body|response_body$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("|request_body\\|response_body| remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "remove_if", "^request_body|response_body$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("|request_body\\|response_body\\|boo| remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
-             "remove_if", "^request_body|response_body|boo$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf$", None)
-    parse_ok("/request_body\\/response_body\\/boo/ remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
-             "remove_if", "^request_body/response_body/boo$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf$", None)
+    parse_ok(
+        "!request_body|response_body! remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "remove_if",
+        "^request_body|response_body$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "remove_if",
+        "^request_body|response_body$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body\\|boo| remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
+        "remove_if",
+        "^request_body|response_body|boo$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf$",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body\\/boo/ remove_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
+        "remove_if",
+        "^request_body/response_body/boo$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf$",
+        None,
+    )
 
 
 def test_parses_remove_if_found_rules():
@@ -403,20 +467,50 @@ def test_parses_remove_if_found_rules():
     parse_fail("/.*/ remove_if_found /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% remove_if_found %<!--SKIP_BODY_LOGGING-->%",
-             "remove_if_found", "^response_body$", "<!--SKIP_BODY_LOGGING-->", None)
-    parse_ok("/response_body/ remove_if_found /<!--SKIP_BODY_LOGGING-->/",
-             "remove_if_found", "^response_body$", "<!--SKIP_BODY_LOGGING-->", None)
+    parse_ok(
+        "%response_body% remove_if_found %<!--SKIP_BODY_LOGGING-->%",
+        "remove_if_found",
+        "^response_body$",
+        "<!--SKIP_BODY_LOGGING-->",
+        None,
+    )
+    parse_ok(
+        "/response_body/ remove_if_found /<!--SKIP_BODY_LOGGING-->/",
+        "remove_if_found",
+        "^response_body$",
+        "<!--SKIP_BODY_LOGGING-->",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "remove_if_found", "^request_body|response_body$", "<!--IGNORE_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("|request_body\\|response_body| remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "remove_if_found", "^request_body|response_body$", "<!--IGNORE_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("|request_body\\|response_body\\|boo| remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
-             "remove_if_found", "^request_body|response_body|boo$", "<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf", None)
-    parse_ok("/request_body\\/response_body\\/boo/ remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
-             "remove_if_found", "^request_body/response_body/boo$", "<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf", None)
+    parse_ok(
+        "!request_body|response_body! remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "remove_if_found",
+        "^request_body|response_body$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "remove_if_found",
+        "^request_body|response_body$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body\\|boo| remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
+        "remove_if_found",
+        "^request_body|response_body|boo$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body\\/boo/ remove_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|asdf|",
+        "remove_if_found",
+        "^request_body/response_body/boo$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->|asdf",
+        None,
+    )
 
 
 def test_parses_remove_unless_rules():
@@ -453,20 +547,50 @@ def test_parses_remove_unless_rules():
     parse_fail("/.*/ remove_unless /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% remove_unless %<!--PERFORM_BODY_LOGGING-->%",
-             "remove_unless", "^response_body$", "^<!--PERFORM_BODY_LOGGING-->$", None)
-    parse_ok("/response_body/ remove_unless /<!--PERFORM_BODY_LOGGING-->/",
-             "remove_unless", "^response_body$", "^<!--PERFORM_BODY_LOGGING-->$", None)
+    parse_ok(
+        "%response_body% remove_unless %<!--PERFORM_BODY_LOGGING-->%",
+        "remove_unless",
+        "^response_body$",
+        "^<!--PERFORM_BODY_LOGGING-->$",
+        None,
+    )
+    parse_ok(
+        "/response_body/ remove_unless /<!--PERFORM_BODY_LOGGING-->/",
+        "remove_unless",
+        "^response_body$",
+        "^<!--PERFORM_BODY_LOGGING-->$",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
-             "remove_unless", "^request_body|response_body$", "^<!--PERFORM_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("|request_body\\|response_body| remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
-             "remove_unless", "^request_body|response_body$", "^<!--PERFORM_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("|request_body\\|response_body\\|boo| remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
-             "remove_unless", "^request_body|response_body|boo$", "^<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit$", None)
-    parse_ok("/request_body\\/response_body\\/boo/ remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
-             "remove_unless", "^request_body/response_body/boo$", "^<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit$", None)
+    parse_ok(
+        "!request_body|response_body! remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
+        "remove_unless",
+        "^request_body|response_body$",
+        "^<!--PERFORM_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
+        "remove_unless",
+        "^request_body|response_body$",
+        "^<!--PERFORM_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body\\|boo| remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
+        "remove_unless",
+        "^request_body|response_body|boo$",
+        "^<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit$",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body\\/boo/ remove_unless |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
+        "remove_unless",
+        "^request_body/response_body/boo$",
+        "^<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit$",
+        None,
+    )
 
 
 def test_parses_remove_unless_found_rules():
@@ -503,20 +627,50 @@ def test_parses_remove_unless_found_rules():
     parse_fail("/.*/ remove_unless_found /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% remove_unless_found %<!--PERFORM_BODY_LOGGING-->%",
-             "remove_unless_found", "^response_body$", "<!--PERFORM_BODY_LOGGING-->", None)
-    parse_ok("/response_body/ remove_unless_found /<!--PERFORM_BODY_LOGGING-->/",
-             "remove_unless_found", "^response_body$", "<!--PERFORM_BODY_LOGGING-->", None)
+    parse_ok(
+        "%response_body% remove_unless_found %<!--PERFORM_BODY_LOGGING-->%",
+        "remove_unless_found",
+        "^response_body$",
+        "<!--PERFORM_BODY_LOGGING-->",
+        None,
+    )
+    parse_ok(
+        "/response_body/ remove_unless_found /<!--PERFORM_BODY_LOGGING-->/",
+        "remove_unless_found",
+        "^response_body$",
+        "<!--PERFORM_BODY_LOGGING-->",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
-             "remove_unless_found", "^request_body|response_body$", "<!--PERFORM_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("|request_body\\|response_body| remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
-             "remove_unless_found", "^request_body|response_body$", "<!--PERFORM_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("|request_body\\|response_body\\|boo| remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
-             "remove_unless_found", "^request_body|response_body|boo$", "<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit", None)
-    parse_ok("/request_body\\/response_body\\/boo/ remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
-             "remove_unless_found", "^request_body/response_body/boo$", "<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit", None)
+    parse_ok(
+        "!request_body|response_body! remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
+        "remove_unless_found",
+        "^request_body|response_body$",
+        "<!--PERFORM_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->|",
+        "remove_unless_found",
+        "^request_body|response_body$",
+        "<!--PERFORM_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body\\|boo| remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
+        "remove_unless_found",
+        "^request_body|response_body|boo$",
+        "<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body\\/boo/ remove_unless_found |<!--PERFORM_LOGGING-->\\|<!-SKIP-->\\|skipit|",
+        "remove_unless_found",
+        "^request_body/response_body/boo$",
+        "<!--PERFORM_LOGGING-->|<!-SKIP-->|skipit",
+        None,
+    )
 
 
 def test_parses_replace_rules():
@@ -561,24 +715,71 @@ def test_parses_replace_rules():
     parse_fail("/.*/ replace /1/, /")
 
     # with valid regexes
-    parse_ok("%response_body% replace %kurt%, %vagner%", "replace", "^response_body$", "kurt", "vagner")
-    parse_ok("/response_body/ replace /kurt/, /vagner/", "replace", "^response_body$", "kurt", "vagner")
-    parse_ok("%response_body|.+_header:.+% replace %kurt%, %vagner%",
-             "replace", "^response_body|.+_header:.+$", "kurt", "vagner")
-    parse_ok("|response_body\\|.+_header:.+| replace |kurt|, |vagner\\|frazier|",
-             "replace", "^response_body|.+_header:.+$", "kurt", "vagner|frazier")
+    parse_ok(
+        "%response_body% replace %kurt%, %vagner%",
+        "replace",
+        "^response_body$",
+        "kurt",
+        "vagner",
+    )
+    parse_ok(
+        "/response_body/ replace /kurt/, /vagner/",
+        "replace",
+        "^response_body$",
+        "kurt",
+        "vagner",
+    )
+    parse_ok(
+        "%response_body|.+_header:.+% replace %kurt%, %vagner%",
+        "replace",
+        "^response_body|.+_header:.+$",
+        "kurt",
+        "vagner",
+    )
+    parse_ok(
+        "|response_body\\|.+_header:.+| replace |kurt|, |vagner\\|frazier|",
+        "replace",
+        "^response_body|.+_header:.+$",
+        "kurt",
+        "vagner|frazier",
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("|response_body\\|.+_header:.+| replace |kurt|, |vagner|",
-             "replace", "^response_body|.+_header:.+$", "kurt", "vagner")
-    parse_ok("|response_body\\|.+_header:.+\\|boo| replace |kurt|, |vagner|",
-             "replace", "^response_body|.+_header:.+|boo$", "kurt", "vagner")
-    parse_ok("|response_body| replace |kurt\\|bruce|, |vagner|",
-             "replace", "^response_body$", "kurt|bruce", "vagner")
-    parse_ok("|response_body| replace |kurt\\|bruce\\|kevin|, |vagner|",
-             "replace", "^response_body$", "kurt|bruce|kevin", "vagner")
-    parse_ok("|response_body| replace /kurt\\/bruce\\/kevin/, |vagner|",
-             "replace", "^response_body$", "kurt/bruce/kevin", "vagner")
+    parse_ok(
+        "|response_body\\|.+_header:.+| replace |kurt|, |vagner|",
+        "replace",
+        "^response_body|.+_header:.+$",
+        "kurt",
+        "vagner",
+    )
+    parse_ok(
+        "|response_body\\|.+_header:.+\\|boo| replace |kurt|, |vagner|",
+        "replace",
+        "^response_body|.+_header:.+|boo$",
+        "kurt",
+        "vagner",
+    )
+    parse_ok(
+        "|response_body| replace |kurt\\|bruce|, |vagner|",
+        "replace",
+        "^response_body$",
+        "kurt|bruce",
+        "vagner",
+    )
+    parse_ok(
+        "|response_body| replace |kurt\\|bruce\\|kevin|, |vagner|",
+        "replace",
+        "^response_body$",
+        "kurt|bruce|kevin",
+        "vagner",
+    )
+    parse_ok(
+        "|response_body| replace /kurt\\/bruce\\/kevin/, |vagner|",
+        "replace",
+        "^response_body$",
+        "kurt/bruce/kevin",
+        "vagner",
+    )
 
 
 def test_parses_sample_rules():
@@ -600,7 +801,9 @@ def test_parses_sample_rules():
 def test_parses_skip_compression_rules():
     parse_fail("skip_compression whaa")
     parse_ok("skip_compression", "skip_compression", None, None, None)
-    parse_ok("skip_compression # slightly faster!", "skip_compression", None, None, None)
+    parse_ok(
+        "skip_compression # slightly faster!", "skip_compression", None, None, None
+    )
 
 
 def test_parses_skip_submission_rules():
@@ -627,15 +830,51 @@ def test_parses_stop_rules():
     parse_fail("%.*% stop /1/, /2/, /3/ # blah")
 
     # with valid regexes
-    parse_ok("%request_header:skip_usage_logging% stop", "stop", "^request_header:skip_usage_logging$", None, None)
-    parse_ok("|request_header:skip_usage_logging| stop", "stop", "^request_header:skip_usage_logging$", None, None)
-    parse_ok("/request_header:skip_usage_logging/ stop", "stop", "^request_header:skip_usage_logging$", None, None)
+    parse_ok(
+        "%request_header:skip_usage_logging% stop",
+        "stop",
+        "^request_header:skip_usage_logging$",
+        None,
+        None,
+    )
+    parse_ok(
+        "|request_header:skip_usage_logging| stop",
+        "stop",
+        "^request_header:skip_usage_logging$",
+        None,
+        None,
+    )
+    parse_ok(
+        "/request_header:skip_usage_logging/ stop",
+        "stop",
+        "^request_header:skip_usage_logging$",
+        None,
+        None,
+    )
 
     # with valid regexes and escape sequences
     parse_ok("!request_header\\!! stop", "stop", "^request_header!$", None, None)
-    parse_ok("|request_header\\|response_header| stop", "stop", "^request_header|response_header$", None, None)
-    parse_ok("|request_header\\|response_header\\|boo| stop", "stop", "^request_header|response_header|boo$", None, None)
-    parse_ok("/request_header\\/response_header\\/boo/ stop", "stop", "^request_header/response_header/boo$", None, None)
+    parse_ok(
+        "|request_header\\|response_header| stop",
+        "stop",
+        "^request_header|response_header$",
+        None,
+        None,
+    )
+    parse_ok(
+        "|request_header\\|response_header\\|boo| stop",
+        "stop",
+        "^request_header|response_header|boo$",
+        None,
+        None,
+    )
+    parse_ok(
+        "/request_header\\/response_header\\/boo/ stop",
+        "stop",
+        "^request_header/response_header/boo$",
+        None,
+        None,
+    )
 
 
 def test_parses_stop_if_rules():
@@ -672,18 +911,50 @@ def test_parses_stop_if_rules():
     parse_fail("/.*/ stop_if /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% stop_if %<!--IGNORE_LOGGING-->%", "stop_if", "^response_body$", "^<!--IGNORE_LOGGING-->$", None)
-    parse_ok("/response_body/ stop_if /<!--IGNORE_LOGGING-->/", "stop_if", "^response_body$", "^<!--IGNORE_LOGGING-->$", None)
+    parse_ok(
+        "%response_body% stop_if %<!--IGNORE_LOGGING-->%",
+        "stop_if",
+        "^response_body$",
+        "^<!--IGNORE_LOGGING-->$",
+        None,
+    )
+    parse_ok(
+        "/response_body/ stop_if /<!--IGNORE_LOGGING-->/",
+        "stop_if",
+        "^response_body$",
+        "^<!--IGNORE_LOGGING-->$",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "stop_if", "^request_body|response_body$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("!request_body|response_body|boo\\!! stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "stop_if", "^request_body|response_body|boo!$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("|request_body\\|response_body| stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "stop_if", "^request_body|response_body$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->$", None)
-    parse_ok("/request_body\\/response_body/ stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|pipe\\||",
-             "stop_if", "^request_body/response_body$", "^<!--IGNORE_LOGGING-->|<!-SKIP-->|pipe|$", None)
+    parse_ok(
+        "!request_body|response_body! stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "stop_if",
+        "^request_body|response_body$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "!request_body|response_body|boo\\!! stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "stop_if",
+        "^request_body|response_body|boo!$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "stop_if",
+        "^request_body|response_body$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->$",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body/ stop_if |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|pipe\\||",
+        "stop_if",
+        "^request_body/response_body$",
+        "^<!--IGNORE_LOGGING-->|<!-SKIP-->|pipe|$",
+        None,
+    )
 
 
 def test_parses_stop_if_found_rules():
@@ -720,20 +991,50 @@ def test_parses_stop_if_found_rules():
     parse_fail("/.*/ stop_if_found /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% stop_if_found %<!--IGNORE_LOGGING-->%",
-             "stop_if_found", "^response_body$", "<!--IGNORE_LOGGING-->", None)
-    parse_ok("/response_body/ stop_if_found /<!--IGNORE_LOGGING-->/",
-             "stop_if_found", "^response_body$", "<!--IGNORE_LOGGING-->", None)
+    parse_ok(
+        "%response_body% stop_if_found %<!--IGNORE_LOGGING-->%",
+        "stop_if_found",
+        "^response_body$",
+        "<!--IGNORE_LOGGING-->",
+        None,
+    )
+    parse_ok(
+        "/response_body/ stop_if_found /<!--IGNORE_LOGGING-->/",
+        "stop_if_found",
+        "^response_body$",
+        "<!--IGNORE_LOGGING-->",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "stop_if_found", "^request_body|response_body$", "<!--IGNORE_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("!request_body|response_body|boo\\!! stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "stop_if_found", "^request_body|response_body|boo!$", "<!--IGNORE_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("|request_body\\|response_body| stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
-             "stop_if_found", "^request_body|response_body$", "<!--IGNORE_LOGGING-->|<!-SKIP-->", None)
-    parse_ok("/request_body\\/response_body/ stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|pipe\\||",
-             "stop_if_found", "^request_body/response_body$", "<!--IGNORE_LOGGING-->|<!-SKIP-->|pipe|", None)
+    parse_ok(
+        "!request_body|response_body! stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "stop_if_found",
+        "^request_body|response_body$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "!request_body|response_body|boo\\!! stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "stop_if_found",
+        "^request_body|response_body|boo!$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->|",
+        "stop_if_found",
+        "^request_body|response_body$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body/ stop_if_found |<!--IGNORE_LOGGING-->\\|<!-SKIP-->\\|pipe\\||",
+        "stop_if_found",
+        "^request_body/response_body$",
+        "<!--IGNORE_LOGGING-->|<!-SKIP-->|pipe|",
+        None,
+    )
 
 
 def test_parses_stop_unless_rules():
@@ -770,20 +1071,57 @@ def test_parses_stop_unless_rules():
     parse_fail("/.*/ stop_unless /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% stop_unless %<!--DO_LOGGING-->%", "stop_unless", "^response_body$", "^<!--DO_LOGGING-->$", None)
-    parse_ok("/response_body/ stop_unless /<!--DO_LOGGING-->/", "stop_unless", "^response_body$", "^<!--DO_LOGGING-->$", None)
+    parse_ok(
+        "%response_body% stop_unless %<!--DO_LOGGING-->%",
+        "stop_unless",
+        "^response_body$",
+        "^<!--DO_LOGGING-->$",
+        None,
+    )
+    parse_ok(
+        "/response_body/ stop_unless /<!--DO_LOGGING-->/",
+        "stop_unless",
+        "^response_body$",
+        "^<!--DO_LOGGING-->$",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
-             "stop_unless", "^request_body|response_body$", "^<!--DO_LOGGING-->|<!-NOSKIP-->$", None)
-    parse_ok("!request_body|response_body|boo\\!! stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
-             "stop_unless", "^request_body|response_body|boo!$", "^<!--DO_LOGGING-->|<!-NOSKIP-->$", None)
-    parse_ok("|request_body\\|response_body| stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
-             "stop_unless", "^request_body|response_body$", "^<!--DO_LOGGING-->|<!-NOSKIP-->$", None)
-    parse_ok("|request_body\\|response_body| stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
-             "stop_unless", "^request_body|response_body$", "^<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|$", None)
-    parse_ok("/request_body\\/response_body/ stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
-             "stop_unless", "^request_body/response_body$", "^<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|$", None)
+    parse_ok(
+        "!request_body|response_body! stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
+        "stop_unless",
+        "^request_body|response_body$",
+        "^<!--DO_LOGGING-->|<!-NOSKIP-->$",
+        None,
+    )
+    parse_ok(
+        "!request_body|response_body|boo\\!! stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
+        "stop_unless",
+        "^request_body|response_body|boo!$",
+        "^<!--DO_LOGGING-->|<!-NOSKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
+        "stop_unless",
+        "^request_body|response_body$",
+        "^<!--DO_LOGGING-->|<!-NOSKIP-->$",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
+        "stop_unless",
+        "^request_body|response_body$",
+        "^<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|$",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body/ stop_unless |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
+        "stop_unless",
+        "^request_body/response_body$",
+        "^<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|$",
+        None,
+    )
 
 
 def test_parses_stop_unless_found_rules():
@@ -820,22 +1158,57 @@ def test_parses_stop_unless_found_rules():
     parse_fail("/.*/ stop_unless_found /(.*))/")
 
     # with valid regexes
-    parse_ok("%response_body% stop_unless_found %<!--DO_LOGGING-->%",
-             "stop_unless_found", "^response_body$", "<!--DO_LOGGING-->", None)
-    parse_ok("/response_body/ stop_unless_found /<!--DO_LOGGING-->/",
-             "stop_unless_found", "^response_body$", "<!--DO_LOGGING-->", None)
+    parse_ok(
+        "%response_body% stop_unless_found %<!--DO_LOGGING-->%",
+        "stop_unless_found",
+        "^response_body$",
+        "<!--DO_LOGGING-->",
+        None,
+    )
+    parse_ok(
+        "/response_body/ stop_unless_found /<!--DO_LOGGING-->/",
+        "stop_unless_found",
+        "^response_body$",
+        "<!--DO_LOGGING-->",
+        None,
+    )
 
     # with valid regexes and escape sequences
-    parse_ok("!request_body|response_body! stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
-             "stop_unless_found", "^request_body|response_body$", "<!--DO_LOGGING-->|<!-NOSKIP-->", None)
-    parse_ok("!request_body|response_body|boo\\!! stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
-             "stop_unless_found", "^request_body|response_body|boo!$", "<!--DO_LOGGING-->|<!-NOSKIP-->", None)
-    parse_ok("|request_body\\|response_body| stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
-             "stop_unless_found", "^request_body|response_body$", "<!--DO_LOGGING-->|<!-NOSKIP-->", None)
-    parse_ok("|request_body\\|response_body| stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
-             "stop_unless_found", "^request_body|response_body$", "<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|", None)
-    parse_ok("/request_body\\/response_body/ stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
-             "stop_unless_found", "^request_body/response_body$", "<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|", None)
+    parse_ok(
+        "!request_body|response_body! stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
+        "stop_unless_found",
+        "^request_body|response_body$",
+        "<!--DO_LOGGING-->|<!-NOSKIP-->",
+        None,
+    )
+    parse_ok(
+        "!request_body|response_body|boo\\!! stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
+        "stop_unless_found",
+        "^request_body|response_body|boo!$",
+        "<!--DO_LOGGING-->|<!-NOSKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->|",
+        "stop_unless_found",
+        "^request_body|response_body$",
+        "<!--DO_LOGGING-->|<!-NOSKIP-->",
+        None,
+    )
+    parse_ok(
+        "|request_body\\|response_body| stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
+        "stop_unless_found",
+        "^request_body|response_body$",
+        "<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|",
+        None,
+    )
+    parse_ok(
+        "/request_body\\/response_body/ stop_unless_found |<!--DO_LOGGING-->\\|<!-NOSKIP-->\\|pipe\\||",
+        "stop_unless_found",
+        "^request_body/response_body$",
+        "<!--DO_LOGGING-->|<!-NOSKIP-->|pipe|",
+        None,
+    )
 
 
 def test_raises_expected_errors():
@@ -843,34 +1216,34 @@ def test_raises_expected_errors():
         HttpRules("file://~/bleepblorpbleepblorp12345")
         assert False
     except FileNotFoundError as e:
-        assert str(e) == 'Failed to load rules: ~/bleepblorpbleepblorp12345'
+        assert str(e) == "Failed to load rules: ~/bleepblorpbleepblorp12345"
 
     try:
         HttpRules("/*! stop")
         assert False
     except SyntaxError as e:
-        assert str(e) == 'Invalid expression (/*!) in rule: /*! stop'
+        assert str(e) == "Invalid expression (/*!) in rule: /*! stop"
 
     try:
         HttpRules("/*/ stop")
         assert False
     except SyntaxError as e:
-        assert str(e) == 'Invalid regex (/*/) in rule: /*/ stop'
+        assert str(e) == "Invalid regex (/*/) in rule: /*/ stop"
 
     try:
         HttpRules("/boo")
         assert False
     except SyntaxError as e:
-        assert str(e) == 'Invalid rule: /boo'
+        assert str(e) == "Invalid rule: /boo"
 
     try:
         HttpRules("sample 123")
         assert False
     except SyntaxError as e:
-        assert str(e) == 'Invalid sample percent: 123'
+        assert str(e) == "Invalid sample percent: 123"
 
     try:
         HttpRules("!!! stop")
         assert False
     except SyntaxError as e:
-        assert str(e) == 'Unescaped separator (!) in rule: !!! stop'
+        assert str(e) == "Unescaped separator (!) in rule: !!! stop"

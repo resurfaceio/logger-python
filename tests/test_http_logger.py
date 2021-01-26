@@ -2,6 +2,7 @@
 # © 2016-2021 Resurface Labs Inc.
 
 from test_helper import *
+
 from usagelogger import HttpLogger, UsageLoggers
 
 
@@ -16,8 +17,8 @@ def test_creates_instance():
 
 
 def test_creates_multiple_instances():
-    url1 = 'https://resurface.io'
-    url2 = 'https://whatever.com'
+    url1 = "https://resurface.io"
+    url2 = "https://whatever.com"
     logger1 = HttpLogger(url=url1)
     logger2 = HttpLogger(url=url2)
     logger3 = HttpLogger(url=DEMO_URL)
@@ -60,7 +61,9 @@ def test_detects_string_content_types():
     assert HttpLogger.is_string_content_type("application/json") is True
     assert HttpLogger.is_string_content_type("application/soap") is True
     assert HttpLogger.is_string_content_type("application/xml") is True
-    assert HttpLogger.is_string_content_type("application/x-www-form-urlencoded") is True
+    assert (
+        HttpLogger.is_string_content_type("application/x-www-form-urlencoded") is True
+    )
     assert HttpLogger.is_string_content_type("text/html") is True
     assert HttpLogger.is_string_content_type("text/html; charset=utf-8") is True
     assert HttpLogger.is_string_content_type("text/plain") is True
@@ -72,9 +75,9 @@ def test_detects_string_content_types():
 def test_has_valid_agent():
     agent = HttpLogger.AGENT
     assert len(agent) > 0
-    assert agent.endswith('.py')
-    assert ('\\' in agent) is False
-    assert ('\"' in agent) is False
+    assert agent.endswith(".py")
+    assert ("\\" in agent) is False
+    assert ('"' in agent) is False
     assert ("'" in agent) is False
     assert HttpLogger().agent == agent
 
@@ -110,7 +113,7 @@ def test_silently_ignores_unexpected_option_classes():
     assert logger.queue is None
     assert logger.url is None
 
-    logger = HttpLogger(queue='asdf')
+    logger = HttpLogger(queue="asdf")
     assert logger.enableable is False
     assert logger.enabled is False
     assert logger.queue is None
