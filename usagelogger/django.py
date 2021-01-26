@@ -16,11 +16,17 @@ def __read_settings__(key):
 class HttpLoggerForDjango:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.logger = HttpLogger(url=__read_settings__('url'), rules=__read_settings__('rules'))
+        self.logger = HttpLogger(
+            url=__read_settings__("url"), rules=__read_settings__("rules")
+        )
 
     def __call__(self, request):
         response = self.get_response(request)
         status = response.status_code
-        if (status < 300 or status == 302) and HttpLogger.is_string_content_type(response['Content-Type']):
-            HttpMessage.send(self.logger, request=request, response=response)  # todo add timing details
+        if (status < 300 or status == 302) and HttpLogger.is_string_content_type(
+            response["Content-Type"]
+        ):
+            HttpMessage.send(
+                self.logger, request=request, response=response
+            )  # todo add timing details
         return response
