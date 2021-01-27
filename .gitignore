@@ -37,7 +37,14 @@ pip-log.txt
 # Virtualenvs
 env
 venv
+.venv
 
 docs/source/reference/services
 tests/coverage.xml
 tests/nosetests.xml
+
+# cache and META
+.mypy_cache
+pip-*
+__pycache__
+

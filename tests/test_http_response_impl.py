@@ -14,9 +14,9 @@ def test_body():
 
 def test_headers():
     r = HttpResponseImpl()
-    r.headers['ABC'] = '123'
+    r.headers["ABC"] = "123"
     assert len(r.headers) == 1
-    assert r.headers['ABC'] == '123'
+    assert r.headers["ABC"] == "123"
 
 
 def test_url():

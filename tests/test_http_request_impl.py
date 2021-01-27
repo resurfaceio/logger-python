@@ -14,22 +14,22 @@ def test_body():
 
 def test_headers():
     r = HttpRequestImpl()
-    r.headers['ABC'] = '123'
+    r.headers["ABC"] = "123"
     assert len(r.headers) == 1
-    assert r.headers['ABC'] == '123'
+    assert r.headers["ABC"] == "123"
 
 
 def test_method():
     r = HttpRequestImpl()
-    r.method = 'POST'
-    assert r.method == 'POST'
+    r.method = "POST"
+    assert r.method == "POST"
 
 
 def test_params():
     r = HttpRequestImpl()
-    r.params['ABC'] = '123'
+    r.params["ABC"] = "123"
     assert len(r.params) == 1
-    assert r.params['ABC'] == '123'
+    assert r.params["ABC"] == "123"
 
 
 def test_url():

@@ -4,6 +4,7 @@
 from typing import List
 
 from test_helper import *
+
 from usagelogger import BaseLogger, UsageLoggers
 
 
@@ -18,11 +19,11 @@ def test_creates_instance():
 
 
 def test_creates_multiple_instances():
-    agent1 = 'agent1'
-    agent2 = 'AGENT2'
-    agent3 = 'aGeNt3'
-    url1 = 'http://resurface.io'
-    url2 = 'http://whatever.com'
+    agent1 = "agent1"
+    agent2 = "AGENT2"
+    agent3 = "aGeNt3"
+    url1 = "http://resurface.io"
+    url2 = "http://whatever.com"
     logger1 = BaseLogger(agent1, url=url1)
     logger2 = BaseLogger(agent2, url=url2)
     logger3 = BaseLogger(agent3, url=DEMO_URL)
@@ -56,7 +57,7 @@ def test_has_valid_host():
     host = BaseLogger.host_lookup()
     assert host is not None
     assert len(host) > 0
-    assert host != 'unknown'
+    assert host != "unknown"
     assert host == BaseLogger(MOCK_AGENT).host
 
 
@@ -64,9 +65,9 @@ def test_has_valid_version():
     version = BaseLogger.version_lookup()
     assert version is not None
     assert len(version) > 0
-    assert version.startswith('2.0.')
-    assert ('\\' in version) is False
-    assert ('\"' in version) is False
+    assert version.startswith("2.0.")
+    assert ("\\" in version) is False
+    assert ('"' in version) is False
     assert ("'" in version) is False
     assert version == BaseLogger(MOCK_AGENT).version
 
@@ -118,9 +119,13 @@ def test_skips_enabling_for_undefined_url():
 def test_submits_to_demo_url():
     logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
     assert logger.url == DEMO_URL
-    message: List[List[str]] = [['agent', logger.agent], ['version', logger.version],
-                                ['now', str(MOCK_NOW)], ['prototol', 'https']]
-    msg = json.dumps(message, separators=(',', ':'))
+    message: List[List[str]] = [
+        ["agent", logger.agent],
+        ["version", logger.version],
+        ["now", str(MOCK_NOW)],
+        ["prototol", "https"],
+    ]
+    msg = json.dumps(message, separators=(",", ":"))
     assert parseable(msg) is True
     logger.submit(msg)
     assert logger.submit_failures == 0
@@ -128,11 +133,15 @@ def test_submits_to_demo_url():
 
 
 def test_submits_to_demo_url_via_http():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL.replace('https', 'http', 1))
-    assert logger.url.startswith('http://') is True
-    message: List[List[str]] = [['agent', logger.agent], ['version', logger.version],
-                                ['now', str(MOCK_NOW)], ['prototol', 'http']]
-    msg = json.dumps(message, separators=(',', ':'))
+    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL.replace("https", "http", 1))
+    assert logger.url.startswith("http://") is True
+    message: List[List[str]] = [
+        ["agent", logger.agent],
+        ["version", logger.version],
+        ["now", str(MOCK_NOW)],
+        ["prototol", "http"],
+    ]
+    msg = json.dumps(message, separators=(",", ":"))
     assert parseable(msg) is True
     logger.submit(msg)
     assert logger.submit_failures == 0
@@ -143,9 +152,14 @@ def test_submits_to_demo_url_without_compression():
     logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
     logger.skip_compression = True
     assert logger.skip_compression is True
-    message: List[List[str]] = [['agent', logger.agent], ['version', logger.version],
-                                ['now', str(MOCK_NOW)], ['prototol', 'https'], ['skip_compression', 'true']]
-    msg = json.dumps(message, separators=(',', ':'))
+    message: List[List[str]] = [
+        ["agent", logger.agent],
+        ["version", logger.version],
+        ["now", str(MOCK_NOW)],
+        ["prototol", "https"],
+        ["skip_compression", "true"],
+    ]
+    msg = json.dumps(message, separators=(",", ":"))
     assert parseable(msg) is True
     logger.submit(msg)
     assert logger.submit_failures == 0
@@ -157,7 +171,7 @@ def test_submits_to_denied_url():
         logger = BaseLogger(MOCK_AGENT, url=denied_url)
         assert logger.enableable is True
         assert logger.enabled is True
-        logger.submit('{}')
+        logger.submit("{}")
         assert logger.submit_failures == 1
         assert logger.submit_successes == 0
 
@@ -170,9 +184,9 @@ def test_submits_to_queue():
     assert logger.enableable is True
     assert logger.enabled is True
     assert len(queue) == 0
-    logger.submit('{}')
+    logger.submit("{}")
     assert len(queue) == 1
-    logger.submit('{}')
+    logger.submit("{}")
     assert len(queue) == 2
     assert logger.submit_failures == 0
     assert logger.submit_successes == 2
@@ -209,7 +223,7 @@ def test_silently_ignores_unexpected_option_classes():
     assert logger.queue is None
     assert logger.url is None
 
-    logger = BaseLogger(MOCK_AGENT, queue='asdf')
+    logger = BaseLogger(MOCK_AGENT, queue="asdf")
     assert logger.enableable is False
     assert logger.enabled is False
     assert logger.queue is None

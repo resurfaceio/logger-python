@@ -15,12 +15,15 @@ from usagelogger.usage_loggers import UsageLoggers
 class BaseLogger(object):
     """Basic usage logger to embed or extend."""
 
-    def __init__(self, agent: str,
-                 enabled: Optional[bool] = True,
-                 queue: Optional[List[str]] = None,
-                 url: Optional[str] = None,
-                 skip_compression: Optional[bool] = False,
-                 skip_submission: Optional[bool] = False) -> None:
+    def __init__(
+        self,
+        agent: str,
+        enabled: Optional[bool] = True,
+        queue: Optional[List[str]] = None,
+        url: Optional[str] = None,
+        skip_compression: Optional[bool] = False,
+        skip_submission: Optional[bool] = False,
+    ) -> None:
 
         self.agent = agent
         self.host = self.host_lookup()
@@ -29,7 +32,8 @@ class BaseLogger(object):
         self.version = self.version_lookup()
 
         # read provided options
-        if url is None: url = UsageLoggers.url_by_default()
+        if url is None:
+            url = UsageLoggers.url_by_default()
 
         # set options in priority order
         self._enabled = enabled
@@ -38,11 +42,11 @@ class BaseLogger(object):
             self._url = None
         elif url is not None and isinstance(url, str):
             try:
-                if urlsplit(url).scheme in {'http', 'https'}:
+                if urlsplit(url).scheme in {"http", "https"}:
                     self._url_scheme: str = urlsplit(url).scheme
                     self._url = url
                 else:
-                    raise TypeError('incorrect URL scheme')
+                    raise TypeError("incorrect URL scheme")
             except TypeError:
                 self._enabled = False
                 self._url = None
@@ -99,7 +103,9 @@ class BaseLogger(object):
                 else:
                     conn = http.client.HTTPSConnection(hostname, url_parser.port)
 
-                headers: Dict[str, str] = {'Content-Type': 'application/json; charset=UTF-8'}
+                headers: Dict[str, str] = {
+                    "Content-Type": "application/json; charset=UTF-8"
+                }
                 conn.request("POST", url_path, msg, headers)
                 response = conn.getresponse()
                 conn.close()  # todo keep connection alive
@@ -134,12 +140,13 @@ class BaseLogger(object):
 
     @staticmethod
     def host_lookup() -> str:
-        dyno = os.getenv('DYNO')
-        if dyno is not None: return dyno
+        dyno = os.getenv("DYNO")
+        if dyno is not None:
+            return dyno
         try:
             return socket.gethostname()
-        except:
-            return 'unknown'
+        except Exception:
+            return "unknown"
 
     @staticmethod
     def version_lookup() -> str:

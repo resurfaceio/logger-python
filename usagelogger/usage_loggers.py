@@ -1,11 +1,11 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-import os
+from os import getenv
 
 
 class UsageLoggers(object):
-    __BRICKED: bool = os.getenv('USAGE_LOGGERS_DISABLE') == 'true'
+    __BRICKED: bool = getenv("USAGE_LOGGERS_DISABLE") == "true"
 
     __disabled: bool = __BRICKED
 
@@ -15,7 +15,8 @@ class UsageLoggers(object):
 
     @classmethod
     def enable(cls) -> None:
-        if cls.__BRICKED is False: cls.__disabled = False
+        if cls.__BRICKED is False:
+            cls.__disabled = False
 
     @classmethod
     def is_enabled(cls) -> bool:
@@ -23,4 +24,4 @@ class UsageLoggers(object):
 
     @staticmethod
     def url_by_default() -> str:
-        return os.getenv('USAGE_LOGGERS_URL')
+        return getenv("USAGE_LOGGERS_URL")
