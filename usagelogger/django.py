@@ -32,5 +32,5 @@ class HttpLoggerForDjango:
             request=request,
             response=response,
             interval=interval,
-        )  # todo add timing details
+        )
         return response
