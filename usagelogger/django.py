@@ -1,6 +1,8 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
+import time
+
 from django.conf import settings
 
 from usagelogger import HttpLogger, HttpMessage
@@ -21,12 +23,14 @@ class HttpLoggerForDjango:
         )
 
     def __call__(self, request):
+        start_time = time.time()
         response = self.get_response(request)
-        status = response.status_code
-        if (status < 300 or status == 302) and HttpLogger.is_string_content_type(
-            response["Content-Type"]
-        ):
-            HttpMessage.send(
-                self.logger, request=request, response=response
-            )  # todo add timing details
+        interval = time.time() - start_time
+
+        HttpMessage.send(
+            self.logger,
+            request=request,
+            response=response,
+            interval=interval,
+        )  # todo add timing details
         return response
