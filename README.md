@@ -1,9 +1,17 @@
 # resurfaceio-logger-python
+
 Logging usage of Python-based services, with user privacy by design.
 
 Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
 
-[![PyPI version](https://badge.fury.io/py/usagelogger.svg)](https://badge.fury.io/py/usagelogger)
+![Python Version](https://img.shields.io/badge/python-3.7+-blue?style=for-the-badge&logo=python)
+[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-python/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-python)
+
+<!-- [![License](https://img.shields.io/github/license/resurfaceio/logger-python?style=for-the-badge)](https://github.com/resurfaceio/logger-python/blob/master/LICENSE.md) -->
+
+<a href="https://github.com/resurfaceio/logger-python/blob/master/CONTRIBUTING.md" target="_blank" title="Contributions are welcome"><img src="https://img.shields.io/badge/contributions-welcome-green.svg?style=for-the-badge"></a>
+
+<a href="https://badge.fury.io/py/usagelogger" target="_blank" title="PyPI version"><img src="https://badge.fury.io/py/usagelogger.svg"></a>
 
 ## Contents
 
@@ -71,4 +79,5 @@ but logging rules are easily customized to meet the needs of any application.
 <a href="https://resurface.io/rules.html">Logging rules documentation</a>
 
 ---
+
 <small>&copy; 2016-2021 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
