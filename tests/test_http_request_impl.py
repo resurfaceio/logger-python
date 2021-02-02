@@ -1,8 +1,7 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-from test_helper import *
-
+from tests.test_helper import *
 from usagelogger import HttpRequestImpl
 
 

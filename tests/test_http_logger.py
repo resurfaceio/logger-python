@@ -1,8 +1,7 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-from test_helper import *
-
+from tests.test_helper import *
 from usagelogger import HttpLogger, UsageLoggers
 
 
@@ -46,30 +45,6 @@ def test_creates_multiple_instances():
     assert logger1.enabled is True
     assert logger2.enabled is True
     assert logger3.enabled is True
-
-
-def test_detects_string_content_types():
-    assert HttpLogger.is_string_content_type(None) is False
-    assert HttpLogger.is_string_content_type("") is False
-    assert HttpLogger.is_string_content_type(" ") is False
-    assert HttpLogger.is_string_content_type("/") is False
-    assert HttpLogger.is_string_content_type("application/") is False
-    assert HttpLogger.is_string_content_type("json") is False
-    assert HttpLogger.is_string_content_type("html") is False
-    assert HttpLogger.is_string_content_type("xml") is False
-
-    assert HttpLogger.is_string_content_type("application/json") is True
-    assert HttpLogger.is_string_content_type("application/soap") is True
-    assert HttpLogger.is_string_content_type("application/xml") is True
-    assert (
-        HttpLogger.is_string_content_type("application/x-www-form-urlencoded") is True
-    )
-    assert HttpLogger.is_string_content_type("text/html") is True
-    assert HttpLogger.is_string_content_type("text/html; charset=utf-8") is True
-    assert HttpLogger.is_string_content_type("text/plain") is True
-    assert HttpLogger.is_string_content_type("text/plain123") is True
-    assert HttpLogger.is_string_content_type("text/xml") is True
-    assert HttpLogger.is_string_content_type("Text/XML") is True
 
 
 def test_has_valid_agent():

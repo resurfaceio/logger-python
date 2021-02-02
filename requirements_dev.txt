@@ -1,6 +1,7 @@
 -e .
 mypy
 black
+flake8
 pre-commit
 setuptools 
 wheel 

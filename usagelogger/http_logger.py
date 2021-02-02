@@ -2,8 +2,7 @@
 # © 2016-2021 Resurface Labs Inc.
 
 import json
-import re
-from typing import List, Optional, Pattern
+from typing import List, Optional
 
 from usagelogger.base_logger import BaseLogger
 from usagelogger.http_rules import HttpRules
@@ -66,13 +65,3 @@ class HttpLogger(BaseLogger):
 
         # let's do this thing
         self.submit(json.dumps(details, separators=(",", ":")))
-
-    @classmethod
-    def is_string_content_type(cls, s: str) -> bool:
-        return s is not None and cls.__STRING_TYPES_REGEX.match(s) is not None
-
-    __STRING_TYPES: str = (
-        r"^(text/(html|plain|xml))|"
-        r"(application/(json|soap|xml|x-www-form-urlencoded))"
-    )
-    __STRING_TYPES_REGEX: Pattern = re.compile(__STRING_TYPES, flags=re.IGNORECASE)

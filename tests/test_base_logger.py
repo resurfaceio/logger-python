@@ -3,8 +3,7 @@
 
 from typing import List
 
-from test_helper import *
-
+from tests.test_helper import *
 from usagelogger import BaseLogger, UsageLoggers
 
 
