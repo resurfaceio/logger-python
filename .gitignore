@@ -48,3 +48,8 @@ tests/nosetests.xml
 pip-*
 __pycache__
 
+# coverage
+htmlcov
+
+# logs
+*.log
