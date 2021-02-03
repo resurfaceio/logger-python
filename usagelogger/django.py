@@ -25,7 +25,7 @@ class HttpLoggerForDjango:
     def __call__(self, request):
         start_time = time.time()
         response = self.get_response(request)
-        interval = time.time() - start_time
+        interval = str((time.time() - start_time) * 1000)
 
         HttpMessage.send(
             self.logger,
