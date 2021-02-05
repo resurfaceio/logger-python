@@ -1,18 +1,20 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
-import http.client
+import json
 import os
 import socket
 import threading
+import zlib
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
+
+import requests
 
 import usagelogger  # just to read version
 from usagelogger.usage_loggers import UsageLoggers
 
 
-class BaseLogger(object):
+class BaseLogger:
     """Basic usage logger to embed or extend."""
 
     def __init__(
@@ -23,6 +25,7 @@ class BaseLogger(object):
         url: Optional[str] = None,
         skip_compression: bool = False,
         skip_submission: bool = False,
+        conn=requests.Session(),
     ) -> None:
 
         self.agent = agent
@@ -30,6 +33,7 @@ class BaseLogger(object):
         self.skip_compression = skip_compression
         self.skip_submission = skip_submission
         self.version = self.version_lookup()
+        self.conn = conn
 
         # read provided options
         if url is None:
@@ -82,7 +86,7 @@ class BaseLogger(object):
     def queue(self) -> Optional[List[str]]:
         return self._queue
 
-    def submit(self, msg: Optional[str]) -> None:
+    def submit(self, msg: str) -> None:
         """Submits JSON message to intended destination."""
 
         if msg is None or self.skip_submission is True or self.enabled is False:
@@ -93,24 +97,22 @@ class BaseLogger(object):
                 self._submit_successes += 1
         else:
             try:
-                # todo implement compression
-                url_parser = urlsplit(self.url)
-                hostname = url_parser.hostname  # todo cache this
-                url_path = url_parser.path + url_parser.query  # todo cache this
-
-                if self._url_scheme == "http":
-                    conn = http.client.HTTPConnection(hostname, url_parser.port)  # type: ignore
-                else:
-                    conn = http.client.HTTPSConnection(hostname, url_parser.port)  # type: ignore
-
                 headers: Dict[str, str] = {
-                    "Content-Type": "application/json; charset=UTF-8"
+                    "Content-Type": "application/json; charset=UTF-8",
+                    "Connection": "keep-alive",
                 }
-                conn.request("POST", url_path, msg, headers)
-                response = conn.getresponse()
-                conn.close()  # todo keep connection alive
 
-                if response.status == 204:
+                # TODO: Add/Mody test for skip compression
+                if not self.skip_compression:
+                    body: bytes = json.dumps(msg).encode("utf-8")
+                else:
+                    headers["Accept-Encoding"] = "gzip, deflate"
+                    headers["content-encoding"] = "gzip"
+
+                    body = zlib.compress(json.dumps(msg).encode("utf-8"))
+                response = self.conn.post(self.url, data=body, headers=headers)
+
+                if response.status_code == 204:
                     with self._submit_successes_lock:
                         self._submit_successes += 1
                 else:
@@ -118,7 +120,7 @@ class BaseLogger(object):
                         self._submit_failures += 1
 
             # http errors
-            except (http.client.HTTPException, IOError, OSError):
+            except (requests.exceptions.RequestException, IOError, OSError):
                 with self._submit_failures_lock:
                     self._submit_failures += 1
             # JSON errors
