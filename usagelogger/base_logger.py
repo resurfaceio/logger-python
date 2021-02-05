@@ -18,11 +18,11 @@ class BaseLogger(object):
     def __init__(
         self,
         agent: str,
-        enabled: Optional[bool] = True,
+        enabled: bool = True,
         queue: Optional[List[str]] = None,
         url: Optional[str] = None,
-        skip_compression: Optional[bool] = False,
-        skip_submission: Optional[bool] = False,
+        skip_compression: bool = False,
+        skip_submission: bool = False,
     ) -> None:
 
         self.agent = agent
@@ -79,7 +79,7 @@ class BaseLogger(object):
         return self._enabled and UsageLoggers.is_enabled()
 
     @property
-    def queue(self) -> List[str]:
+    def queue(self) -> Optional[List[str]]:
         return self._queue
 
     def submit(self, msg: Optional[str]) -> None:
@@ -99,9 +99,9 @@ class BaseLogger(object):
                 url_path = url_parser.path + url_parser.query  # todo cache this
 
                 if self._url_scheme == "http":
-                    conn = http.client.HTTPConnection(hostname, url_parser.port)
+                    conn = http.client.HTTPConnection(hostname, url_parser.port)  # type: ignore
                 else:
-                    conn = http.client.HTTPSConnection(hostname, url_parser.port)
+                    conn = http.client.HTTPSConnection(hostname, url_parser.port)  # type: ignore
 
                 headers: Dict[str, str] = {
                     "Content-Type": "application/json; charset=UTF-8"
@@ -136,7 +136,7 @@ class BaseLogger(object):
 
     @property
     def url(self) -> str:
-        return self._url
+        return self._url  # type: ignore
 
     @staticmethod
     def host_lookup() -> str:

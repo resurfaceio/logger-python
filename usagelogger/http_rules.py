@@ -40,7 +40,7 @@ class HttpRules(Sized):
 
     @classmethod
     def set_default_rules(cls, rules: str) -> None:
-        cls.__default_rules: str = re.sub(
+        cls.__default_rules = re.sub(
             r"^\s*include default\s*$", "", rules, flags=re.MULTILINE
         )
 
@@ -221,7 +221,7 @@ class HttpRules(Sized):
         # parse all rules
         prs: List = []
         for rule in rules.split("\n"):
-            parsed: HttpRule = HttpRules.parse_rule(rule)
+            parsed = HttpRules.parse_rule(rule)
             if parsed is not None:
                 prs.append(parsed)
         self._length = len(prs)

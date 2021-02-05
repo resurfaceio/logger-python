@@ -16,11 +16,11 @@ class HttpLogger(BaseLogger):
 
     def __init__(
         self,
-        enabled: Optional[bool] = True,
+        enabled: bool = True,
         queue: Optional[List[str]] = None,
         url: Optional[str] = None,
-        skip_compression: Optional[bool] = False,
-        skip_submission: Optional[bool] = False,
+        skip_compression: bool = False,
+        skip_submission: bool = False,
         rules: Optional[str] = None,
     ) -> None:
 
@@ -34,7 +34,7 @@ class HttpLogger(BaseLogger):
         )
 
         # parse specified rules
-        self._rules = HttpRules(rules)
+        self._rules = HttpRules(rules)  # type: ignore
 
         # apply configuration rules
         self.skip_compression = self._rules.skip_compression
@@ -54,7 +54,7 @@ class HttpLogger(BaseLogger):
 
     def submit_if_passing(self, details: List[List[str]]) -> None:
         # apply active rules
-        details = self._rules.apply(details)
+        details = self._rules.apply(details)  # type: ignore
         if details is None:
             return
 
