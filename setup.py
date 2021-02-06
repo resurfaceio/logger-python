@@ -29,7 +29,7 @@ setup(
     keywords="logging resurface",
     packages=["usagelogger"],
     python_requires=">=3.7, <4",
-    install_requires=[],
+    install_requires=read_file("requirements.txt").splitlines(),
     tests_require=["pytest"],
     project_urls={
         "Bug Reports": "https://github.com/resurfaceio/logger-python/issues",
