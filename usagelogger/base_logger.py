@@ -100,9 +100,9 @@ class BaseLogger:
                 headers: Dict[str, str] = {
                     "Content-Type": "application/json; charset=UTF-8",
                     "Connection": "keep-alive",
+                    "User-Agent": "Resurface/" + usagelogger.__version__ + "(python)",
                 }
 
-                # TODO: Add/Mody test for skip compression
                 if not self.skip_compression:
                     body: bytes = json.dumps(msg).encode("utf-8")
                 else:
