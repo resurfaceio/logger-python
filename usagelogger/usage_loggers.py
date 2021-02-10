@@ -2,6 +2,7 @@
 # © 2016-2021 Resurface Labs Inc.
 
 from os import getenv
+from typing import Optional
 
 
 class UsageLoggers(object):
@@ -23,5 +24,5 @@ class UsageLoggers(object):
         return not cls.__disabled
 
     @staticmethod
-    def url_by_default() -> str:
+    def url_by_default() -> Optional[str]:
         return getenv("USAGE_LOGGERS_URL")

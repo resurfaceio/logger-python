@@ -24,7 +24,9 @@ class HttpMessage(object):
             return
 
         # copy details from request & resonse
-        message = cls.build(request, response, response_body, request_body)
+        message: List[List[str]] = cls.build(
+            request, response, response_body, request_body
+        )
 
         # todo copy details from active session
 
@@ -44,9 +46,9 @@ class HttpMessage(object):
         response,
         response_body: Optional[str] = None,
         request_body: Optional[str] = None,
-    ) -> Optional[List[List[str]]]:
+    ) -> List[List[str]]:
 
-        message: Optional[List[List[str]]] = None
+        message: List[List[str]] = []
 
         if request.__class__.__name__ == "WSGIRequest":
             message = []
