@@ -137,8 +137,7 @@ DEALINGS IN THE SOFTWARE.
 
 https://pypi.python.org/pypi/autoflake <br>Used under MIT License
 
-Copyright (C) 2011-2013 Tarek Ziade <tarek@ziade.org><br>
-Copyright (C) 2012-2016 Ian Cordasco <graffatcolmingov@gmail.com><br>
+Copyright (C) 2012-2018 Steven Myint<br>
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
