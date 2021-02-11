@@ -28,9 +28,6 @@ class HttpLoggerForDjango:
         interval = str((time.time() - start_time) * 1000)
 
         HttpMessage.send(
-            self.logger,
-            request=request,
-            response=response,
-            interval=interval,
+            self.logger, request=request, response=response, interval=interval,
         )
         return response

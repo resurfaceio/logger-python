@@ -10,15 +10,18 @@ For the code linting and formatting, we use both black and flake8. Pre-commit ho
 $ git clone git@github.com:resurfaceio/logger-python.git resurfaceio-logger-python
 $ cd resurfaceio-logger-python
 
-## Install pre-commit hooks
-$ pre-commit install
 
 ## Create python virtual env and activate
-$ pyton -m venv .venv
+$ python -m venv .venv
 $ source .venv/bin/activate
 
 ## Install dev requirements
 $ pip install -r requirements_dev.txt
+
+## Restart env after requirements installation
+
+$ deactivate
+$ source .venv/bin/activate
 ```
 
 Running unit tests:
@@ -26,6 +29,10 @@ Running unit tests:
 ```
 $ pytest
 ```
+
+## Install pre-commit hooks
+
+$ pre-commit install
 
 Precommit check:
 
