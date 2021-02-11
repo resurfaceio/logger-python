@@ -98,20 +98,18 @@ class BaseLogger:
         else:
             try:
                 headers: Dict[str, str] = {
-                    "Content-Type": "application/json; charset=UTF-8",
                     "Connection": "keep-alive",
+                    "Content-Type": "application/json; charset=UTF-8",
                     "User-Agent": "Resurface/" + usagelogger.__version__ + "(python)",
                 }
 
                 if not self.skip_compression:
-                    body: bytes = json.dumps(msg).encode("utf-8")
+                    body = msg.encode("utf-8")
                 else:
-                    headers["Accept-Encoding"] = "gzip, deflate"
-                    headers["content-encoding"] = "gzip"
+                    headers["Content-Encoding"] = "deflated"
+                    body = zlib.compress(msg.encode("utf-8"))
 
-                    body = zlib.compress(json.dumps(msg).encode("utf-8"))
                 response = self.conn.post(self.url, data=body, headers=headers)
-
                 if response.status_code == 204:
                     with self._submit_successes_lock:
                         self._submit_successes += 1
