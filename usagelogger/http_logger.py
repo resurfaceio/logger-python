@@ -59,9 +59,7 @@ class HttpLogger(BaseLogger):
             return
 
         # finalize message
-        details.append(["agent", self.AGENT])
         details.append(["host", self.host])
-        details.append(["version", self.version])
 
         # let's do this thing
         self.submit(json.dumps(details, separators=(",", ":")))

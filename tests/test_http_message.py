@@ -14,9 +14,7 @@ def test_formats_request():
     assert len(queue) == 1
     msg = queue[0]
     assert parseable(msg) is True
-    assert f'["agent","{HttpLogger.AGENT}"]' in msg
     assert f'["host","{HttpLogger.host_lookup()}"]' in msg
-    assert f'["version","{HttpLogger.version_lookup()}"]' in msg
     assert f'["now","{MOCK_NOW}"]' in msg
     assert '["request_method","GET"]' in msg
     assert f'["request_url","{MOCK_URL}"]' in msg
