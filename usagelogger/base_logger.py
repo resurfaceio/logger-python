@@ -1,6 +1,5 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-import json
 import os
 import socket
 import threading
@@ -100,7 +99,7 @@ class BaseLogger:
                 headers: Dict[str, str] = {
                     "Connection": "keep-alive",
                     "Content-Type": "application/json; charset=UTF-8",
-                    "User-Agent": "Resurface/" + usagelogger.__version__ + "(python)",
+                    "User-Agent": "Resurface/" + usagelogger.__version__ + " (" + self.agent + ")",
                 }
 
                 if not self.skip_compression:
