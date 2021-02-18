@@ -3,6 +3,7 @@
 
 from time import time
 from typing import List, Optional
+from urllib import parse
 
 from usagelogger import HttpLogger
 
@@ -95,5 +96,31 @@ class HttpMessage(object):
             )
             if final_response_body:
                 message.append(["response_body", final_response_body])
+
+        elif request.__class__.__name__ == "PreparedRequest":
+            message = []
+            if request.method:
+                message.append(["request_method", request.method])
+
+            url = request.url
+            if url:
+                message.append(["request_url", url])
+            if response.status_code:
+                message.append(["response_code", str(response.status_code)])
+            for k, v in request.headers.items():
+                message.append([f"request_header:{k}".lower(), v])
+            if request.method == "GET":
+                parsed_url = parse.parse_qs(parse.urlparse(url).query)
+                for k, v in parsed_url.items():
+                    message.append([f"request_param:{k}".lower(), v[0]])
+
+            elif request.method == "POST":
+                if request.body:
+                    for data in request.body.split("&"):
+                        k, v = data.split("=")
+                        message.append([f"request_param:{k}".lower(), v])
+            for k, v in response.headers.items():
+                message.append([f"response_header:{k}".lower(), v])
+            message.append(["response_body", response.content.decode("utf8")])
 
         return message
