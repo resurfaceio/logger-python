@@ -32,6 +32,31 @@ Requires Python 3.7 or higher and a `requests` HTTP library. No other dependenci
 pip3 install --upgrade usagelogger
 ```
 
+<a name="logging_from_requests"/>
+
+## Logging From requests
+
+```python
+
+import requests
+
+from usagelogger.middlewares import MiddlewareHTTPAdapter
+
+middlewares = [
+    ResurfaceLoggerMiddleware(
+        url="http://localhost:4001/message", rules="include debug"
+    )
+]
+session = requests.Session()
+adapter = MiddlewareHTTPAdapter(middlewares)
+session.mount("http://", adapter)
+session.mount("https://", adapter)
+response = session.get(
+    url="https://demo.url.com/?id=1&name=my_name",
+)
+
+```
+
 <a name="logging_from_django"/>
 
 ## Logging From Django
@@ -41,7 +66,7 @@ After <a href="#installing_with_pip">installing the package</a>, edit `settings.
 ```python
 MIDDLEWARE = [
     "django.middleware...",
-    "usagelogger.django.HttpLoggerForDjango",
+    "usagelogger.middlewares.HttpLoggerForDjango",
 ]
 ```
 
