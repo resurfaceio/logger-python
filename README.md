@@ -38,7 +38,7 @@ pip3 install --upgrade usagelogger
 
 import requests
 
-from usagelogger.middlewares import MiddlewareHTTPAdapter
+from usagelogger.middlewares import MiddlewareHTTPAdapter, ResurfaceLoggerMiddleware
 
 middlewares = [
     ResurfaceLoggerMiddleware(
