@@ -1,5 +1,5 @@
 # resurfaceio-logger-python
-Log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
+Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
 [![PyPI](https://img.shields.io/pypi/v/usagelogger?style=for-the-badge)](https://badge.fury.io/py/usagelogger)
 [![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-python/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-python)
