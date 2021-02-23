@@ -25,6 +25,7 @@ class BaseLogger:
         skip_compression: bool = False,
         skip_submission: bool = False,
         conn=requests.Session(),
+        timeout: int = 5,
     ) -> None:
 
         self.agent = agent
@@ -108,7 +109,7 @@ class BaseLogger:
                     headers["Content-Encoding"] = "deflated"
                     body = zlib.compress(msg.encode("utf-8"))
 
-                response = self.conn.post(self.url, data=body, headers=headers)
+                response = self.conn.post(self.url, data=body, headers=headers, self.timeout)
                 if response.status_code == 204:
                     with self._submit_successes_lock:
                         self._submit_successes += 1
