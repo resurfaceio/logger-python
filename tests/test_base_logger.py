@@ -23,18 +23,21 @@ def test_creates_multiple_instances():
     agent3 = "aGeNt3"
     url1 = "http://resurface.io"
     url2 = "http://whatever.com"
+    timeout = 3
     logger1 = BaseLogger(agent1, url=url1)
-    logger2 = BaseLogger(agent2, url=url2)
+    logger2 = BaseLogger(agent2, url=url2, timeout=timeout)
     logger3 = BaseLogger(agent3, url=DEMO_URL)
 
     assert logger1.agent == agent1
     assert logger1.enableable is True
     assert logger1.enabled is True
     assert logger1.url == url1
+    assert logger1.timeout == BaseLogger.DEFAULT_TIMEOUT
     assert logger2.agent == agent2
     assert logger2.enableable is True
     assert logger2.enabled is True
     assert logger2.url == url2
+    assert logger2.timeout == timeout
     assert logger3.agent == agent3
     assert logger3.enableable is True
     assert logger3.enabled is True
