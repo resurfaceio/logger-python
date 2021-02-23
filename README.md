@@ -1,10 +1,10 @@
 # resurfaceio-logger-python
 Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
-[![PyPI](https://img.shields.io/pypi/v/usagelogger?style=for-the-badge)](https://badge.fury.io/py/usagelogger)
-[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-python/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-python)
-[![License](https://img.shields.io/github/license/resurfaceio/logger-python?style=for-the-badge)](https://github.com/resurfaceio/logger-python/blob/master/LICENSE)
-[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg?style=for-the-badge)](https://github.com/resurfaceio/logger-python/blob/master/CONTRIBUTING.md)
+[![PyPI](https://img.shields.io/pypi/v/usagelogger)](https://badge.fury.io/py/usagelogger)
+[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-python/badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-python)
+[![License](https://img.shields.io/github/license/resurfaceio/logger-python)](https://github.com/resurfaceio/logger-python/blob/master/LICENSE)
+[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg)](https://github.com/resurfaceio/logger-python/blob/master/CONTRIBUTING.md)
 
 ## Contents
 
