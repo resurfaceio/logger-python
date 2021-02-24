@@ -1,4 +1,5 @@
 # resurfaceio-logger-python
+
 Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
 [![PyPI](https://img.shields.io/pypi/v/usagelogger)](https://badge.fury.io/py/usagelogger)
@@ -38,6 +39,7 @@ pip3 install --upgrade usagelogger
 import requests
 
 from usagelogger import resurface
+
 # standard session
 s = requests.Session()
 s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
@@ -45,6 +47,7 @@ s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
 # logging session
 s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
 s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
 
 ```
 
