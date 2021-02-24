@@ -1,4 +1,5 @@
 # resurfaceio-logger-python
+
 Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
 [![PyPI](https://img.shields.io/pypi/v/usagelogger)](https://badge.fury.io/py/usagelogger)
@@ -28,6 +29,31 @@ Requires Python 3.7 or higher and a `requests` HTTP library. No other dependenci
 
 ```
 pip3 install --upgrade usagelogger
+```
+
+<a name="logging_from_aiohttp"/>
+
+## Logging From AIOHTTP
+
+```python
+
+from aiohttp import web
+
+from usagelogger.middlewares import HttpLoggerForAIOHTTP
+
+
+async def test(request):
+    return web.Response(text="Hello")
+
+app = web.Application(
+    middlewares=[
+        HttpLoggerForAIOHTTP(
+            url="http://localhost:4001/message", rules="include debug"
+        )
+    ]
+)
+app.router.add_get("/", test)
+web.run_app(app)
 ```
 
 <a name="logging_from_requests"/>
