@@ -97,7 +97,34 @@ class HttpMessage(object):
             if final_response_body:
                 message.append(["response_body", final_response_body])
 
-        elif request.__class__.__name__ in ("PreparedRequest", "Request"):
+        elif request.__class__.__name__ == "Request":
+            message = []
+            if request.method:
+                message.append(["request_method", request.method])
+
+            url = request.url
+
+            if url:
+                message.append(["request_url", str(url)])
+            if response.status:
+                message.append(["response_code", str(response.status)])
+            for k, v in request.headers.items():
+                message.append([f"request_header:{k}".lower(), v])
+            if request.method == "GET":
+
+                for k, v in url.query.items():
+                    message.append([f"request_param:{k}".lower(), v[0]])
+
+            elif request.method == "POST":
+                if request.body:
+                    for data in request.body.split("&"):
+                        k, v = data.split("=")
+                        message.append([f"request_param:{k}".lower(), v])
+            for k, v in response.headers.items():
+                message.append([f"response_header:{k}".lower(), v])
+            message.append(["response_body", response.body.decode("utf8")])
+
+        elif request.__class__.__name__ == "PreparedRequest":
             message = []
             if request.method:
                 message.append(["request_method", request.method])
