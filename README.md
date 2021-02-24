@@ -35,23 +35,16 @@ pip3 install --upgrade usagelogger
 ## Logging From requests
 
 ```python
-
 import requests
 
-from usagelogger.middlewares import MiddlewareHTTPAdapter
+from usagelogger import resurface
+# standard session
+s = requests.Session()
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
 
-middlewares = [
-    ResurfaceLoggerMiddleware(
-        url="http://localhost:4001/message", rules="include debug"
-    )
-]
-session = requests.Session()
-adapter = MiddlewareHTTPAdapter(middlewares)
-session.mount("http://", adapter)
-session.mount("https://", adapter)
-response = session.get(
-    url="https://demo.url.com/?id=1&name=my_name",
-)
+# logging session
+s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
 
 ```
 
