@@ -104,39 +104,3 @@ class MiddlewareHTTPAdapter(HTTPAdapter):
         for middleware in reversed(self.middlewares):
             response = middleware.after_build_response(req, resp, response)
         return response
-
-
-class BaseMiddleware(object):
-    def before_init_poolmanager(self, connections, maxsize, block=False):
-        """Called before `HTTPAdapter::init_poolmanager`. Optionally return a
-        dictionary of keyword arguments to `PoolManager`.
-        :returns: `dict` of keyword arguments or `None`
-        """
-
-    def before_send(self, request, *args, **kwargs):
-        """Called before `HTTPAdapter::send`. If a truthy value is returned,
-        :class:`MiddlewareHTTPAdapter <MiddlewareHTTPAdapter>` will short-
-        circuit the remaining middlewares and `HTTPAdapter::send`, using the
-        returned value instead.
-        :param request: The `PreparedRequest` used to generate the response.
-        :returns: The `Response` object or `None`.
-        """
-
-    def before_build_response(self, req, resp):
-        """Called before `HTTPAdapter::build_response`. Optionally modify the
-        returned `PreparedRequest` and `HTTPResponse` objects.
-        :param req: The `PreparedRequest` used to generate the response.
-        :param resp: The urllib3 response object.
-        :returns: Tuple of potentially modified (req, resp)
-        """
-        return req, resp
-
-    def after_build_response(self, req, resp, response):
-        """Called after `HTTPAdapter::build_response`. Optionally modify the
-        returned `Response` object.
-        :param req: The `PreparedRequest` used to generate the response.
-        :param resp: The urllib3 response object.
-        :param response: The `Response` object.
-        :returns: The potentially modified `Response` object.
-        """
-        return response
