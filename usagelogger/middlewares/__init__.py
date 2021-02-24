@@ -1,3 +1,4 @@
+from ._aiohttp import HttpLoggerForAIOHTTP  # noqa
 from ._django import HttpLoggerForDjango  # noqa
 from ._flask import HttpLoggerForFlask
 from ._requests import ResurfaceLoggerMiddleware  # noqa
@@ -8,4 +9,5 @@ __all__ = [
     "ResurfaceLoggerMiddleware",
     "MiddlewareHTTPAdapter",
     "HttpLoggerForFlask",
+    "HttpLoggerForAIOHTTP",
 ]
