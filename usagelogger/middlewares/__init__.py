@@ -1,5 +1,4 @@
 from ._django import HttpLoggerForDjango  # noqa
-from ._requests import ResurfaceLoggerMiddleware  # noqa
-from .requests_adapter import MiddlewareHTTPAdapter  # noqa
+from ._requests import Session  # noqa
 
-__all__ = ["HttpLoggerForDjango", "ResurfaceLoggerMiddleware", "MiddlewareHTTPAdapter"]
+__all__ = ["HttpLoggerForDjango", "Session"]
