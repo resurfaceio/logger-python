@@ -1,6 +1,7 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 import os
+import queue as Queue
 import socket
 import threading
 import zlib
@@ -25,6 +26,7 @@ class BaseLogger:
         skip_compression: bool = False,
         skip_submission: bool = False,
         conn=requests.Session(),
+        max_queue_depth: int = 128,
     ) -> None:
 
         self.agent = agent
@@ -40,7 +42,12 @@ class BaseLogger:
 
         # set options in priority order
         self._enabled = enabled
-        self._queue = queue if isinstance(queue, list) else None
+        if isinstance(queue, list):
+            self._queue = Queue.Queue(max_queue_depth)
+            for i in queue:
+                self._queue.put_nowait(i)
+        else:
+            self._queue = None
         if self._queue is not None:
             self._url = None
         elif url is not None and isinstance(url, str):
@@ -88,18 +95,16 @@ class BaseLogger:
     def submit(self, msg: str) -> None:
         """Submits JSON message to intended destination."""
 
-        if msg is None or self.skip_submission is True or self.enabled is False:
-            pass
-        elif self._queue is not None:
-            self._queue.append(msg)
-            with self._submit_successes_lock:
-                self._submit_successes += 1
-        else:
+        def post_request(msg):
             try:
                 headers: Dict[str, str] = {
                     "Connection": "keep-alive",
                     "Content-Type": "application/json; charset=UTF-8",
-                    "User-Agent": "Resurface/" + usagelogger.__version__ + " (" + self.agent + ")",
+                    "User-Agent": "Resurface/"
+                    + usagelogger.__version__
+                    + " ("
+                    + self.agent
+                    + ")",
                 }
 
                 if not self.skip_compression:
@@ -115,6 +120,8 @@ class BaseLogger:
                 else:
                     with self._submit_failures_lock:
                         self._submit_failures += 1
+                if self._queue is not None:
+                    self._queue.get()
 
             # http errors
             except (requests.exceptions.RequestException, IOError, OSError):
@@ -124,6 +131,16 @@ class BaseLogger:
             except (OverflowError, TypeError, ValueError):
                 with self._submit_failures_lock:
                     self._submit_failures += 1
+
+        if msg is None or self.skip_submission is True or self.enabled is False:
+            pass
+        elif self._queue is not None:
+            self._queue.put(msg)
+            threading.Thread(target=post_request, args=(msg,)).start()
+            # with self._submit_successes_lock:
+            # self._submit_successes += 1
+        else:
+            threading.Thread(target=post_request, args=(msg,)).start()
 
     @property
     def submit_failures(self) -> int:
