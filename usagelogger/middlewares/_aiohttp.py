@@ -15,7 +15,10 @@ def HttpLoggerForAIOHTTP(url, rules):
         interval = str((time.time() - start_time) * 1000)
 
         HttpMessage.send(
-            logger, request=request, response=response, interval=interval,
+            logger,
+            request=request,
+            response=response,
+            interval=interval,
         )
 
         return response
