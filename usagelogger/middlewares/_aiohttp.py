@@ -13,7 +13,6 @@ def HttpLoggerForAIOHTTP(url, rules):
         start_time = time.time()
         response = await handler(request)
         interval = str((time.time() - start_time) * 1000)
-        print(request.__class__.__name__)
 
         HttpMessage.send(
             logger, request=request, response=response, interval=interval,
