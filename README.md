@@ -1,12 +1,11 @@
 # resurfaceio-logger-python
 
-Logging usage of Python-based services, with user privacy by design.
+Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
-Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
-
-![Python Version](https://img.shields.io/badge/python-3.7+-blue?style=for-the-badge&logo=python) [![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-python/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-python) [![License](https://img.shields.io/github/license/resurfaceio/logger-python?style=for-the-badge)](https://github.com/resurfaceio/logger-python/blob/master/LICENSE) <a href="https://github.com/resurfaceio/logger-python/blob/master/CONTRIBUTING.md" target="_blank" title="Contributions are welcome"><img src="https://img.shields.io/badge/contributions-welcome-green.svg?style=for-the-badge"></a>
-
-<a href="https://badge.fury.io/py/usagelogger" target="_blank" title="PyPI version"><img src="https://badge.fury.io/py/usagelogger.svg"></a>
+[![PyPI](https://img.shields.io/pypi/v/usagelogger)](https://badge.fury.io/py/usagelogger)
+[![CodeFactor](https://www.codefactor.io/repository/github/resurfaceio/logger-python/badge)](https://www.codefactor.io/repository/github/resurfaceio/logger-python)
+[![License](https://img.shields.io/github/license/resurfaceio/logger-python)](https://github.com/resurfaceio/logger-python/blob/master/LICENSE)
+[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg)](https://github.com/resurfaceio/logger-python/blob/master/CONTRIBUTING.md)
 
 ## Contents
 
@@ -37,23 +36,18 @@ pip3 install --upgrade usagelogger
 ## Logging From requests
 
 ```python
-
 import requests
 
-from usagelogger.middlewares import MiddlewareHTTPAdapter, ResurfaceLoggerMiddleware
+from usagelogger import resurface
 
-middlewares = [
-    ResurfaceLoggerMiddleware(
-        url="http://localhost:4001/message", rules="include debug"
-    )
-]
-session = requests.Session()
-adapter = MiddlewareHTTPAdapter(middlewares)
-session.mount("http://", adapter)
-session.mount("https://", adapter)
-response = session.get(
-    url="https://demo.url.com/?id=1&name=my_name",
-)
+# standard session
+s = requests.Session()
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
+# logging session
+s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
 
 ```
 
