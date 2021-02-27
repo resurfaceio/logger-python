@@ -99,7 +99,11 @@ class BaseLogger:
                 headers: Dict[str, str] = {
                     "Connection": "keep-alive",
                     "Content-Type": "application/json; charset=UTF-8",
-                    "User-Agent": "Resurface/" + usagelogger.__version__ + " (" + self.agent + ")",
+                    "User-Agent": "Resurface/"
+                    + usagelogger.__version__
+                    + " ("
+                    + self.agent
+                    + ")",
                 }
 
                 if not self.skip_compression:

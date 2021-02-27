@@ -61,23 +61,18 @@ web.run_app(app)
 ## Logging From requests
 
 ```python
-
 import requests
 
-from usagelogger.middlewares import MiddlewareHTTPAdapter, ResurfaceLoggerMiddleware
+from usagelogger import resurface
 
-middlewares = [
-    ResurfaceLoggerMiddleware(
-        url="http://localhost:4001/message", rules="include debug"
-    )
-]
-session = requests.Session()
-adapter = MiddlewareHTTPAdapter(middlewares)
-session.mount("http://", adapter)
-session.mount("https://", adapter)
-response = session.get(
-    url="https://demo.url.com/?id=1&name=my_name",
-)
+# standard session
+s = requests.Session()
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
+# logging session
+s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
 
 ```
 
@@ -103,6 +98,29 @@ USAGELOGGER = {
 }
 ```
 
+<a name="logging_from_flask"/>
+
+## Logging From Flask
+
+```python
+from flask import Flask
+
+from usagelogger.middlewares import HttpLoggerForFlask
+
+app = Flask(__name__)
+
+app.wsgi_app = HttpLoggerForFlask(  # type: ignore
+    app=app.wsgi_app, url="http://localhost:4001/message", rules="include debug"
+)
+
+@app.route("/")
+def home():
+    return "This route works!"
+
+app.run(debug=True)
+
+```
+
 <a name="logging_with_api"/>
 
 ## Logging With API
@@ -125,3 +143,7 @@ but logging rules are easily customized to meet the needs of any application.
 ---
 
 <small>&copy; 2016-2021 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
+
+```
+
+```
