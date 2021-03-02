@@ -1,4 +1,5 @@
 # resurfaceio-logger-python
+
 Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
 [![PyPI](https://img.shields.io/pypi/v/usagelogger)](https://badge.fury.io/py/usagelogger)
@@ -30,6 +31,51 @@ Requires Python 3.7 or higher and a `requests` HTTP library. No other dependenci
 pip3 install --upgrade usagelogger
 ```
 
+<a name="logging_from_aiohttp"/>
+
+## Logging From AIOHTTP
+
+```python
+
+from aiohttp import web
+
+from usagelogger.middlewares import HttpLoggerForAIOHTTP
+
+
+async def test(request):
+    return web.Response(text="Hello")
+
+app = web.Application(
+    middlewares=[
+        HttpLoggerForAIOHTTP(
+            url="http://localhost:4001/message", rules="include debug"
+        )
+    ]
+)
+app.router.add_get("/", test)
+web.run_app(app)
+```
+
+<a name="logging_from_requests"/>
+
+## Logging From requests
+
+```python
+import requests
+
+from usagelogger import resurface
+
+# standard session
+s = requests.Session()
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
+# logging session
+s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
+
+```
+
 <a name="logging_from_django"/>
 
 ## Logging From Django
@@ -39,7 +85,7 @@ After <a href="#installing_with_pip">installing the package</a>, edit `settings.
 ```python
 MIDDLEWARE = [
     "django.middleware...",
-    "usagelogger.django.HttpLoggerForDjango",
+    "usagelogger.middlewares.HttpLoggerForDjango",
 ]
 ```
 
@@ -50,6 +96,29 @@ USAGELOGGER = {
     'url': 'http://localhost:4001/message',
     'rules': 'include debug'
 }
+```
+
+<a name="logging_from_flask"/>
+
+## Logging From Flask
+
+```python
+from flask import Flask
+
+from usagelogger.middlewares import HttpLoggerForFlask
+
+app = Flask(__name__)
+
+app.wsgi_app = HttpLoggerForFlask(  # type: ignore
+    app=app.wsgi_app, url="http://localhost:4001/message", rules="include debug"
+)
+
+@app.route("/")
+def home():
+    return "This route works!"
+
+app.run(debug=True)
+
 ```
 
 <a name="logging_with_api"/>
@@ -74,3 +143,7 @@ but logging rules are easily customized to meet the needs of any application.
 ---
 
 <small>&copy; 2016-2021 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
+
+```
+
+```
