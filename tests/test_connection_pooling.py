@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import unittest
 from typing import List
@@ -15,6 +16,7 @@ class TestBaseLogger(unittest.TestCase):
         )
 
     def tearDown(self) -> None:
+        logging.shutdown()
         os.remove("test_debug.log")
 
     def test_requests_keep_alive(self) -> None:
