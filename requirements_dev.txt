@@ -1,9 +1,13 @@
 -e .
-mypy
-black
-flake8
-pre-commit
-setuptools 
-wheel 
-twine 
-pytest
+mypy==0.800
+black==20.8b1
+flake8==3.8.4
+pre-commit==2.10.1
+setuptools
+wheel
+twine==3.3.0
+pytest==6.2.2
+# middleware specific
+Werkzeug==1.0.1
+django==3.1.7
+aiohttp==3.7.4
