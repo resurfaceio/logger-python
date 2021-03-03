@@ -9,7 +9,7 @@ from requests.utils import default_headers
 
 from usagelogger import HttpLogger, HttpMessage
 
-from .requests_middleware_adapter import MiddlewareHTTPAdapter
+from ._adapter import MiddlewareHTTPAdapter
 
 
 class Session(RequestsSession):

@@ -19,7 +19,7 @@ class HttpMessage(object):
         request_body: Optional[str] = None,
         now=None,
         interval=None,
-    ) -> None:  # todo missing type hints
+    ) -> None:  # TODO: missing type hints
 
         if not logger.enabled:
             return
@@ -29,7 +29,7 @@ class HttpMessage(object):
             request, response, response_body, request_body
         )
 
-        # todo copy details from active session
+        # TODO: copy details from active session
 
         # add timing details
         message.append(

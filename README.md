@@ -12,7 +12,10 @@ Easily log API requests and responses to your own <a href="https://resurface.io"
 <ul>
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#installing_with_pip">Installing With pip</a></li>
+<li><a href="#logging_from_aiohttp">Logging From AIOHTTP</a></li>
+<li><a href="#logging_from_requests">Logging From Requests</a></li>
 <li><a href="#logging_from_django">Logging From Django</a></li>
+<li><a href="#logging_from_flask">Logging From Flas</a></li>
 <li><a href="#logging_with_api">Logging With API</a></li>
 <li><a href="#privacy">Protecting User Privacy</a></li>
 </ul>
@@ -85,7 +88,7 @@ After <a href="#installing_with_pip">installing the package</a>, edit `settings.
 ```python
 MIDDLEWARE = [
     "django.middleware...",
-    "usagelogger.middlewares.HttpLoggerForDjango",
+    "usagelogger.django.HttpLoggerForDjango",
 ]
 ```
 
