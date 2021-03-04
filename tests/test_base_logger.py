@@ -127,6 +127,7 @@ def test_submits_to_demo_url():
     msg = json.dumps(message, separators=(",", ":"))
     assert parseable(msg) is True
     logger.submit(msg)
+    logger.wait_for_response()
     assert logger.submit_failures == 0
     assert logger.submit_successes == 1
 
@@ -143,6 +144,7 @@ def test_submits_to_demo_url_via_http():
     msg = json.dumps(message, separators=(",", ":"))
     assert parseable(msg) is True
     logger.submit(msg)
+    logger.wait_for_response()
     assert logger.submit_failures == 0
     assert logger.submit_successes == 1
 
@@ -161,6 +163,7 @@ def test_submits_to_demo_url_without_compression():
     msg = json.dumps(message, separators=(",", ":"))
     assert parseable(msg) is True
     logger.submit(msg)
+    logger.wait_for_response()
     assert logger.submit_failures == 0
     assert logger.submit_successes == 1
 
@@ -171,6 +174,7 @@ def test_submits_to_denied_url():
         assert logger.enableable is True
         assert logger.enabled is True
         logger.submit("{}")
+        logger.wait_for_response()
         assert logger.submit_failures == 1
         assert logger.submit_successes == 0
 

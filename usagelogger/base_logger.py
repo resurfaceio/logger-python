@@ -1,10 +1,10 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 import os
-import queue as Queue
 import socket
 import threading
 import zlib
+from queue import Queue
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
 
@@ -35,8 +35,6 @@ class BaseLogger:
         self.skip_submission = skip_submission
         self.version = self.version_lookup()
         self.conn = conn
-        self._boundedq = Queue.Queue(max_slots)
-        threading.Thread(target=self.worker).start()
 
         # read provided options
         if url is None:
@@ -68,6 +66,11 @@ class BaseLogger:
         self._submit_successes = 0
         self._submit_successes_lock = threading.Lock()
 
+        # create and start background thread and a bounded queue
+        self._bounded_queue = Queue(max_slots)  # exchanges info between threads
+        threading.Thread(target=self.hermes, daemon=True).start()
+        threading.Thread(target=self.thread_monitor).start()
+
     def disable(self):
         self._enabled = False
         return self
@@ -90,7 +93,7 @@ class BaseLogger:
         return self._queue
 
     def submit(self, msg: str) -> None:
-        """Submits JSON message to intended destination."""
+        """Adds JSON message to bounded queue."""
 
         if msg is None or self.skip_submission is True or self.enabled is False:
             pass
@@ -99,32 +102,30 @@ class BaseLogger:
             with self._submit_successes_lock:
                 self._submit_successes += 1
         else:
-            self._boundedq.put(msg)
+            headers: Dict[str, str] = {
+                "Connection": "keep-alive",
+                "Content-Type": "application/json; charset=UTF-8",
+                "User-Agent": "Resurface/"
+                + usagelogger.__version__
+                + " ("
+                + self.agent
+                + ")",
+            }
 
-    def worker(self) -> None:
-        """
-        Submits JSON message to intended destination from background thread.
-        """
+            if not self.skip_compression:
+                body = msg.encode("utf-8")
+            else:
+                headers["Content-Encoding"] = "deflated"
+                body = zlib.compress(msg.encode("utf-8"))
+
+            self._bounded_queue.put((headers, body))
+
+    def hermes(self) -> None:
+        """Submits JSON messages to intended destination."""
 
         while True:
-            msg = self._boundedq.get()
+            headers, body = self._bounded_queue.get()
             try:
-                headers: Dict[str, str] = {
-                    "Connection": "keep-alive",
-                    "Content-Type": "application/json; charset=UTF-8",
-                    "User-Agent": "Resurface/"
-                    + usagelogger.__version__
-                    + " ("
-                    + self.agent
-                    + ")",
-                }
-
-                if not self.skip_compression:
-                    body = msg.encode("utf-8")
-                else:
-                    headers["Content-Encoding"] = "deflated"
-                    body = zlib.compress(msg.encode("utf-8"))
-
                 response = self.conn.post(self.url, data=body, headers=headers)
                 if response.status_code == 204:
                     with self._submit_successes_lock:
@@ -141,6 +142,17 @@ class BaseLogger:
             except (OverflowError, TypeError, ValueError):
                 with self._submit_failures_lock:
                     self._submit_failures += 1
+            finally:
+                self._bounded_queue.task_done()
+
+    def thread_monitor(self) -> None:
+        """Waits for any request still in queue after main thread stops."""
+        threading.main_thread().join()
+        self._bounded_queue.join()
+
+    def wait_for_response(self) -> None:
+        """Waits for any request still in queue."""
+        self._bounded_queue.join()
 
     @property
     def submit_failures(self) -> int:

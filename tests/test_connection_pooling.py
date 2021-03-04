@@ -29,6 +29,7 @@ class TestBaseLogger(unittest.TestCase):
             ]
             msg = json.dumps(message, separators=(",", ":"))
             self.logger.submit(msg)
+        self.logger.wait_for_response()
 
         with open("test_debug.log", "r") as f:
             self.assertEqual(
