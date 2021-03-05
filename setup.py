@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 def read_file(name):
@@ -27,9 +27,10 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     keywords="logging resurface",
-    packages=["usagelogger"],
+    packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
     install_requires=read_file("requirements.txt").splitlines(),
+    include_package_data=True,
     tests_require=["pytest"],
     project_urls={
         "Bug Reports": "https://github.com/resurfaceio/logger-python/issues",
