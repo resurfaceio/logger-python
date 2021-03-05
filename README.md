@@ -42,7 +42,7 @@ pip3 install --upgrade usagelogger
 
 from aiohttp import web
 
-from usagelogger.middlewares import HttpLoggerForAIOHTTP
+from usagelogger.aiohttp import HttpLoggerForAIOHTTP
 
 
 async def test(request):
@@ -88,7 +88,7 @@ After <a href="#installing_with_pip">installing the package</a>, edit `settings.
 ```python
 MIDDLEWARE = [
     "django.middleware...",
-    "usagelogger.middlewares.HttpLoggerForDjango",
+    "usagelogger.django.HttpLoggerForDjango",
 ]
 ```
 
@@ -108,7 +108,7 @@ USAGELOGGER = {
 ```python
 from flask import Flask
 
-from usagelogger.middlewares import HttpLoggerForFlask
+from usagelogger.flask import HttpLoggerForFlask
 
 app = Flask(__name__)
 
