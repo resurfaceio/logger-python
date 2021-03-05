@@ -88,7 +88,7 @@ After <a href="#installing_with_pip">installing the package</a>, edit `settings.
 ```python
 MIDDLEWARE = [
     "django.middleware...",
-    "usagelogger.django.HttpLoggerForDjango",
+    "usagelogger.middlewares.HttpLoggerForDjango",
 ]
 ```
 
