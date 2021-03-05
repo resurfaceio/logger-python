@@ -18,5 +18,4 @@ __all___ = [
     "HttpLogger",
     "HttpMessage",
     "resurface",
-    "django",
 ]
