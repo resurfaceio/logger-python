@@ -101,23 +101,29 @@ class BaseLogger:
             with self._submit_successes_lock:
                 self._submit_successes += 1
         else:
-            headers: Dict[str, str] = {
-                "Connection": "keep-alive",
-                "Content-Type": "application/json; charset=UTF-8",
-                "User-Agent": "Resurface/"
-                + usagelogger.__version__
-                + " ("
-                + self.agent
-                + ")",
-            }
+            try:
+                headers: Dict[str, str] = {
+                    "Connection": "keep-alive",
+                    "Content-Type": "application/json; charset=UTF-8",
+                    "User-Agent": "Resurface/"
+                    + usagelogger.__version__
+                    + " ("
+                    + self.agent
+                    + ")",
+                }
 
-            if not self.skip_compression:
-                body = msg.encode("utf-8")
-            else:
-                headers["Content-Encoding"] = "deflated"
-                body = zlib.compress(msg.encode("utf-8"))
+                if not self.skip_compression:
+                    body = msg.encode("utf-8")
+                else:
+                    headers["Content-Encoding"] = "deflated"
+                    body = zlib.compress(msg.encode("utf-8"))
 
-            self._bounded_queue.put((headers, body))
+                self._bounded_queue.put((headers, body))
+
+            # JSON errors
+            except (OverflowError, TypeError, ValueError):
+                with self._submit_failures_lock:
+                    self._submit_failures += 1
 
     def hermes(self) -> None:
         """Submits JSON messages to intended destination."""
@@ -135,10 +141,6 @@ class BaseLogger:
 
             # http errors
             except (requests.exceptions.RequestException, IOError, OSError):
-                with self._submit_failures_lock:
-                    self._submit_failures += 1
-            # JSON errors
-            except (OverflowError, TypeError, ValueError):
                 with self._submit_failures_lock:
                     self._submit_failures += 1
             finally:
