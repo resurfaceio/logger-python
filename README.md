@@ -101,7 +101,7 @@ app.run(debug=True)
 
 <a name="logging_from_requests"/>
 
-## Logging From requests
+## Logging From Requests
 
 ```python
 from usagelogger import resurface
