@@ -13,9 +13,9 @@ Easily log API requests and responses to your own <a href="https://resurface.io"
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#installing_with_pip">Installing With pip</a></li>
 <li><a href="#logging_from_aiohttp">Logging From AIOHTTP</a></li>
-<li><a href="#logging_from_requests">Logging From Requests</a></li>
 <li><a href="#logging_from_django">Logging From Django</a></li>
-<li><a href="#logging_from_flask">Logging From Flas</a></li>
+<li><a href="#logging_from_flask">Logging From Flask</a></li>
+<li><a href="#logging_from_requests">Logging From Requests</a></li>
 <li><a href="#logging_with_api">Logging With API</a></li>
 <li><a href="#privacy">Protecting User Privacy</a></li>
 </ul>
@@ -57,26 +57,6 @@ app = web.Application(
 )
 app.router.add_get("/", test)
 web.run_app(app)
-```
-
-<a name="logging_from_requests"/>
-
-## Logging From requests
-
-```python
-import requests
-
-from usagelogger import resurface
-
-# standard session
-s = requests.Session()
-s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
-
-# logging session
-s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
-s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
-
-
 ```
 
 <a name="logging_from_django"/>
@@ -121,6 +101,26 @@ def home():
     return "This route works!"
 
 app.run(debug=True)
+
+```
+
+<a name="logging_from_requests"/>
+
+## Logging From requests
+
+```python
+import requests
+
+from usagelogger import resurface
+
+# standard session
+s = requests.Session()
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
+# logging session
+s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
+s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
+
 
 ```
 
