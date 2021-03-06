@@ -66,10 +66,9 @@ class BaseLogger:
         self._submit_successes = 0
         self._submit_successes_lock = threading.Lock()
 
-        # create and start background thread and a bounded queue
+        # create and start background thread and bounded queue
         self._bounded_queue = Queue(max_slots)  # exchanges info between threads
         threading.Thread(target=self.hermes, daemon=True).start()
-        threading.Thread(target=self.thread_monitor).start()
 
     def disable(self):
         self._enabled = False
@@ -144,11 +143,6 @@ class BaseLogger:
                     self._submit_failures += 1
             finally:
                 self._bounded_queue.task_done()
-
-    def thread_monitor(self) -> None:
-        """Waits for any request still in queue after main thread stops."""
-        threading.main_thread().join()
-        self._bounded_queue.join()
 
     def wait_for_response(self) -> None:
         """Waits for any request still in queue."""
