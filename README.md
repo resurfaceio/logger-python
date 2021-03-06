@@ -39,11 +39,8 @@ pip3 install --upgrade usagelogger
 ## Logging From AIOHTTP
 
 ```python
-
 from aiohttp import web
-
 from usagelogger.aiohttp import HttpLoggerForAIOHTTP
-
 
 async def test(request):
     return web.Response(text="Hello")
@@ -63,7 +60,7 @@ web.run_app(app)
 
 ## Logging From Django
 
-After <a href="#installing_with_pip">installing the package</a>, edit `settings.py` to register middleware.
+First edit `settings.py` to register middleware, like this:
 
 ```python
 MIDDLEWARE = [
@@ -72,7 +69,7 @@ MIDDLEWARE = [
 ]
 ```
 
-Now add a new section to `settings.py` for logging configuration.
+Then add a new section to `settings.py` for logging configuration, like this:
 
 ```python
 USAGELOGGER = {
@@ -87,7 +84,6 @@ USAGELOGGER = {
 
 ```python
 from flask import Flask
-
 from usagelogger.flask import HttpLoggerForFlask
 
 app = Flask(__name__)
@@ -101,7 +97,6 @@ def home():
     return "This route works!"
 
 app.run(debug=True)
-
 ```
 
 <a name="logging_from_requests"/>
@@ -109,19 +104,10 @@ app.run(debug=True)
 ## Logging From requests
 
 ```python
-import requests
-
 from usagelogger import resurface
 
-# standard session
-s = requests.Session()
-s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
-
-# logging session
 s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
-s.get("https://httpbin.org/cookies/set/sessioncookie/123456789")
-
-
+s.get(...)
 ```
 
 <a name="logging_with_api"/>
@@ -144,9 +130,4 @@ but logging rules are easily customized to meet the needs of any application.
 <a href="https://resurface.io/rules.html">Logging rules documentation</a>
 
 ---
-
 <small>&copy; 2016-2021 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
-
-```
-
-```
