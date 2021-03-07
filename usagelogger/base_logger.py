@@ -26,7 +26,7 @@ class BaseLogger:
         skip_compression: bool = False,
         skip_submission: bool = False,
         conn=requests.Session(),
-        max_slots: int = 128,
+        max_concurrent: int = 128,
     ) -> None:
 
         self.agent = agent
@@ -67,7 +67,7 @@ class BaseLogger:
         self._submit_successes_lock = threading.Lock()
 
         # create and start background thread and bounded queue
-        self._bounded_queue = Queue(max_slots)  # exchanges info between threads
+        self._bounded_queue = Queue(max_concurrent)  # exchanges info between threads
         threading.Thread(target=self.hermes, daemon=True).start()
 
     def disable(self):
