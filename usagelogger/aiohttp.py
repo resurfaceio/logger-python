@@ -1,4 +1,5 @@
 import time
+from typing import Optional
 
 from aiohttp import web
 
@@ -7,7 +8,7 @@ from usagelogger.http_request_impl import HttpRequestImpl
 from usagelogger.http_response_impl import HttpResponseImpl
 
 
-def HttpLoggerForAIOHTTP(url, rules):
+def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None):
     logger = HttpLogger(url=url, rules=rules)
 
     @web.middleware
