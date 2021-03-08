@@ -19,7 +19,7 @@ class dotdict(dict):
 
 
 class HttpLoggerForFlask:
-    def __init__(self, app, url: str, rules: str):
+    def __init__(self, app, url: Optional[str] = None, rules: Optional[str] = None):
         self.app = app
         self.logger = HttpLogger(url=url, rules=rules)
         self.start_time: float = 0.0

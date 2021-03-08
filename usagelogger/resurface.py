@@ -1,5 +1,6 @@
 import time
 from collections import OrderedDict
+from typing import Optional
 
 from requests.cookies import cookiejar_from_dict
 from requests.hooks import default_hooks
@@ -13,7 +14,7 @@ from ._adapter import MiddlewareHTTPAdapter
 
 
 class Session(RequestsSession):
-    def __init__(self, url="", rules="") -> None:
+    def __init__(self, url: Optional[str] = None, rules: Optional[str] = None) -> None:
         self.headers = default_headers()
 
         self.auth = None
@@ -47,7 +48,9 @@ class Session(RequestsSession):
 
 
 class ResurfaceHTTPAdapter:
-    def __init__(self, url, rules, *args, **kwargs):
+    def __init__(
+        self, url: Optional[str] = None, rules: Optional[str] = None, *args, **kwargs
+    ):
         self.logger = HttpLogger(url=url, rules=rules)
         self.start_time = 0
 
