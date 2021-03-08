@@ -102,7 +102,7 @@ class HttpMessage(object):
             if request.method:
                 message.append(["request_method", request.method])
 
-            url = request.url
+            url = str(request.url)
             if url:
                 message.append(["request_url", url])
             if response.status_code:
