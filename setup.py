@@ -8,7 +8,7 @@ def read_file(name):
 
 setup(
     name="usagelogger",
-    version="2.1.1",
+    version="2.2.0",
     description="Logging usage of Python-based services, with user privacy by design.",
     long_description=read_file("DESCRIPTIONS.md"),
     long_description_content_type="text/markdown",
