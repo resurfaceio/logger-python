@@ -97,7 +97,7 @@ class HttpMessage(object):
             if final_response_body:
                 message.append(["response_body", final_response_body])
 
-        elif request.__class__.__name__ in ("PreparedRequest", "Request"):
+        elif request.__class__.__name__ == "PreparedRequest":
             message = []
             if request.method:
                 message.append(["request_method", request.method])
