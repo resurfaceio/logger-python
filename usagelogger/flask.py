@@ -2,20 +2,13 @@
 # © 2016-2021 Resurface Labs Inc.
 
 import time
-from typing import Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
+from urllib import parse
 
 from werkzeug.wrappers import Request
 from werkzeug.wsgi import ClosingIterator
 
-from usagelogger import HttpLogger, HttpMessage
-
-
-class dotdict(dict):
-    """dot.notation access to dictionary attributes"""
-
-    __getattr__ = dict.get
-    __setattr__ = dict.__setitem__  # type: ignore
-    __delattr__ = dict.__delitem__  # type: ignore
+from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
 
 
 class HttpLoggerForFlask:
@@ -26,13 +19,13 @@ class HttpLoggerForFlask:
         self.interval: float = 0.0
         self.response: List[bytes] = []
         self.response_headers: Iterable[Tuple[str, str]] = []
-        self.status: Optional[str] = None
+        self.status: Optional[int] = None
 
     def start_response(
         self, status: str, response_headers: Iterable[Tuple[str, str]]
     ) -> None:
         self.start_time = time.time()
-        self.status = status
+        self.status = int(status.split(" ")[0])
         self.response_headers = response_headers
 
     def finish_response(self, response: ClosingIterator) -> List[bytes]:
@@ -52,17 +45,29 @@ class HttpLoggerForFlask:
 
         response_chunks = self.finish_response(self.app(environ, _start_response))
         request = Request(environ)
-        res = dotdict(
-            {
-                "headers": dict(self.response_headers),
-                "status_code": self.status,
-                "content": self.response[0] if self.response else None,
-            }
+
+        parased_raw_params: Dict[str, List[str]] = parse.parse_qs(
+            parse.urlparse(request.url).query
         )
+        params: Dict[str, str] = {}
+
+        # Type correction
+        for k, v in parased_raw_params.items():
+            params[k] = v[0]
+
         HttpMessage.send(
             self.logger,
-            request=request,
-            response=res,
+            request=HttpRequestImpl(
+                method=request.method,
+                url=str(request.url),
+                headers=dict(request.headers),
+                params=params,
+            ),
+            response=HttpResponseImpl(
+                status=self.status,
+                body=str(self.response[0].decode()) if self.response else None,
+                headers=dict(self.response_headers),
+            ),
             interval=str(self.interval),
         )
         return ClosingIterator(response_chunks)
