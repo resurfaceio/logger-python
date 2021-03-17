@@ -17,6 +17,7 @@ def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None)
         response = await handler(request)
 
         interval = str((time.time() - start_time) * 1000)
+        data__: bytes = await request.read()
 
         HttpMessage.send(
             logger,
@@ -25,6 +26,7 @@ def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None)
                 headers=request.headers,
                 params=request.query,
                 method=request.method,
+                body=data__.decode(),
             ),
             response=HttpResponseImpl(
                 status=response.status,

@@ -62,6 +62,7 @@ class HttpLoggerForFlask:
                 url=str(request.url),
                 headers=dict(request.headers),
                 params=params,
+                body=request.data.decode(),
             ),
             response=HttpResponseImpl(
                 status=self.status,
