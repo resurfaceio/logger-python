@@ -1,7 +1,9 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
+import copy
 import time
+from io import StringIO
 from typing import Dict, Iterable, List, Optional, Tuple
 from urllib import parse
 
@@ -38,6 +40,23 @@ class HttpLoggerForFlask:
         self.response = stored_response_chunks
         return stored_response_chunks
 
+    def request_body(self, environ):
+        content_length = environ.get("CONTENT_LENGTH")
+        lines = []
+        if content_length:
+            if content_length == "-1":
+                body = environ["wsgi.input"].read(-1)
+                content_length = len(body)
+            else:
+                content_length = int(content_length)
+                for line in environ["wsgi.input"]:
+                    lines.append(line)
+                newlines = copy.copy(lines)
+                environ["wsgi.input"] = body = StringIO("".join(newlines))
+        else:
+            content_length = 0
+        return content_length, body
+
     def __call__(self, environ, start_response) -> ClosingIterator:
         def _start_response(status, response_headers, *args):
             self.start_response(status, response_headers)
@@ -49,11 +68,14 @@ class HttpLoggerForFlask:
         parased_raw_params: Dict[str, List[str]] = parse.parse_qs(
             parse.urlparse(request.url).query
         )
+
         params: Dict[str, str] = {}
 
         # Type correction
         for k, v in parased_raw_params.items():
             params[k] = v[0]
+
+        body__ = self.request_body(environ)
 
         HttpMessage.send(
             self.logger,
@@ -62,7 +84,7 @@ class HttpLoggerForFlask:
                 url=str(request.url),
                 headers=dict(request.headers),
                 params=params,
-                body=request.data.decode(),
+                body=body__,
             ),
             response=HttpResponseImpl(
                 status=self.status,
@@ -71,4 +93,5 @@ class HttpLoggerForFlask:
             ),
             interval=str(self.interval),
         )
+
         return ClosingIterator(response_chunks)
