@@ -43,6 +43,7 @@ class HttpLoggerForFlask:
     def request_body(self, environ):
         content_length = environ.get("CONTENT_LENGTH")
         lines = []
+        body = ""
         if content_length:
             if content_length == "-1":
                 body = environ["wsgi.input"].read(-1)
