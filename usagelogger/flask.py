@@ -1,9 +1,8 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-import copy
+
 import time
-from io import StringIO
 from typing import Dict, Iterable, List, Optional, Tuple
 from urllib import parse
 
@@ -42,19 +41,17 @@ class HttpLoggerForFlask:
 
     def request_body(self, environ):
         content_length = environ.get("CONTENT_LENGTH")
-        lines = []
         body = ""
         if content_length:
             if content_length == "-1":
+                # This is a special case, where the content length is basically undetermined
                 body = environ["wsgi.input"].read(-1)
                 content_length = len(body)
             else:
                 content_length = int(content_length)
-                for line in environ["wsgi.input"]:
-                    lines.append(line)
-                newlines = copy.copy(lines)
-                environ["wsgi.input"] = body = StringIO("".join(newlines))
-        else:
+                body = environ["wsgi.input"].read(content_length)
+                body = body.decode("utf-8")
+            environ["wsgi.input"] = body
             content_length = 0
         return content_length, body
 
@@ -76,7 +73,7 @@ class HttpLoggerForFlask:
         for k, v in parased_raw_params.items():
             params[k] = v[0]
 
-        body__ = self.request_body(environ)
+        _, body__ = self.request_body(environ)
 
         HttpMessage.send(
             self.logger,
@@ -85,7 +82,7 @@ class HttpLoggerForFlask:
                 url=str(request.url),
                 headers=dict(request.headers),
                 params=params,
-                body=body__.decode(),
+                body=body__,
             ),
             response=HttpResponseImpl(
                 status=self.status,
