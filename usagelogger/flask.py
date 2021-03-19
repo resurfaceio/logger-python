@@ -3,6 +3,7 @@
 
 
 import time
+from io import BytesIO
 from typing import Dict, Iterable, List, Optional, Tuple
 from urllib import parse
 
@@ -31,10 +32,8 @@ class HttpLoggerForFlask:
 
     def finish_response(self, response: ClosingIterator) -> List[bytes]:
         self.interval = 1000.0 * (time.time() - self.start_time)
-        new_response_chunks = []
         stored_response_chunks = []
         for line in response:
-            new_response_chunks.append(line)
             stored_response_chunks.append(line)
         self.response = stored_response_chunks
         return stored_response_chunks
@@ -50,12 +49,14 @@ class HttpLoggerForFlask:
             else:
                 content_length = int(content_length)
                 body = environ["wsgi.input"].read(content_length)
-                body = body.decode("utf-8")
-            environ["wsgi.input"] = body
-            content_length = 0
-        return content_length, body
+                environ["wsgi.input"] = BytesIO(bytes(body))
+
+        return body.decode("utf-8")
 
     def __call__(self, environ, start_response) -> ClosingIterator:
+
+        body__ = self.request_body(environ)
+
         def _start_response(status, response_headers, *args):
             self.start_response(status, response_headers)
             return start_response(status, response_headers, *args)
@@ -72,8 +73,6 @@ class HttpLoggerForFlask:
         # Type correction
         for k, v in parased_raw_params.items():
             params[k] = v[0]
-
-        _, body__ = self.request_body(environ)
 
         HttpMessage.send(
             self.logger,
