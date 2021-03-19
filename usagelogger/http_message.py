@@ -62,6 +62,7 @@ class HttpMessage(object):
                 message.append(["response_code", str(response.status_code)])
             for k, v in request.headers.items():
                 message.append([f"request_header:{k}".lower(), v])
+            message.append(["request_body", request.body.decode()])
             if request.method == "GET":
                 for k, v in request.GET.items():
                     message.append([f"request_param:{k}".lower(), v])
