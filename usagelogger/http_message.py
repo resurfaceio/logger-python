@@ -110,17 +110,15 @@ class HttpMessage(object):
                 message.append(["response_code", str(response.status_code)])
             for k, v in request.headers.items():
                 message.append([f"request_header:{k}".lower(), v])
-            if request.method == "GET":
-                parsed_url = parse.parse_qs(parse.urlparse(url).query)
-                for k, v in parsed_url.items():
-                    message.append([f"request_param:{k}".lower(), v[0]])
-            if request.body:
-                message.append(["request_body", request.body])
-            elif request.method == "POST":
 
-                for data in request.body.split("&"):
-                    k, v = data.split("=")
-                    message.append([f"request_param:{k}".lower(), v])
+            parsed_url = parse.parse_qs(parse.urlparse(url).query)
+            for k, v in parsed_url.items():
+                message.append([f"request_param:{k}".lower(), v[0]])
+            if request.body:
+                body_ = request.body
+                if type(body_) == bytes:
+                    body_ = body_.decode()
+                message.append(["request_body", body_])
 
             for k, v in response.headers.items():
                 message.append([f"response_header:{k}".lower(), v])
