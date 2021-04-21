@@ -40,7 +40,7 @@ class HttpLoggerForFlask:
 
     def request_body(self, environ):
         content_length = environ.get("CONTENT_LENGTH")
-        body = ""
+        body: bytes = b""
         if content_length:
             if content_length == "-1":
                 # This is a special case, where the content length is basically undetermined
