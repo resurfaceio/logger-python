@@ -115,40 +115,6 @@ def test_skips_enabling_for_undefined_url():
     assert logger.enabled is False
 
 
-def test_submits_to_demo_url():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
-    assert logger.url == DEMO_URL
-    message: List[List[str]] = [
-        ["agent", logger.agent],
-        ["version", logger.version],
-        ["now", str(MOCK_NOW)],
-        ["prototol", "https"],
-    ]
-    msg = json.dumps(message, separators=(",", ":"))
-    assert parseable(msg) is True
-    logger.submit(msg)
-    assert logger.submit_failures == 0
-    assert logger.submit_successes == 1
-
-
-def test_submits_to_demo_url_without_compression():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
-    logger.skip_compression = True
-    assert logger.skip_compression is True
-    message: List[List[str]] = [
-        ["agent", logger.agent],
-        ["version", logger.version],
-        ["now", str(MOCK_NOW)],
-        ["prototol", "https"],
-        ["skip_compression", "true"],
-    ]
-    msg = json.dumps(message, separators=(",", ":"))
-    assert parseable(msg) is True
-    logger.submit(msg)
-    assert logger.submit_failures == 0
-    assert logger.submit_successes == 1
-
-
 def test_submits_to_denied_url():
     for denied_url in MOCK_URLS_DENIED:
         logger = BaseLogger(MOCK_AGENT, url=denied_url)

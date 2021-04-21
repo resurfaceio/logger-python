@@ -5,7 +5,7 @@ import json
 
 from usagelogger import HttpRequestImpl, HttpResponseImpl
 
-DEMO_URL = "http://localhost:4001/message"
+DEMO_URL = "https://demo.resurface.io"
 
 MOCK_AGENT = "helper.py"
 
