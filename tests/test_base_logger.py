@@ -131,22 +131,6 @@ def test_submits_to_demo_url():
     assert logger.submit_successes == 1
 
 
-def test_submits_to_demo_url_via_http():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL.replace("https", "http", 1))
-    assert logger.url.startswith("http://") is True
-    message: List[List[str]] = [
-        ["agent", logger.agent],
-        ["version", logger.version],
-        ["now", str(MOCK_NOW)],
-        ["prototol", "http"],
-    ]
-    msg = json.dumps(message, separators=(",", ":"))
-    assert parseable(msg) is True
-    logger.submit(msg)
-    assert logger.submit_failures == 0
-    assert logger.submit_successes == 1
-
-
 def test_submits_to_demo_url_without_compression():
     logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
     logger.skip_compression = True

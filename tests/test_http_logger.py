@@ -31,8 +31,8 @@ def test_creates_multiple_instances():
     assert logger2.enabled is True
     assert logger2.url == url2
     assert logger3.agent == HttpLogger.AGENT
-    assert logger3.enableable is True
-    assert logger3.enabled is True
+    assert logger3.enableable is False
+    assert logger3.enabled is False
     assert logger3.url == DEMO_URL
 
     UsageLoggers.disable()
@@ -44,7 +44,7 @@ def test_creates_multiple_instances():
     assert UsageLoggers.is_enabled() is True
     assert logger1.enabled is True
     assert logger2.enabled is True
-    assert logger3.enabled is True
+    assert logger3.enabled is False
 
 
 def test_has_valid_agent():
