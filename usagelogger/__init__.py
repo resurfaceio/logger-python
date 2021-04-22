@@ -6,7 +6,7 @@ from .http_response_impl import HttpResponseImpl  # noqa
 from .http_rules import HttpRules  # noqa
 from .usage_loggers import UsageLoggers  # noqa
 
-__version__ = "2.2.4"
+__version__ = "2.2.5"
 
 __all___ = [
     "UsageLoggers",
