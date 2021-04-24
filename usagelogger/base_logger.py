@@ -10,7 +10,8 @@ from urllib.parse import urlsplit
 import requests
 
 import usagelogger  # just to read version
-from usagelogger.usage_loggers import UsageLoggers
+
+from .usage_loggers import UsageLoggers
 
 
 class BaseLogger:
