@@ -6,7 +6,7 @@ from time import time
 from typing import List, Optional
 from urllib import parse
 
-from usagelogger import HttpLogger
+from .http_logger import HttpLogger
 
 
 class HttpMessage(object):
