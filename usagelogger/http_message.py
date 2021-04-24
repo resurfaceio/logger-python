@@ -129,7 +129,7 @@ class HttpMessage(object):
                 message.append([f"request_param:{k}".lower(), v[0]])
             if request.body:
                 body_ = request.body
-                if type(body_) == bytes:
+                if isinstance(body_, bytes):
                     body_ = body_.decode()
                 message.append(["request_body", body_])
 
