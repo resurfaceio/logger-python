@@ -39,11 +39,11 @@ class HTTPLoggerForTornado:
         return params
 
     @staticmethod
-    def get_request_response_time(handler):
+    def get_request_response_time(handler) -> str:
         request_time = time()
         response_time = request_time + handler.request.request_time()
         interval = 1000.0 * abs(request_time - response_time)
-        return interval
+        return str(interval)
 
     def log(self, handler):
 
