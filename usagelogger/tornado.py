@@ -1,4 +1,3 @@
-from time import time
 from typing import Optional
 
 from usagelogger import HttpLogger, HttpMessage
@@ -40,9 +39,7 @@ class HTTPLoggerForTornado:
 
     @staticmethod
     def get_request_response_time(handler) -> str:
-        request_time = time()
-        response_time = request_time + handler.request.request_time()
-        interval = 1000.0 * abs(request_time - response_time)
+        interval = 1000.0 * handler.request.request_time()
         return str(interval)
 
     def log(self, handler):
