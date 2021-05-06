@@ -1,11 +1,12 @@
-Logging usage of Python-based services, with user privacy by design.
-
-Visit <a href="https://resurface.io">resurface.io</a> for general information on usage logging.
+Easily log API requests and responses to your own <a href="https://resurface.io">system of record</a>.
 
 ## Middleware Integrations
 
-Loggers can be added to <a href="https://github.com/resurfaceio/logger-python#logging-from-django">Django</a>
-applications with only minor configuration changes.
+Loggers can be added to these types of applications with only minor configuration changes:
+* <a href="https://github.com/resurfaceio/logger-python#logging-from-aiohttp">AIOHTTP</a>
+* <a href="https://github.com/resurfaceio/logger-python#logging-from-django">Django</a>
+* <a href="https://github.com/resurfaceio/logger-python#logging-from-flask">Flask</a>
+* <a href="https://github.com/resurfaceio/logger-python#logging-from-requests">Requests</a>
 
 ## Logging With API
 

@@ -1,7 +1,6 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-from typing import List
 
 from tests.test_helper import *
 from usagelogger import BaseLogger, UsageLoggers
@@ -64,7 +63,7 @@ def test_has_valid_version():
     version = BaseLogger.version_lookup()
     assert version is not None
     assert len(version) > 0
-    assert version.startswith("2.1.")
+    assert version.startswith("2.2.")
     assert ("\\" in version) is False
     assert ('"' in version) is False
     assert ("'" in version) is False
@@ -113,59 +112,6 @@ def test_skips_enabling_for_undefined_url():
     assert logger.url is None
     logger.enable()
     assert logger.enabled is False
-
-
-def test_submits_to_demo_url():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
-    assert logger.url == DEMO_URL
-    message: List[List[str]] = [
-        ["agent", logger.agent],
-        ["version", logger.version],
-        ["now", str(MOCK_NOW)],
-        ["prototol", "https"],
-    ]
-    msg = json.dumps(message, separators=(",", ":"))
-    assert parseable(msg) is True
-    logger.submit(msg)
-    logger.wait_for_response()
-    assert logger.submit_failures == 0
-    assert logger.submit_successes == 1
-
-
-def test_submits_to_demo_url_via_http():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL.replace("https", "http", 1))
-    assert logger.url.startswith("http://") is True
-    message: List[List[str]] = [
-        ["agent", logger.agent],
-        ["version", logger.version],
-        ["now", str(MOCK_NOW)],
-        ["prototol", "http"],
-    ]
-    msg = json.dumps(message, separators=(",", ":"))
-    assert parseable(msg) is True
-    logger.submit(msg)
-    logger.wait_for_response()
-    assert logger.submit_failures == 0
-    assert logger.submit_successes == 1
-
-
-def test_submits_to_demo_url_without_compression():
-    logger = BaseLogger(MOCK_AGENT, url=DEMO_URL)
-    logger.skip_compression = True
-    assert logger.skip_compression is True
-    message: List[List[str]] = [
-        ["agent", logger.agent],
-        ["version", logger.version],
-        ["now", str(MOCK_NOW)],
-        ["prototol", "https"],
-        ["skip_compression", "true"],
-    ]
-    msg = json.dumps(message, separators=(",", ":"))
-    assert parseable(msg) is True
-    logger.submit(msg)
-    logger.wait_for_response()
-    assert logger.submit_failures == 0
-    assert logger.submit_successes == 1
 
 
 def test_submits_to_denied_url():
