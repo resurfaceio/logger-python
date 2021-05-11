@@ -137,7 +137,7 @@ def test_load_rules_from_file():
 def parse_fail(line):
     try:
         HttpRules.parse_rule(line)
-    except:
+    except Exception:
         return
     assert False
 

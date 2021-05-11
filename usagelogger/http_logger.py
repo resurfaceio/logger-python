@@ -4,8 +4,8 @@
 import json
 from typing import List, Optional
 
-from usagelogger.base_logger import BaseLogger
-from usagelogger.http_rules import HttpRules
+from .base_logger import BaseLogger
+from .http_rules import HttpRules
 
 
 class HttpLogger(BaseLogger):

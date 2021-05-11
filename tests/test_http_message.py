@@ -1,7 +1,20 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-from tests.test_helper import *
+from tests.test_helper import (
+    MOCK_HTML,
+    MOCK_HTML2,
+    MOCK_JSON_ESCAPED,
+    MOCK_NOW,
+    MOCK_QUERY_STRING,
+    MOCK_URL,
+    mock_request,
+    mock_request_with_json,
+    mock_request_with_json2,
+    mock_response,
+    mock_response_with_html,
+    parseable,
+)
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
 
 

@@ -1,8 +1,14 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
 
-from test_helper import *
-
+from tests.test_helper import (
+    MOCK_HTML,
+    MOCK_HTML3,
+    MOCK_HTML4,
+    MOCK_HTML5,
+    mock_request_with_json2,
+    mock_response_with_html,
+)
 from usagelogger import HttpLogger, HttpMessage, HttpRules
 
 
@@ -60,16 +66,19 @@ def test_uses_allow_http_url_rules():
     assert logger.enableable is True
 
 
+# Todo: Finish this test
 def test_uses_copy_session_field_rules():
-    assert None is None  # todo finish
+    assert None is None
 
 
+# Todo: Finish this test
 def test_uses_copy_session_field_and_remove_rules():
-    assert None is None  # todo finish
+    assert None is None
 
 
+# Todo: Finish this test
 def test_uses_copy_session_field_and_stop_rules():
-    assert None is None  # todo finish
+    assert None is None
 
 
 def test_uses_remove_rules():
