@@ -22,6 +22,7 @@ class HttpLogger(BaseLogger):
         skip_compression: bool = False,
         skip_submission: bool = False,
         rules: Optional[str] = None,
+        elable_waf: Optional[bool] = False,
     ) -> None:
 
         super().__init__(
@@ -39,6 +40,7 @@ class HttpLogger(BaseLogger):
         # apply configuration rules
         self.skip_compression = self._rules.skip_compression
         self.skip_submission = self._rules.skip_submission
+        # self.waf = WAF().load_model()
         if (
             self._enabled
             and url is not None
@@ -58,8 +60,12 @@ class HttpLogger(BaseLogger):
         if details is None:
             return
 
+        details[1]
+
+        # proba = WAF().get_threat_probabilities(query=query, model=self.waf)
         # finalize message
         details.append(["host", self.host])
+        # details.append(["threat_score", proba])
 
         # let's do this thing
         self.submit(json.dumps(details, separators=(",", ":")))
