@@ -1,3 +1,4 @@
+from . import middleware  # noqa
 from .base_logger import BaseLogger  # noqa
 from .http_logger import HttpLogger  # noqa
 from .http_message import HttpMessage  # noqa
@@ -16,4 +17,10 @@ __all___ = [
     "BaseLogger",
     "HttpLogger",
     "HttpMessage",
+    "resurface",
+    "middleware",
+    # Depricating soon
+    "flask",
+    "django",
+    "aiohttp",
 ]
