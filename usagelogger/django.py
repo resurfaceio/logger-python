@@ -24,40 +24,45 @@ class HttpLoggerForDjango:
             url=__read_settings__("url"), rules=__read_settings__("rules")
         )
 
-    def prepare_request(self, request, response):
+    def prepare_request_body(self, request, response=None):
         RE_PATTERN = r'(?<=; filename=")(.*?)"\\r\\nContent-Type: (.*?)\\r\\n(.*?)((-+)([a-zA-Z0-9_.-]+)\\r\\nContent-Disposition:)'  # noqa
         RE_REPLACE_TO = r'\1"\\r\\nContent-Type: \2\\r\\n\\r\\n<file-data>\\r\\n\4'
         request.encoding = "utf-8"
         is_multipart = request.content_type == "multipart/form-data"
 
-        try:
-            if is_multipart:
-                request._rsf_body = (
-                    re.sub(
-                        pattern=RE_PATTERN,
-                        repl=RE_REPLACE_TO,
-                        string="%r" % request.body,
-                    )
-                    .encode()
-                    .decode("unicode_escape")
-                )
-            else:
-                request._rsf_body = request.body.decode(request.encoding)
-        except RawPostDataException:
+        if response is None:
             try:
-                request._rsf_body = str(response.renderer_context["request"].data)
+                if is_multipart:
+                    body = (
+                        re.sub(
+                            pattern=RE_PATTERN,
+                            repl=RE_REPLACE_TO,
+                            string="%r" % request.body,
+                        )
+                        .encode()
+                        .decode("unicode_escape")
+                    )
+                else:
+                    body = request.body.decode(request.encoding)
+            except RawPostDataException:
+                body = None
+        else:
+            try:
+                body = str(response.renderer_context["request"].data)
             except AttributeError:
-                request._rsf_body = request.readlines()
+                body = request.readlines()
 
-        return request
+        return body
 
     def __call__(self, request):
         start_time = time.time()
+        request_body = self.prepare_request_body(request)
         response = self.get_response(request)
         interval = str((time.time() - start_time) * 1000)
         method = request.method
-
-        _request = self.prepare_request(request, response)
+        
+        if request_body is None:
+            request_body = self.prepare_request_body(request, response)
 
         HttpMessage.send(
             self.logger,
@@ -66,7 +71,7 @@ class HttpLoggerForDjango:
                 url=str(request.build_absolute_uri()),
                 headers=request.headers,
                 params=request.POST if method == "POST" else request.GET,
-                body=_request._rsf_body,
+                body=request_body,
             ),
             response=HttpResponseImpl(
                 status=response.status_code,

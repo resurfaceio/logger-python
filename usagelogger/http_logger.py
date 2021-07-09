@@ -2,6 +2,7 @@
 # © 2016-2021 Resurface Labs Inc.
 
 import json
+import logging
 from typing import List, Optional
 
 from .base_logger import BaseLogger
@@ -23,6 +24,14 @@ class HttpLogger(BaseLogger):
         skip_submission: bool = False,
         rules: Optional[str] = None,
     ) -> None:
+
+        warner = logging.getLogger(__name__)
+        argtype_warn = "Resurface: Invalid type for {} " \
+                  "(argument should be a {}). Logger won't be enabled."
+        if url and type(url) != str:
+            warner.error(argtype_warn.format("url", "string"))
+        if rules and type(rules) != str:
+            warner.error(argtype_warn.format("rules", "string"))
 
         super().__init__(
             self.AGENT,
@@ -47,6 +56,9 @@ class HttpLogger(BaseLogger):
         ):
             self._enableable = False
             self._enabled = False
+        
+        if not self.enabled:
+            warner.error("Resurface: Logger is not enabled.")
 
     @property
     def rules(self) -> HttpRules:
