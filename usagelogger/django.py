@@ -1,13 +1,12 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
-import re
 import time
 
 from django.conf import settings
 from django.http.request import RawPostDataException
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
+from usagelogger.utils.multipart_utils import decode_multipart
 
 
 def __read_settings__(key):
@@ -25,29 +24,20 @@ class HttpLoggerForDjango:
         )
 
     def prepare_request_body(self, request, response=None):
-        RE_PATTERN = r'(?<=; filename=")(.*?)"\\r\\nContent-Type: (.*?)\\r\\n(.*?)((-{2,})([a-zA-Z0-9_.-]+))'  # noqa
-        RE_REPLACE_TO = r'\1"\\r\\nContent-Type: \2\\r\\n\\r\\n<file-data>\\r\\n\4'
+
         is_multipart = request.content_type == "multipart/form-data"
 
         try:
             if response is None:
                 if is_multipart:
-                    body = (
-                        re.sub(
-                            pattern=RE_PATTERN,
-                            repl=RE_REPLACE_TO,
-                            string="%r" % request.body,
-                        )[2:-1]
-                        .encode()
-                        .decode("unicode_escape")
-                    )
+                    body = decode_multipart(request.body)
                 else:
-                    body = request.body.decode(request.encoding)
+                    body = request.body.decode()
             else:
                 body = str(response.renderer_context["request"].data)
         except (RawPostDataException, AttributeError):
             body = None
-        
+
         return body
 
     def __call__(self, request):
@@ -56,7 +46,7 @@ class HttpLoggerForDjango:
         response = self.get_response(request)
         interval = str((time.time() - start_time) * 1000)
         method = request.method
-        
+
         if request_body is None:
             request_body = self.prepare_request_body(request, response)
 
