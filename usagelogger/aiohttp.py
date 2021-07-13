@@ -6,6 +6,7 @@ from aiohttp import web
 from usagelogger import HttpLogger, HttpMessage
 from usagelogger.http_request_impl import HttpRequestImpl
 from usagelogger.http_response_impl import HttpResponseImpl
+from usagelogger.utils.multipart_utils import decode_multipart
 
 
 def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None):
@@ -19,6 +20,7 @@ def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None)
         interval = str((time.time() - start_time) * 1000)
         data__: bytes = await request.read()
 
+        is_multipart = "multipart/form-data" in str(request.headers.get("Content-Type"))
         HttpMessage.send(
             logger,
             request=HttpRequestImpl(
@@ -26,7 +28,7 @@ def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None)
                 headers=request.headers,
                 params=request.query,
                 method=request.method,
-                body=data__.decode(),
+                body=decode_multipart(data__) if is_multipart else data__.decode(),
             ),
             response=HttpResponseImpl(
                 status=response.status,
