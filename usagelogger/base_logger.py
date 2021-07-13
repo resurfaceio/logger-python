@@ -17,6 +17,9 @@ from .usage_loggers import UsageLoggers
 class BaseLogger:
     """Basic usage logger to embed or extend."""
 
+    # Timeout
+    default_timeout: int = 5
+
     def __init__(
         self,
         agent: str,
@@ -26,6 +29,7 @@ class BaseLogger:
         skip_compression: bool = False,
         skip_submission: bool = False,
         conn=requests.Session(),
+        timeout: int = default_timeout,
     ) -> None:
 
         self.agent = agent
@@ -34,6 +38,7 @@ class BaseLogger:
         self.skip_submission = skip_submission
         self.version = self.version_lookup()
         self.conn = conn
+        self.timeout = timeout
 
         # read provided options
         if url is None:
@@ -113,7 +118,9 @@ class BaseLogger:
                     headers["Content-Encoding"] = "deflated"
                     body = zlib.compress(msg.encode("utf-8"))
 
-                response = self.conn.post(self.url, data=body, headers=headers)
+                response = self.conn.post(
+                    self.url, data=body, headers=headers, timeout=self.timeout
+                )
                 if response.status_code == 204:
                     with self._submit_successes_lock:
                         self._submit_successes += 1
