@@ -25,33 +25,29 @@ class HttpLoggerForDjango:
         )
 
     def prepare_request_body(self, request, response=None):
-        RE_PATTERN = r'(?<=; filename=")(.*?)"\\r\\nContent-Type: (.*?)\\r\\n(.*?)((-+)([a-zA-Z0-9_.-]+)\\r\\nContent-Disposition:)'  # noqa
+        RE_PATTERN = r'(?<=; filename=")(.*?)"\\r\\nContent-Type: (.*?)\\r\\n(.*?)((-{2,})([a-zA-Z0-9_.-]+))'  # noqa
         RE_REPLACE_TO = r'\1"\\r\\nContent-Type: \2\\r\\n\\r\\n<file-data>\\r\\n\4'
-        request.encoding = "utf-8"
         is_multipart = request.content_type == "multipart/form-data"
 
-        if response is None:
-            try:
+        try:
+            if response is None:
                 if is_multipart:
                     body = (
                         re.sub(
                             pattern=RE_PATTERN,
                             repl=RE_REPLACE_TO,
                             string="%r" % request.body,
-                        )
+                        )[2:-1]
                         .encode()
                         .decode("unicode_escape")
                     )
                 else:
                     body = request.body.decode(request.encoding)
-            except RawPostDataException:
-                body = None
-        else:
-            try:
+            else:
                 body = str(response.renderer_context["request"].data)
-            except AttributeError:
-                body = request.readlines()
-
+        except (RawPostDataException, AttributeError):
+            body = None
+        
         return body
 
     def __call__(self, request):
