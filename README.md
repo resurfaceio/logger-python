@@ -62,10 +62,12 @@ web.run_app(app)
 
 First edit `settings.py` to register middleware, like this:
 
+*Note: Resurface middleware should be placed on top in the stack of middleware.*
+
 ```python
 MIDDLEWARE = [
+    "usagelogger.django.HttpLoggerForDjango", # Always on the top
     "django.middleware...",
-    "usagelogger.django.HttpLoggerForDjango",
 ]
 ```
 
@@ -73,8 +75,8 @@ Then add a new section to `settings.py` for logging configuration, like this:
 
 ```python
 USAGELOGGER = {
-    'url': 'http://localhost:4001/message',
-    'rules': 'include debug'
+    'url': 'http://localhost:4001/message', 
+    'rules': 'include debug' 
 }
 ```
 
