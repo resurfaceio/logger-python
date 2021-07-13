@@ -2,26 +2,11 @@
 # © 2016-2021 Resurface Labs Inc.
 
 import json
-import warnings
+from usagelogger.warnings_utils import ResurfaceWarning
 from typing import List, Optional
 
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
-
-
-class ResurfaceWarning(UserWarning):
-    def __init__(self, warning_type, environment_var=None, required_type=None):
-        self.warning_type = warning_type
-        self.env_var = environment_var
-        self.required_type = required_type
-    def __str__(self):
-        if self.warning_type == "argwarn":
-            warn = f"Invalid type for {self.env_var} " +\
-            f"(argument should be a {self.required_type}). " +\
-            "Logger won't be enabled."
-        elif self.warning_type == "nologgerwarn":
-            warn = "Logger is not enabled."
-        return warn
 
 
 class HttpLogger(BaseLogger):
@@ -41,9 +26,9 @@ class HttpLogger(BaseLogger):
     ) -> None:
 
         if url and not isinstance(url, str):
-            warnings.warn(ResurfaceWarning("argwarn", "url", "string"))
+            ResurfaceWarning("argtype", "url", "string").warn()
         if rules and not isinstance(rules, str):
-            warnings.warn(ResurfaceWarning("argwarn", "rules", "string"))
+            ResurfaceWarning("argtype", "rules", "string").warn()
 
         super().__init__(
             self.AGENT,
@@ -70,7 +55,7 @@ class HttpLogger(BaseLogger):
             self._enabled = False
 
         if not self.enabled:
-            warnings.warn(ResurfaceWarning("nologgerwarn"))
+            ResurfaceWarning("nologger").warn()
 
     @property
     def rules(self) -> HttpRules:

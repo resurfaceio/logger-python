@@ -50,6 +50,14 @@ class HttpLoggerForDjango:
         if request_body is None:
             request_body = self.prepare_request_body(request, response)
 
+        try:
+            if response.content:
+                response_body = str(response.content.decode("utf8"))
+            else:
+                response_body = None
+        except AttributeError:
+            response_body = None
+
         HttpMessage.send(
             self.logger,
             request=HttpRequestImpl(
@@ -61,7 +69,7 @@ class HttpLoggerForDjango:
             ),
             response=HttpResponseImpl(
                 status=response.status_code,
-                body=str(response.content.decode("utf8")) if response.content else None,
+                body=response_body,
                 headers=response,
             ),
             interval=interval,
