@@ -11,6 +11,7 @@ from werkzeug.wrappers import Request
 from werkzeug.wsgi import ClosingIterator
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
+from usagelogger.utils.multipart_utils import decode_multipart
 
 
 class HttpLoggerForFlask:
