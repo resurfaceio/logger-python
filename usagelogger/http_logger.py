@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
-from .utils.warnings_utils import ResurfaceWarning
+from .utils.warnings import ResurfaceWarning
 
 
 class HttpLogger(BaseLogger):

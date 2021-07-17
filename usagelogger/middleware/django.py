@@ -6,7 +6,7 @@ import time
 from django.conf import settings
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
-from usagelogger.utils.multipart_utils import decode_multipart
+from usagelogger.utils.multipart_decoder import decode_multipart
 
 
 def __read_settings__(key):
