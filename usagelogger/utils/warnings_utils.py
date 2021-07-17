@@ -9,13 +9,18 @@ class ResurfaceWarning(UserWarning):
         self.warning_type = warning_type
         self.env_var = environment_var
         self.required_type = required_type
-    def __str__(self):
+
+    def __str__(self) -> str:
+        warn: str = ""
         if self.warning_type == "argtype":
-            warn = f"Invalid type for {self.env_var} " +\
-            f"(argument should be a {self.required_type}). " +\
-            "Logger won't be enabled."
+            warn = (
+                f"Invalid type for {self.env_var} "
+                + f"(argument should be a {self.required_type}). "
+                + "Logger won't be enabled."
+            )
         elif self.warning_type == "nologger":
             warn = "Logger is not enabled."
         return warn
+
     def warn(self):
         warnings.warn(self, stacklevel=2)
