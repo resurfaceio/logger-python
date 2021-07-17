@@ -40,7 +40,7 @@ pip3 install --upgrade usagelogger
 
 ```python
 from aiohttp import web
-from usagelogger.aiohttp import HttpLoggerForAIOHTTP
+from usagelogger.middleware.aiohttp import HttpLoggerForAIOHTTP
 
 async def test(request):
     return web.Response(text="Hello")
@@ -66,7 +66,7 @@ First edit `settings.py` to register middleware, like this:
 
 ```python
 MIDDLEWARE = [
-    "usagelogger.django.HttpLoggerForDjango",  # Always on the top
+    "usagelogger.middleware.django.HttpLoggerForDjango",  # Always on the top
     "django.middleware...",
 ]
 ```
@@ -86,7 +86,7 @@ USAGELOGGER = {
 
 ```python
 from flask import Flask
-from usagelogger.flask import HttpLoggerForFlask
+from usagelogger.middleware.flask import HttpLoggerForFlask
 
 app = Flask(__name__)
 
