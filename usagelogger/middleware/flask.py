@@ -1,7 +1,5 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
-
 import time
 from io import BytesIO
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -11,6 +9,7 @@ from werkzeug.wrappers import Request
 from werkzeug.wsgi import ClosingIterator
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
+from usagelogger.multipart_utils import decode_multipart
 
 
 class HttpLoggerForFlask:
@@ -32,15 +31,17 @@ class HttpLoggerForFlask:
 
     def finish_response(self, response: ClosingIterator) -> List[bytes]:
         self.interval = 1000.0 * (time.time() - self.start_time)
-        stored_response_chunks = []
+        stored_response_chunks: List[bytes] = []
         for line in response:
             stored_response_chunks.append(line)
         self.response = stored_response_chunks
         return stored_response_chunks
 
     def request_body(self, environ):
-        content_length = environ.get("CONTENT_LENGTH")
         body: bytes = b""
+        content_length = environ.get("CONTENT_LENGTH")
+        is_multipart = "multipart/form-data" in str(environ.get("CONTENT_TYPE"))
+
         if content_length:
             if content_length == "-1":
                 # This is a special case, where the content length is basically undetermined
@@ -51,7 +52,7 @@ class HttpLoggerForFlask:
                 body = environ["wsgi.input"].read(content_length)
                 environ["wsgi.input"] = BytesIO(bytes(body))
 
-        return body.decode("utf-8")
+        return decode_multipart(body) if is_multipart else body.decode("utf-8")
 
     def __call__(self, environ, start_response) -> ClosingIterator:
 
