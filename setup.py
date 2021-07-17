@@ -1,3 +1,5 @@
+from distutils import util
+
 from setuptools import setup
 
 
@@ -5,6 +7,9 @@ def read_file(name):
     with open(name) as fd:
         return fd.read()
 
+
+middleware = util.convert_path("usagelogger/middleware")
+utils = util.convert_path("usagelogger/utils")
 
 setup(
     name="usagelogger",
@@ -29,8 +34,8 @@ setup(
     keywords="logging resurface",
     package_dir={
         "usagelogger": "usagelogger",
-        "usagelogger.middleware": "usagelogger/middleware",
-        "usagelogger.utils": "usagelogger/utils",
+        "usagelogger.middleware": middleware,
+        "usagelogger.utils": utils,
     },
     packages=["usagelogger", "usagelogger.middleware", "usagelogger.utils"],
     # packages=find_packages(exclude=["tests"]),
