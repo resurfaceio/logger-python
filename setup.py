@@ -1,4 +1,4 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 
 def read_file(name):
@@ -27,7 +27,13 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     keywords="logging resurface",
-    packages=find_packages(exclude=["tests"]),
+    package_dir={
+        "usagelogger": "usagelogger",
+        "usagelogger.middleware": "usagelogger/middleware",
+        "usagelogger.utils": "usagelogger/utils",
+    },
+    packages=["usagelogger", "usagelogger.middleware", "usagelogger.utils"],
+    # packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
     install_requires=read_file("requirements.txt").splitlines(),
     include_package_data=True,
