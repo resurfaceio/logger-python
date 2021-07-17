@@ -2,11 +2,11 @@
 # © 2016-2021 Resurface Labs Inc.
 
 import json
-from usagelogger.warnings_utils import ResurfaceWarning
 from typing import List, Optional
 
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
+from .utils.warnings_utils import ResurfaceWarning
 
 
 class HttpLogger(BaseLogger):
