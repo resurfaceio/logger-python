@@ -6,7 +6,7 @@ from django.conf import settings
 from django.http.request import RawPostDataException
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
-from usagelogger.multipart_utils import decode_multipart
+from usagelogger.utils.multipart_utils import decode_multipart
 
 
 def __read_settings__(key):
