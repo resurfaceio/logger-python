@@ -8,6 +8,7 @@ from starlette.responses import Response, StreamingResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
+from usagelogger.utils.multipart_decoder import decode_multipart
 
 
 class HttpLoggerForFastAPI:
@@ -32,6 +33,7 @@ class HttpLoggerForFastAPI:
         # 'content-length': '25'
         interval = str((time.time() - start_time) * 1000)
         data__: bytes = await request.body()
+        is_multipart = "multipart" in request.headers.get("content-type")
         HttpMessage.send(
             self.logger,
             request=HttpRequestImpl(
@@ -39,7 +41,7 @@ class HttpLoggerForFastAPI:
                 headers=dict(request.headers),
                 params=dict(request.query_params),
                 method=request.method,
-                body=data__.decode(),
+                body=decode_multipart(data__) if is_multipart else data__.decode(),
             ),
             response=HttpResponseImpl(
                 status=response.status_code,
