@@ -38,7 +38,10 @@ git push origin master
 
 ## Release Process
 
-All [integration tests](https://github.com/resurfaceio/logger-tests) must pass first.
+Exercise using Python test apps:
+* test-aiohttp
+* test-django
+* test-flask
 
 Push artifacts to [pypi.org](https://pypi.org/):
 

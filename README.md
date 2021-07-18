@@ -40,7 +40,7 @@ pip3 install --upgrade usagelogger
 
 ```python
 from aiohttp import web
-from usagelogger.aiohttp import HttpLoggerForAIOHTTP
+from usagelogger.middleware.aiohttp import HttpLoggerForAIOHTTP
 
 async def test(request):
     return web.Response(text="Hello")
@@ -62,10 +62,12 @@ web.run_app(app)
 
 First edit `settings.py` to register middleware, like this:
 
+*Note: We recommend placing Resurface middleware at the top in the middleware stack.*
+
 ```python
 MIDDLEWARE = [
+    "usagelogger.middleware.django.HttpLoggerForDjango",  # Always on the top
     "django.middleware...",
-    "usagelogger.django.HttpLoggerForDjango",
 ]
 ```
 
@@ -73,8 +75,8 @@ Then add a new section to `settings.py` for logging configuration, like this:
 
 ```python
 USAGELOGGER = {
-    'url': 'http://localhost:4001/message',
-    'rules': 'include debug'
+    'url': 'http://localhost:4001/message', 
+    'rules': 'include debug' 
 }
 ```
 
@@ -84,7 +86,7 @@ USAGELOGGER = {
 
 ```python
 from flask import Flask
-from usagelogger.flask import HttpLoggerForFlask
+from usagelogger.middleware.flask import HttpLoggerForFlask
 
 app = Flask(__name__)
 
