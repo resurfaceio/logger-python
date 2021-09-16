@@ -1,6 +1,6 @@
 import warnings
 
-from .middleware.django import *  # noqa  # pylint: disable=allow-with-wildcard-import,unused-wildcard-import
+from .middleware.django import *  # noqa  # pylint: disable=wildcard-import
 
 warnings.warn(
     """Importing HttpLoggerForDjango from usagelogger.django is depricating soon.

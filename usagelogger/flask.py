@@ -1,6 +1,6 @@
 import warnings
 
-from .middleware.flask import *  # noqa # pylint: disable=allow-with-wildcard-import,unused-wildcard-import
+from .middleware.flask import *  # noqa # pylint: disable=wildcard-import
 
 warnings.warn(
     """Importing HttpLoggerForFlask from usagelogger.flask is depricating soon.
