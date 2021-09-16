@@ -40,7 +40,7 @@ setup(
     packages=["usagelogger", "usagelogger.middleware", "usagelogger.utils"],
     # packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
-    install_requires=read_file("requirements.txt").splitlines(),
+    install_requires=["requests>=2"],
     include_package_data=True,
     tests_require=["pytest"],
     project_urls={

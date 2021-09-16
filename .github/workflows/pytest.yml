@@ -1,9 +1,8 @@
 name: Unit test the usagelogger
 
 on:
-  push:
-    branches:
-      - master
+  - push
+  - pull_request
 
 jobs:
   build:

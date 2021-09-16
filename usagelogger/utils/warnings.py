@@ -10,8 +10,7 @@ class ResurfaceWarning(UserWarning):
         self.env_var = environment_var
         self.required_type = required_type
 
-    def __str__(self) -> str:
-        warn: str = ""
+    def __str__(self):
         if self.warning_type == "argtype":
             warn = (
                 f"Invalid type for {self.env_var} "
