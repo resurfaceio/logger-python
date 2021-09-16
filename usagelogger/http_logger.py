@@ -4,9 +4,9 @@
 import json
 from typing import List, Optional
 
+from . import ResurfaceWarning
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
-from .utils.warnings import ResurfaceWarning
 
 
 class HttpLogger(BaseLogger):
