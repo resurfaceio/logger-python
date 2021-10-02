@@ -3,7 +3,9 @@
 import os
 import socket
 import threading
+import time
 import zlib
+from queue import Queue
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
 
@@ -12,6 +14,16 @@ import requests
 import usagelogger  # just to read version
 
 from .usage_loggers import UsageLoggers
+
+THREADS = 2
+
+enclosure_queue: Queue = Queue()
+
+
+def slow_conn_simulator(url, body, headers):
+
+    time.sleep(10)
+    # return cnn.post(url, data=body, headers=headers)
 
 
 class BaseLogger:
@@ -25,7 +37,6 @@ class BaseLogger:
         url: Optional[str] = None,
         skip_compression: bool = False,
         skip_submission: bool = False,
-        conn=requests.Session(),
     ) -> None:
 
         self.agent = agent
@@ -33,7 +44,6 @@ class BaseLogger:
         self.skip_compression = skip_compression
         self.skip_submission = skip_submission
         self.version = self.version_lookup()
-        self.conn = conn
 
         # read provided options
         if url is None:
@@ -46,11 +56,10 @@ class BaseLogger:
             self._url = None
         elif url is not None and isinstance(url, str):
             try:
-                if urlsplit(url).scheme in {"http", "https"}:
-                    self._url_scheme: str = urlsplit(url).scheme
-                    self._url = url
-                else:
+                if urlsplit(url).scheme not in {"http", "https"}:
                     raise TypeError("incorrect URL scheme")
+                self._url_scheme: str = urlsplit(url).scheme
+                self._url = url
             except TypeError:
                 self._enabled = False
                 self._url = None
@@ -86,6 +95,23 @@ class BaseLogger:
     def queue(self) -> Optional[List[str]]:
         return self._queue
 
+    def __internal_submission(self, i, q):
+        with requests.Session() as s:
+            while True:
+                print(f"Thread {i}: starting")
+                # time.sleep(10)
+                payload = q.get()
+                response = s.post(
+                    payload["url"], data=payload["body"], headers=payload["headers"]
+                )
+                if response.status_code == 204:
+                    with self._submit_successes_lock:
+                        self._submit_successes += 1
+                else:
+                    with self._submit_failures_lock:
+                        self._submit_failures += 1
+                q.task_done()
+
     def submit(self, msg: str) -> None:
         """Submits JSON message to intended destination."""
 
@@ -113,13 +139,27 @@ class BaseLogger:
                     headers["Content-Encoding"] = "deflated"
                     body = zlib.compress(msg.encode("utf-8"))
 
-                response = self.conn.post(self.url, data=body, headers=headers)
-                if response.status_code == 204:
-                    with self._submit_successes_lock:
-                        self._submit_successes += 1
-                else:
-                    with self._submit_failures_lock:
-                        self._submit_failures += 1
+                # response = requests.post(self.url, data=body, headers=headers)
+                # if response.status_code == 204:
+                #     with self._submit_successes_lock:
+                #         self._submit_successes += 1
+                # else:
+                #     with self._submit_failures_lock:
+                #         self._submit_failures += 1
+                payload = {"url": self.url, "body": body, "headers": headers}
+                enclosure_queue.put(payload)
+                for i in range(THREADS):
+                    worker = threading.Thread(
+                        target=self.__internal_submission,
+                        args=(
+                            i,
+                            enclosure_queue,
+                        ),
+                    )
+                    worker.setDaemon(True)
+                    worker.start()
+
+                # enclosure_queue.join()
 
             # http errors
             except (requests.exceptions.RequestException, IOError, OSError):
