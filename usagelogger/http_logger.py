@@ -6,6 +6,7 @@ from typing import List, Optional
 
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
+from .utils.resurface_utils import ResurfaceWarning
 
 
 class HttpLogger(BaseLogger):
@@ -24,6 +25,11 @@ class HttpLogger(BaseLogger):
         rules: Optional[str] = None,
         elable_waf: Optional[bool] = False,
     ) -> None:
+
+        if url and not isinstance(url, str):
+            ResurfaceWarning("argtype", "url", "string").warn()
+        if rules and not isinstance(rules, str):
+            ResurfaceWarning("argtype", "rules", "string").warn()
 
         super().__init__(
             self.AGENT,
@@ -49,6 +55,9 @@ class HttpLogger(BaseLogger):
         ):
             self._enableable = False
             self._enabled = False
+
+        if not self.enabled:
+            ResurfaceWarning("nologger").warn()
 
     @property
     def rules(self) -> HttpRules:

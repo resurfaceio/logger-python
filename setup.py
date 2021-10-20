@@ -1,4 +1,6 @@
-from setuptools import find_packages, setup
+from distutils import util
+
+from setuptools import setup
 
 
 def read_file(name):
@@ -6,9 +8,12 @@ def read_file(name):
         return fd.read()
 
 
+middleware = util.convert_path("usagelogger/middleware")
+utils = util.convert_path("usagelogger/utils")
+
 setup(
     name="usagelogger",
-    version="2.2.5",
+    version="2.2.6",
     description="Logging usage of Python-based services, with user privacy by design.",
     long_description=read_file("DESCRIPTIONS.md"),
     long_description_content_type="text/markdown",
@@ -27,9 +32,15 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     keywords="logging resurface",
-    packages=find_packages(exclude=["tests"]),
+    package_dir={
+        "usagelogger": "usagelogger",
+        "usagelogger.middleware": middleware,
+        "usagelogger.utils": utils,
+    },
+    packages=["usagelogger", "usagelogger.middleware", "usagelogger.utils"],
+    # packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
-    install_requires=read_file("requirements.txt").splitlines(),
+    install_requires=["requests>=2"],
     include_package_data=True,
     tests_require=["pytest"],
     project_urls={
