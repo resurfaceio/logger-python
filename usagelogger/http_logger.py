@@ -4,6 +4,7 @@
 import json
 from typing import List, Optional
 
+from ._waf import WAF
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
 from .utils.resurface_utils import ResurfaceWarning
@@ -46,7 +47,7 @@ class HttpLogger(BaseLogger):
         # apply configuration rules
         self.skip_compression = self._rules.skip_compression
         self.skip_submission = self._rules.skip_submission
-        # self.waf = WAF().load_model()
+        self.waf = WAF.load_model()
         if (
             self._enabled
             and url is not None
@@ -69,12 +70,10 @@ class HttpLogger(BaseLogger):
         if details is None:
             return
 
-        details[1]
-
-        # proba = WAF().get_threat_probabilities(query=query, model=self.waf)
+        proba = self.waf.get_threat_probabilities(query=details[1][1])
         # finalize message
         details.append(["host", self.host])
-        # details.append(["threat_score", proba])
+        details.append(["threat_score", proba])
 
         # let's do this thing
         self.submit(json.dumps(details, separators=(",", ":")))
