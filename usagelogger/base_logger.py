@@ -126,7 +126,6 @@ class BaseLogger:
             response = self.conn.post(
                 payload["url"], data=ndjson_payload, headers=headers
             )
-            print(response.status_code)
             if response.status_code == 204:
                 with self._submit_successes_lock:
                     self._submit_successes += 1
