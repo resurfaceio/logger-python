@@ -1,6 +1,6 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
+from re import match
 from time import time
 from typing import List, Optional
 from urllib import parse
@@ -19,7 +19,7 @@ class HttpMessage(object):
         request_body: Optional[str] = None,
         now=None,
         interval=None,
-    ) -> None:  # TODO: missing type hints
+    ) -> None:
 
         if not logger.enabled:
             return
@@ -30,18 +30,18 @@ class HttpMessage(object):
         )
 
         # copy details from active session
-        # if logger.rules.copy_session_field:
-        #     session_dict = logger.conn.__dict__
-        #     if session_dict:
-        #         for r in logger.rules.copy_session_field:
-        #             for d0 in session_dict:
-        #                 if match(r.param1, d0):
-        #                     d1 = session_dict[d0]
-        #                     if d0 == "cookies":
-        #                         d1 = d1.get_dict()
-        #                     if isinstance(d1, dict):
-        #                         d1 = {k: v for k, v in d1.items() if v}
-        #                     message.append([f"session_field:{d0.lower()}", str(d1)])
+        if logger.rules.copy_session_field:
+            session_dict = logger.conn.__dict__
+            if session_dict:
+                for r in logger.rules.copy_session_field:
+                    for d0 in session_dict:
+                        if match(r.param1, d0):
+                            d1 = session_dict[d0]
+                            if d0 == "cookies":
+                                d1 = d1.get_dict()
+                            if isinstance(d1, dict):
+                                d1 = {k: v for k, v in d1.items() if v}
+                            message.append([f"session_field:{d0.lower()}", str(d1)])
 
         # add timing details
         message.append(
@@ -53,39 +53,17 @@ class HttpMessage(object):
         logger.submit_if_passing(message)
 
     @classmethod
-    def build(
+    def build(  # noqa: C901
         cls,
         request,
         response,
         response_body: Optional[str] = None,
         request_body: Optional[str] = None,
-    ) -> List[List[str]]:
+    ) -> List[List[str]]:  # sourcery no-metrics
 
         message: List[List[str]] = []
 
-        if request.__class__.__name__ == "WSGIRequest":
-            message = []
-            if request.method:
-                message.append(["request_method", request.method])
-            url = request.build_absolute_uri()
-            if url:
-                message.append(["request_url", url])
-            if response.status_code:
-                message.append(["response_code", str(response.status_code)])
-            for k, v in request.headers.items():
-                message.append([f"request_header:{k}".lower(), v])
-            message.append(["request_body", request.body.decode()])
-            if request.method == "GET":
-                for k, v in request.GET.items():
-                    message.append([f"request_param:{k}".lower(), v])
-            elif request.method == "POST":
-                for k, v in request.POST.items():
-                    message.append([f"request_param:{k}".lower(), v])
-            for k, v in response.items():
-                message.append([f"response_header:{k}".lower(), v])
-            message.append(["response_body", response.content.decode("utf8")])
-
-        elif request.__class__.__name__ == "HttpRequestImpl":
+        if request.__class__.__name__ == "HttpRequestImpl":
             message = []
             if request.method:
                 message.append(["request_method", request.method])
