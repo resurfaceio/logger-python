@@ -2,7 +2,6 @@
 # © 2016-2021 Resurface Labs Inc.
 from typing import List, Optional
 
-from ._waf import WAF
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
 from .utils.resurface_utils import ResurfaceWarning
@@ -22,7 +21,6 @@ class HttpLogger(BaseLogger):
         skip_compression: bool = False,
         skip_submission: bool = False,
         rules: Optional[str] = None,
-        elable_waf: Optional[bool] = False,
     ) -> None:
 
         if url and not isinstance(url, str):
@@ -45,7 +43,7 @@ class HttpLogger(BaseLogger):
         # apply configuration rules
         self.skip_compression = self._rules.skip_compression
         self.skip_submission = self._rules.skip_submission
-        self.waf = WAF.load_model()
+
         if (
             self._enabled
             and url is not None
@@ -68,10 +66,8 @@ class HttpLogger(BaseLogger):
         if details is None:
             return
 
-        proba = self.waf.get_threat_probabilities(query=details[1][1])
         # finalize message
         details.append(["host", self.host])
-        details.append(["threat_score", proba])
 
         # let's do this thing
         self.submit(details)

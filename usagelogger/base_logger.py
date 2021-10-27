@@ -4,7 +4,6 @@ import json
 import os
 import socket
 import threading
-import time
 import zlib
 from queue import Queue
 from typing import Dict, List, Optional
@@ -14,6 +13,7 @@ import requests
 
 import usagelogger  # just to read version
 
+from ._waf import WAF
 from .usage_loggers import UsageLoggers
 
 enclosure_queue: Queue = Queue()
@@ -69,6 +69,8 @@ class BaseLogger:
         self._submit_successes = 0
         self._submit_successes_lock = threading.Lock()
 
+        self.waf = WAF.load_model()
+
     def disable(self):
         self._enabled = False
         return self
@@ -104,10 +106,11 @@ class BaseLogger:
 
             to_submit = []
 
-            while True:
+            while not q.empty():
                 payload = q.get()
-                time.sleep(1)  # ML WAF
-                payload["msg"].append(["threat_score", 0.4])
+                # ML WAF
+                proba = self.waf.get_threat_probabilities(query=payload["msg"][1][1])
+                payload["msg"].append(["threat_score", proba])
                 payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
                 if not payload["skip_compression"]:
                     body = payload["msg"]
@@ -118,11 +121,12 @@ class BaseLogger:
                 to_submit.append(body)
                 q.task_done()
 
-            print(f"submitting {len(to_submit)} at once")
+            # print(f"submitting {len(to_submit)} at once")
             ndjson_payload = ("\n".join(to_submit)).encode("utf-8")
             response = self.conn.post(
                 payload["url"], data=ndjson_payload, headers=headers
             )
+            print(response.status_code)
             if response.status_code == 204:
                 with self._submit_successes_lock:
                     self._submit_successes += 1
@@ -154,7 +158,6 @@ class BaseLogger:
                 "skip_compression": self.skip_compression,
             }
             enclosure_queue.put(payload)
-
             if "submission_thread" not in [x.name for x in threading.enumerate()]:
                 worker = threading.Thread(
                     target=self.__internal_submission,
