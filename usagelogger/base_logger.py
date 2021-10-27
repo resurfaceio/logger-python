@@ -16,16 +16,7 @@ import usagelogger  # just to read version
 
 from .usage_loggers import UsageLoggers
 
-THREADS = 5
-
 enclosure_queue: Queue = Queue()
-LAG = 0.005
-
-
-def slow_conn_simulator(url, body, headers):
-
-    time.sleep(10)
-    # return cnn.post(url, data=body, headers=headers)
 
 
 class BaseLogger:
@@ -110,14 +101,12 @@ class BaseLogger:
                 + self.agent
                 + ")",
             }
-            _lag = 0.0
 
             to_submit = []
 
-            time.sleep(min((_lag, 5)))  # Sleep for lag or 5 seconds
-            while not enclosure_queue.empty():
+            while True:
                 payload = q.get()
-                time.sleep(1.5)  # ML WAF
+                time.sleep(1)  # ML WAF
                 payload["msg"].append(["threat_score", 0.4])
                 payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
                 if not payload["skip_compression"]:
@@ -126,7 +115,6 @@ class BaseLogger:
                     headers["Content-Encoding"] = "deflated"
                     body = zlib.compress(payload["msg"])
 
-                _lag += payload["lag"]
                 to_submit.append(body)
                 q.task_done()
 
@@ -163,7 +151,6 @@ class BaseLogger:
             payload = {
                 "url": self.url,
                 "msg": msg,
-                "lag": LAG,
                 "skip_compression": self.skip_compression,
             }
             enclosure_queue.put(payload)
