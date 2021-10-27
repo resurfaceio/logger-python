@@ -1,7 +1,5 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
-import json
 from typing import List, Optional
 
 from .base_logger import BaseLogger
@@ -71,4 +69,4 @@ class HttpLogger(BaseLogger):
         details.append(["host", self.host])
 
         # let's do this thing
-        self.submit(json.dumps(details, separators=(",", ":")))
+        self.submit(details)
