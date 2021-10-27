@@ -10,6 +10,7 @@ def read_file(name):
 
 middleware = util.convert_path("usagelogger/middleware")
 utils = util.convert_path("usagelogger/utils")
+artifacts = util.convert_path("usagelogger/artifacts")
 
 setup(
     name="usagelogger",
@@ -33,11 +34,17 @@ setup(
     ],
     keywords="logging resurface",
     package_dir={
+        "artifacts": artifacts,
         "usagelogger": "usagelogger",
         "usagelogger.middleware": middleware,
         "usagelogger.utils": utils,
     },
-    packages=["usagelogger", "usagelogger.middleware", "usagelogger.utils"],
+    packages=[
+        "usagelogger",
+        "usagelogger.middleware",
+        "usagelogger.utils",
+        "usagelogger.artifacts",
+    ],
     # packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
     install_requires=["requests>=2"],

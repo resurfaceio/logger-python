@@ -396,7 +396,7 @@ class HttpRules(Sized):
 
         # remove any details with empty values
         details = [x for x in details if x[1] != ""]
-        if len(details) == 0:
+        if not details:
             return None
 
         # mask sensitive details based on replace rules if configured
@@ -407,7 +407,7 @@ class HttpRules(Sized):
 
         # remove any details with empty values
         details = [x for x in details if x[1] != ""]
-        return None if len(details) == 0 else details
+        return None if not details else details
 
     __REGEX_ALLOW_HTTP_URL: Pattern = re.compile(r"^\s*allow_http_url\s*(#.*)?$")
     __REGEX_BLANK_OR_COMMENT: Pattern = re.compile(r"^\s*([#].*)*$")
