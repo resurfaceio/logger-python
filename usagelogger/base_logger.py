@@ -114,9 +114,10 @@ class BaseLogger:
 
             to_submit = []
 
+            time.sleep(min((_lag, 5)))  # Sleep for lag or 5 seconds
             while not enclosure_queue.empty():
                 payload = q.get()
-                time.sleep(5)  # ML WAF
+                time.sleep(1.5)  # ML WAF
                 payload["msg"].append(["threat_score", 0.4])
                 payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
                 if not payload["skip_compression"]:
@@ -129,7 +130,6 @@ class BaseLogger:
                 to_submit.append(body)
                 q.task_done()
 
-            time.sleep(min((_lag, 5)))  # Sleep for lag or 5 seconds
             print(f"submitting {len(to_submit)} at once")
             ndjson_payload = ("\n".join(to_submit)).encode("utf-8")
             response = self.conn.post(
