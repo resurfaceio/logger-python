@@ -34,10 +34,10 @@ setup(
     ],
     keywords="logging resurface",
     package_dir={
-        "artifacts": artifacts,
         "usagelogger": "usagelogger",
         "usagelogger.middleware": middleware,
         "usagelogger.utils": utils,
+        "usagelogger.artifacts": artifacts,
     },
     packages=[
         "usagelogger",
@@ -47,7 +47,7 @@ setup(
     ],
     # packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
-    install_requires=["requests>=2"],
+    install_requires=["requests>=2", "joblib>=1.0.1"],
     include_package_data=True,
     tests_require=["pytest"],
     project_urls={

@@ -12,3 +12,4 @@ Werkzeug==1.0.1
 django==3.1.12
 aiohttp==3.7.4
 tox==3.24.3
+joblib
