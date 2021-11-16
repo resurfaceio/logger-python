@@ -48,7 +48,7 @@ async def test(request):
 app = web.Application(
     middlewares=[
         HttpLoggerForAIOHTTP(
-            url="http://localhost:4001/message", rules="include debug"
+            url="http://localhost:7701/message", rules="include debug"
         )
     ]
 )
@@ -75,7 +75,7 @@ Then add a new section to `settings.py` for logging configuration, like this:
 
 ```python
 USAGELOGGER = {
-    'url': 'http://localhost:4001/message', 
+    'url': 'http://localhost:7701/message', 
     'rules': 'include debug' 
 }
 ```
@@ -91,7 +91,7 @@ from usagelogger.middleware.flask import HttpLoggerForFlask
 app = Flask(__name__)
 
 app.wsgi_app = HttpLoggerForFlask(  # type: ignore
-    app=app.wsgi_app, url="http://localhost:4001/message", rules="include debug"
+    app=app.wsgi_app, url="http://localhost:7701/message", rules="include debug"
 )
 
 @app.route("/")
@@ -108,7 +108,7 @@ app.run(debug=True)
 ```python
 from usagelogger import resurface
 
-s = resurface.Session(url="http://localhost:4001/message", rules="include debug")
+s = resurface.Session(url="http://localhost:7701/message", rules="include debug")
 s.get(...)
 ```
 
