@@ -17,8 +17,6 @@ from .usage_loggers import UsageLoggers
 
 enclosure_queue: Queue = Queue()
 
-WAF_ENABLED = bool(os.getenv("WAF_ENABLED", False))
-
 
 class BaseLogger:
     """Basic usage logger to embed or extend."""
@@ -69,12 +67,6 @@ class BaseLogger:
         self._submit_failures_lock = threading.Lock()
         self._submit_successes = 0
         self._submit_successes_lock = threading.Lock()
-        if WAF_ENABLED:
-            from ._waf import WAF
-
-            self.waf = WAF.load_model()
-        else:
-            self.waf = None
 
     def disable(self):
         self._enabled = False
@@ -113,12 +105,6 @@ class BaseLogger:
 
             while not q.empty():
                 payload = q.get()
-                # ML WAF
-                if WAF_ENABLED:
-                    proba = self.waf.get_threat_probabilities(
-                        query=payload["msg"][1][1]
-                    )
-                    payload["msg"].append(["threat_score", proba])
                 payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
                 if not payload["skip_compression"]:
                     body = payload["msg"]

@@ -10,7 +10,6 @@ def read_file(name):
 
 middleware = util.convert_path("usagelogger/middleware")
 utils = util.convert_path("usagelogger/utils")
-artifacts = util.convert_path("usagelogger/artifacts")
 
 setup(
     name="usagelogger",
@@ -37,17 +36,11 @@ setup(
         "usagelogger": "usagelogger",
         "usagelogger.middleware": middleware,
         "usagelogger.utils": utils,
-        "usagelogger.artifacts": artifacts,
     },
-    packages=[
-        "usagelogger",
-        "usagelogger.middleware",
-        "usagelogger.utils",
-        "usagelogger.artifacts",
-    ],
+    packages=["usagelogger", "usagelogger.middleware", "usagelogger.utils"],
     # packages=find_packages(exclude=["tests"]),
     python_requires=">=3.7, <4",
-    install_requires=["requests>=2", "joblib>=1.0.1"],
+    install_requires=["requests>=2"],
     include_package_data=True,
     tests_require=["pytest"],
     project_urls={
