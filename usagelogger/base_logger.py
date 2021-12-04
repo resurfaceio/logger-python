@@ -13,6 +13,7 @@ import requests
 
 import usagelogger  # just to read version
 
+from .http_rules import HttpRules
 from .usage_loggers import UsageLoggers
 
 enclosure_queue: Queue = Queue()
@@ -89,7 +90,7 @@ class BaseLogger:
     def queue(self) -> Optional[List[str]]:
         return self._queue
 
-    def __internal_submission(self, q: Queue):
+    def __internal_submission(self, q: Queue, rules: HttpRules) -> None:
         try:
             headers: Dict[str, str] = {
                 "Connection": "keep-alive",
@@ -105,12 +106,15 @@ class BaseLogger:
 
             while not q.empty():
                 payload = q.get()
-                payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
+                msg = payload["msg"]
+                if rules:
+                    msg = rules.apply(msg)
+                msg = json.dumps(msg, separators=(",", ":"))
                 if not payload["skip_compression"]:
-                    body = payload["msg"]
+                    body = msg
                 else:
                     headers["Content-Encoding"] = "deflated"
-                    body = zlib.compress(payload["msg"])
+                    body = zlib.compress(msg)
 
                 to_submit.append(body)
                 q.task_done()
@@ -121,30 +125,32 @@ class BaseLogger:
                 payload["url"], data=ndjson_payload, headers=headers
             )
             if response.status_code == 204:
-                with self._submit_successes_lock:
-                    self._submit_successes += 1
+                with self.submit_successes_lock:
+                    self.submit_successes += 1
             else:
-                with self._submit_failures_lock:
-                    self._submit_failures += 1
+                with self.submit_failures_lock:
+                    self.submit_failures += 1
         # http errors
         except (requests.exceptions.RequestException, IOError, OSError):
-            with self._submit_failures_lock:
-                self._submit_failures += 1
+            with self.submit_failures_lock:
+                self.submit_failures += 1
         # JSON errors
         except (OverflowError, TypeError, ValueError):
-            with self._submit_failures_lock:
-                self._submit_failures += 1
+            with self.submit_failures_lock:
+                self.submit_failures += 1
 
-    def submit(self, msg: list) -> None:
+    def submit(self, msg: list, rules: Optional[HttpRules] = None) -> None:
         """Submits JSON message to intended destination."""
 
         if msg is None or self.skip_submission is True or self.enabled is False:
             pass
         elif self._queue is not None:
+            msg = rules.apply(msg) if rules else msg  # type: ignore
             self._queue.append(json.dumps(msg, separators=(",", ":")))
             with self._submit_successes_lock:
                 self._submit_successes += 1
         else:
+
             payload = {
                 "url": self.url,
                 "msg": msg,
@@ -154,7 +160,10 @@ class BaseLogger:
             if "submission_thread" not in [x.name for x in threading.enumerate()]:
                 worker = threading.Thread(
                     target=self.__internal_submission,
-                    args=(enclosure_queue,),
+                    args=(
+                        enclosure_queue,
+                        rules,
+                    ),
                 )
                 worker.name = "submission_thread"
                 worker.setDaemon(True)
@@ -164,12 +173,36 @@ class BaseLogger:
             # enclosure_queue.join()  # We don't have to block our main thread.
 
     @property
+    def submit_failures_lock(self):
+        return self._submit_failures_lock
+
+    @submit_failures_lock.setter
+    def submit_failures_lock(self, value) -> None:
+        self._submit_failures_lock = value
+
+    @property
+    def submit_successes_lock(self):
+        return self._submit_successes_lock
+
+    @submit_successes_lock.setter
+    def submit_successes_lock(self, value) -> None:
+        self._submit_successes_lock = value
+
+    @property
     def submit_failures(self) -> int:
         return self._submit_failures
+
+    @submit_failures.setter
+    def submit_failures(self, value) -> None:
+        self._submit_failures = value
 
     @property
     def submit_successes(self) -> int:
         return self._submit_successes
+
+    @submit_successes.setter
+    def submit_successes(self, value) -> None:
+        self._submit_successes = value
 
     @property
     def url(self) -> str:
