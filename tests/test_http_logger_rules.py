@@ -87,7 +87,7 @@ def test_uses_remove_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!request_body! remove")
@@ -155,7 +155,7 @@ def test_uses_remove_if_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!request_body! remove_if !.*!")
@@ -225,7 +225,7 @@ def test_uses_remove_if_found_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!request_body! remove_if_found !.*!")
@@ -294,7 +294,7 @@ def test_uses_remove_unless_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(
@@ -368,7 +368,7 @@ def test_uses_remove_unless_found_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(
@@ -584,7 +584,7 @@ def test_uses_sample_rules():
         assert str(e) == "Multiple sample rules"
 
     logger = HttpLogger(queue=queue, rules="sample 10")
-    for i in range(1, 101):
+    for _ in range(1, 101):
         HttpMessage.send(
             logger,
             request=mock_request_with_json2(),
@@ -624,28 +624,28 @@ def test_uses_stop_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!request_body! stop")
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop")
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!request_body! stop\n!response_body! stop")
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
 
 def test_uses_stop_if_rules():
@@ -663,14 +663,14 @@ def test_uses_stop_if_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop_if !.*World.*!")
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop_if !.*blahblahblah.*!")
@@ -695,21 +695,21 @@ def test_uses_stop_if_found_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop_if_found !World!")
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop_if_found !.*World.*!")
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(
@@ -729,7 +729,7 @@ def test_uses_stop_unless_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop_unless !.*!")
@@ -752,7 +752,7 @@ def test_uses_stop_unless_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
 
 def test_uses_stop_unless_found_rules():
@@ -763,7 +763,7 @@ def test_uses_stop_unless_found_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
 
     queue = []
     logger = HttpLogger(queue=queue, rules="!response_body! stop_unless_found !.*!")
@@ -795,4 +795,4 @@ def test_uses_stop_unless_found_rules():
     HttpMessage.send(
         logger, request=mock_request_with_json2(), response=mock_response_with_html()
     )
-    assert len(queue) == 0
+    assert not queue
