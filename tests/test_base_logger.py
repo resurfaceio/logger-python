@@ -131,7 +131,7 @@ def test_submits_to_queue():
     assert logger.url is None
     assert logger.enableable is True
     assert logger.enabled is True
-    assert len(queue) == 0
+    assert not queue
     logger.submit("{}")
     assert len(queue) == 1
     logger.submit("{}")
