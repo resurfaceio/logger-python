@@ -61,8 +61,8 @@ class HttpLogger(BaseLogger):
         return self._rules
 
     def submit_if_passing(self, details: List[List[str]]) -> None:
-        # apply active rules
-        details = self._rules.apply(details)  # type: ignore
+        # apply active rules [DEPRICATE THIS]
+        # details = self._rules.apply(details)  # type: ignore
         if details is None:
             return
 
@@ -70,4 +70,4 @@ class HttpLogger(BaseLogger):
         details.append(["host", self.host])
 
         # let's do this thing
-        self.submit(details)
+        self.submit(details, rules=self._rules)
