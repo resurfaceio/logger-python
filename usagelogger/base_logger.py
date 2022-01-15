@@ -159,7 +159,8 @@ class BaseLogger:
                 worker.name = "submission_thread"
                 worker.setDaemon(True)
                 worker.start()
-                worker.join()  # Not a good practice but required for that success and failure counts
+                if os.environ.get("DEBUG") == "True":
+                    worker.join()  # Not a good practice but required for that success and failure counts
 
             # enclosure_queue.join()  # We don't have to block our main thread.
 
