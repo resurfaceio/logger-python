@@ -2,7 +2,7 @@
 # © 2016-2021 Resurface Labs Inc.
 from re import match
 from time import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 from urllib import parse
 
 from .http_logger import HttpLogger
@@ -19,6 +19,7 @@ class HttpMessage(object):
         request_body: Optional[str] = None,
         now=None,
         interval=None,
+        custom_fields: Optional[Dict[str, str]] = None,
     ) -> None:
 
         if not logger.enabled:
@@ -50,7 +51,7 @@ class HttpMessage(object):
         if interval is not None:
             message.append(["interval", interval])
 
-        logger.submit_if_passing(message)
+        logger.submit_if_passing(message, custom_fields)
 
     @classmethod
     def build(  # noqa: C901

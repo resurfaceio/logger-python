@@ -1,6 +1,6 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
@@ -60,11 +60,23 @@ class HttpLogger(BaseLogger):
     def rules(self) -> HttpRules:
         return self._rules
 
-    def submit_if_passing(self, details: List[List[str]]) -> None:
+    def submit_if_passing(
+        self, details: List[List[str]], custom_fields: Optional[Dict[str, str]]
+    ) -> None:
         # apply active rules
         details = self._rules.apply(details)  # type: ignore
         if details is None:
             return
+
+        # add custom fields
+        if custom_fields:
+            details.extend(
+                [
+                    [k, v]
+                    for k, v in custom_fields.items()
+                    if k not in [k for k, v in details]
+                ]
+            )
 
         # finalize message
         details.append(["host", self.host])
