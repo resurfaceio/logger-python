@@ -138,7 +138,12 @@ class BaseLogger:
     def submit(self, msg: list) -> None:
         """Submits JSON message to intended destination."""
 
-        if msg is None or self.skip_submission is True or self.enabled is False:
+        if (
+            not msg
+            or msg is None
+            or self.skip_submission is True
+            or self.enabled is False
+        ):
             pass
         elif self._queue is not None:
             self._queue.append(json.dumps(msg, separators=(",", ":")))
