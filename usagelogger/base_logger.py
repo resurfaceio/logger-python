@@ -103,7 +103,9 @@ class BaseLogger:
 
             to_submit = []
 
-            while not q.empty():
+            cnt = 0
+
+            while not q.empty() or cnt == 100:
                 payload = q.get()
                 payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
                 if not payload["skip_compression"]:
@@ -113,6 +115,7 @@ class BaseLogger:
                     body = zlib.compress(payload["msg"])
 
                 to_submit.append(body)
+                cnt += 1
                 q.task_done()
 
             # print(f"submitting {len(to_submit)} at once")
