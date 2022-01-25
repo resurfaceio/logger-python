@@ -14,7 +14,12 @@ from ._adapter import MiddlewareHTTPAdapter
 
 
 class Session(RequestsSession):
-    def __init__(self, url: Optional[str] = None, rules: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        url: Optional[str] = None,
+        rules: Optional[str] = None,
+        body_max_bytes: int = 1024 * 1024
+    ) -> None:
         self.headers = default_headers()
 
         self.auth = None
@@ -39,7 +44,9 @@ class Session(RequestsSession):
 
         self.adapters = OrderedDict()
 
-        middlewares = [ResurfaceHTTPAdapter(url=url, rules=rules)]
+        middlewares = [
+            ResurfaceHTTPAdapter(url=url, rules=rules, limit=body_max_bytes)
+        ]
 
         adapter = MiddlewareHTTPAdapter(middlewares)
 
@@ -49,10 +56,15 @@ class Session(RequestsSession):
 
 class ResurfaceHTTPAdapter:
     def __init__(
-        self, url: Optional[str] = None, rules: Optional[str] = None, *args, **kwargs
+        self,
+        url: Optional[str] = None,
+        rules: Optional[str] = None,
+        limit: int = 1024 * 1024,
+        *args, **kwargs
     ):
         self.logger = HttpLogger(url=url, rules=rules)
         self.start_time = 0
+        self.limit = limit
 
     def before_init_poolmanager(self, connections, maxsize, block=False):
         """Called before `HTTPAdapter::init_poolmanager`. Optionally return a
@@ -74,12 +86,16 @@ class ResurfaceHTTPAdapter:
         return req, resp
 
     def after_build_response(self, req, resp, response):
-
         interval = str((time.time() - self.start_time) * 1000)
+        if len(response.content) < self.limit:
+            body = response.text
+        else:
+            body = f"{{overflowed: {len(response.content)}}}"
         HttpMessage.send(
             self.logger,
             request=req,
             response=response,
             interval=interval,
+            response_body=body
         )
         return response
