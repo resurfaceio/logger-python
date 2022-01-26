@@ -15,6 +15,7 @@ import usagelogger  # just to read version
 
 from .usage_loggers import UsageLoggers
 
+MAX_BUNDLE_SIZE = 100
 enclosure_queue: Queue = Queue()
 
 
@@ -89,7 +90,31 @@ class BaseLogger:
     def queue(self) -> Optional[List[str]]:
         return self._queue
 
-    def __internal_submission(self, q: Queue):
+    def __dispatch(self, msg_queue: Queue):
+        buffer = []
+        while not msg_queue.empty():
+            msg = msg_queue.get()
+            buffer.append(msg)
+            if len(buffer) == MAX_BUNDLE_SIZE:
+                worker = threading.Thread(
+                    target=self.__internal_submit,
+                    args=(buffer, ),
+                )
+                worker.name = "worker"
+                worker.setDaemon(True)
+                worker.start()
+                buffer = []
+            msg_queue.task_done()
+        if buffer:
+            worker = threading.Thread(
+                target=self.__internal_submit,
+                args=(buffer,),
+            )
+            worker.name = "worker"
+            worker.setDaemon(True)
+            worker.start()
+
+    def __internal_submit(self, to_submit: List):
         try:
             headers: Dict[str, str] = {
                 "Connection": "keep-alive",
@@ -101,27 +126,16 @@ class BaseLogger:
                 + ")",
             }
 
-            to_submit = []
+            bundle = [json.dumps(msg, separators=(",", ":")) for msg in to_submit]
+            bundle = "\n".join(bundle)
+            if self.skip_compression:
+                headers["Content-Encoding"] = "deflated"
+                ndjson_payload = zlib.compress(bundle.encode("utf-8"))
+            else:
+                ndjson_payload = bundle.encode("utf-8")
 
-            cnt = 0
-
-            while not q.empty() or cnt == 100:
-                payload = q.get()
-                payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
-                if not payload["skip_compression"]:
-                    body = payload["msg"]
-                else:
-                    headers["Content-Encoding"] = "deflated"
-                    body = zlib.compress(payload["msg"])
-
-                to_submit.append(body)
-                cnt += 1
-                q.task_done()
-
-            # print(f"submitting {len(to_submit)} at once")
-            ndjson_payload = ("\n".join(to_submit)).encode("utf-8")
             response = self.conn.post(
-                payload["url"], data=ndjson_payload, headers=headers
+                self.url, data=ndjson_payload, headers=headers
             )
             if response.status_code == 204:
                 with self._submit_successes_lock:
@@ -129,6 +143,7 @@ class BaseLogger:
             else:
                 with self._submit_failures_lock:
                     self._submit_failures += 1
+
         # http errors
         except (requests.exceptions.RequestException, IOError, OSError):
             with self._submit_failures_lock:
@@ -153,24 +168,17 @@ class BaseLogger:
             with self._submit_successes_lock:
                 self._submit_successes += 1
         else:
-            payload = {
-                "url": self.url,
-                "msg": msg,
-                "skip_compression": self.skip_compression,
-            }
-            enclosure_queue.put(payload)
-            if "submission_thread" not in [x.name for x in threading.enumerate()]:
+            enclosure_queue.put(msg)
+            if "dispatcher" not in [x.name for x in threading.enumerate()]:
                 worker = threading.Thread(
-                    target=self.__internal_submission,
+                    target=self.__dispatch,
                     args=(enclosure_queue,),
                 )
-                worker.name = "submission_thread"
+                worker.name = "dispatcher"
                 worker.setDaemon(True)
                 worker.start()
                 if os.environ.get("DEBUG") == "True":
-                    worker.join()  # Not a good practice but required for that success and failure counts
-
-            # enclosure_queue.join()  # We don't have to block our main thread.
+                    worker.join()
 
     @property
     def submit_failures(self) -> int:
