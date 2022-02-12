@@ -13,7 +13,7 @@ utils = util.convert_path("usagelogger/utils")
 
 setup(
     name="usagelogger",
-    version="2.2.6",
+    version="3.0.0",
     description="Logging usage of Python-based services, with user privacy by design.",
     long_description=read_file("DESCRIPTIONS.md"),
     long_description_content_type="text/markdown",
