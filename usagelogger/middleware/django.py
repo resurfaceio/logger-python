@@ -66,6 +66,9 @@ class HttpLoggerForDjango:
                 headers=request.headers,
                 params=request.POST if method == "POST" else request.GET,
                 body=request_body,
+                remote_addr=request.META.get("HTTP_X_FORWARDED_FOR")
+                or request.META.get("REMOTE_ADDR")
+                or None,
             ),
             response=HttpResponseImpl(
                 status=response.status_code,

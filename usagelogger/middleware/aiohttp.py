@@ -29,6 +29,7 @@ def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None)
                 params=request.query,
                 method=request.method,
                 body=decode_multipart(data__) if is_multipart else data__.decode(),
+                remote_addr=request.remote_addr or None,
             ),
             response=HttpResponseImpl(
                 status=response.status,

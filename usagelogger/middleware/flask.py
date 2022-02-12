@@ -31,9 +31,7 @@ class HttpLoggerForFlask:
 
     def finish_response(self, response: ClosingIterator) -> List[bytes]:
         self.interval = 1000.0 * (time.time() - self.start_time)
-        stored_response_chunks: List[bytes] = []
-        for line in response:
-            stored_response_chunks.append(line)
+        stored_response_chunks: List[bytes] = list(response)
         self.response = stored_response_chunks
         return stored_response_chunks
 
@@ -83,6 +81,7 @@ class HttpLoggerForFlask:
                 headers=dict(request.headers),
                 params=params,
                 body=body__,
+                remote_addr=request.remote_addr or None,
             ),
             response=HttpResponseImpl(
                 status=self.status,
