@@ -6,7 +6,7 @@ from django.conf import settings
 from django.http.request import RawPostDataException
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
-from usagelogger.multipart_utils import decode_multipart
+from usagelogger.utils.multipart_decoder import decode_multipart
 
 
 def __read_settings__(key):
@@ -66,6 +66,9 @@ class HttpLoggerForDjango:
                 headers=request.headers,
                 params=request.POST if method == "POST" else request.GET,
                 body=request_body,
+                remote_addr=request.META.get("HTTP_X_FORWARDED_FOR")
+                or request.META.get("REMOTE_ADDR")
+                or None,
             ),
             response=HttpResponseImpl(
                 status=response.status_code,

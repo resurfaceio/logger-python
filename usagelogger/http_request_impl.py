@@ -12,9 +12,11 @@ class HttpRequestImpl(object):
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, str]] = None,
         body: Optional[str] = None,
+        remote_addr: Optional[str] = None,
     ) -> None:
         self.method = method
         self.url = url
         self.headers = {} if headers is None else headers
         self.params = {} if params is None else params
         self.body = body
+        self.remote_addr = remote_addr

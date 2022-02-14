@@ -1,12 +1,10 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
-import json
-from usagelogger.warnings_utils import ResurfaceWarning
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from .base_logger import BaseLogger
 from .http_rules import HttpRules
+from .utils.resurface_utils import ResurfaceWarning
 
 
 class HttpLogger(BaseLogger):
@@ -45,6 +43,7 @@ class HttpLogger(BaseLogger):
         # apply configuration rules
         self.skip_compression = self._rules.skip_compression
         self.skip_submission = self._rules.skip_submission
+
         if (
             self._enabled
             and url is not None
@@ -61,14 +60,26 @@ class HttpLogger(BaseLogger):
     def rules(self) -> HttpRules:
         return self._rules
 
-    def submit_if_passing(self, details: List[List[str]]) -> None:
+    def submit_if_passing(
+        self, details: List[List[str]], custom_fields: Optional[Dict[str, str]]
+    ) -> None:
         # apply active rules
         details = self._rules.apply(details)  # type: ignore
         if details is None:
             return
 
+        # add custom fields
+        if custom_fields:
+            details.extend(
+                [
+                    [k, v]
+                    for k, v in custom_fields.items()
+                    if k not in [k for k, v in details]
+                ]
+            )
+
         # finalize message
         details.append(["host", self.host])
 
         # let's do this thing
-        self.submit(json.dumps(details, separators=(",", ":")))
+        self.submit(details)

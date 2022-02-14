@@ -1,9 +1,11 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
+import json
 import os
 import socket
 import threading
 import zlib
+from queue import Queue
 from typing import Dict, List, Optional
 from urllib.parse import urlsplit
 
@@ -12,6 +14,8 @@ import requests
 import usagelogger  # just to read version
 
 from .usage_loggers import UsageLoggers
+
+enclosure_queue: Queue = Queue()
 
 
 class BaseLogger:
@@ -25,7 +29,7 @@ class BaseLogger:
         url: Optional[str] = None,
         skip_compression: bool = False,
         skip_submission: bool = False,
-        conn=requests.Session(),
+        conn: requests.Session = requests.Session(),
     ) -> None:
 
         self.agent = agent
@@ -46,11 +50,10 @@ class BaseLogger:
             self._url = None
         elif url is not None and isinstance(url, str):
             try:
-                if urlsplit(url).scheme in {"http", "https"}:
-                    self._url_scheme: str = urlsplit(url).scheme
-                    self._url = url
-                else:
+                if urlsplit(url).scheme not in {"http", "https"}:
                     raise TypeError("incorrect URL scheme")
+                self._url_scheme: str = urlsplit(url).scheme
+                self._url = url
             except TypeError:
                 self._enabled = False
                 self._url = None
@@ -86,49 +89,88 @@ class BaseLogger:
     def queue(self) -> Optional[List[str]]:
         return self._queue
 
-    def submit(self, msg: str) -> None:
+    def __internal_submission(self, q: Queue):
+        try:
+            headers: Dict[str, str] = {
+                "Connection": "keep-alive",
+                "Content-Type": "application/ndjson; charset=UTF-8",
+                "User-Agent": "Resurface/"
+                + usagelogger.__version__
+                + " ("
+                + self.agent
+                + ")",
+            }
+
+            to_submit = []
+
+            cnt = 0
+
+            while not q.empty() or cnt == 100:
+                payload = q.get()
+                payload["msg"] = json.dumps(payload["msg"], separators=(",", ":"))
+                if not payload["skip_compression"]:
+                    body = payload["msg"]
+                else:
+                    headers["Content-Encoding"] = "deflated"
+                    body = zlib.compress(payload["msg"])
+
+                to_submit.append(body)
+                cnt += 1
+                q.task_done()
+
+            # print(f"submitting {len(to_submit)} at once")
+            ndjson_payload = ("\n".join(to_submit)).encode("utf-8")
+            response = self.conn.post(
+                payload["url"], data=ndjson_payload, headers=headers
+            )
+            if response.status_code == 204:
+                with self._submit_successes_lock:
+                    self._submit_successes += 1
+            else:
+                with self._submit_failures_lock:
+                    self._submit_failures += 1
+        # http errors
+        except (requests.exceptions.RequestException, IOError, OSError):
+            with self._submit_failures_lock:
+                self._submit_failures += 1
+        # JSON errors
+        except (OverflowError, TypeError, ValueError):
+            with self._submit_failures_lock:
+                self._submit_failures += 1
+
+    def submit(self, msg: list) -> None:
         """Submits JSON message to intended destination."""
 
-        if msg is None or self.skip_submission is True or self.enabled is False:
+        if (
+            not msg
+            or msg is None
+            or self.skip_submission is True
+            or self.enabled is False
+        ):
             pass
         elif self._queue is not None:
-            self._queue.append(msg)
+            self._queue.append(json.dumps(msg, separators=(",", ":")))
             with self._submit_successes_lock:
                 self._submit_successes += 1
         else:
-            try:
-                headers: Dict[str, str] = {
-                    "Connection": "keep-alive",
-                    "Content-Type": "application/json; charset=UTF-8",
-                    "User-Agent": "Resurface/"
-                    + usagelogger.__version__
-                    + " ("
-                    + self.agent
-                    + ")",
-                }
+            payload = {
+                "url": self.url,
+                "msg": msg,
+                "skip_compression": self.skip_compression,
+            }
+            enclosure_queue.put(payload)
+            if "submission_thread" not in [x.name for x in threading.enumerate()]:
+                worker = threading.Thread(
+                    target=self.__internal_submission,
+                    args=(enclosure_queue,),
+                )
+                worker.name = "submission_thread"
+                worker.setDaemon(True)
+                worker.start()
+                if os.environ.get("DEBUG") == "True":
+                    worker.join()  # Not a good practice but required for that success and failure counts
 
-                if not self.skip_compression:
-                    body = msg.encode("utf-8")
-                else:
-                    headers["Content-Encoding"] = "deflated"
-                    body = zlib.compress(msg.encode("utf-8"))
-
-                response = self.conn.post(self.url, data=body, headers=headers)
-                if response.status_code == 204:
-                    with self._submit_successes_lock:
-                        self._submit_successes += 1
-                else:
-                    with self._submit_failures_lock:
-                        self._submit_failures += 1
-
-            # http errors
-            except (requests.exceptions.RequestException, IOError, OSError):
-                with self._submit_failures_lock:
-                    self._submit_failures += 1
-            # JSON errors
-            except (OverflowError, TypeError, ValueError):
-                with self._submit_failures_lock:
-                    self._submit_failures += 1
+            # enclosure_queue.join()  # We don't have to block our main thread.
 
     @property
     def submit_failures(self) -> int:

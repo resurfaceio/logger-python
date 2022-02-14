@@ -6,7 +6,7 @@ from aiohttp import web
 from usagelogger import HttpLogger, HttpMessage
 from usagelogger.http_request_impl import HttpRequestImpl
 from usagelogger.http_response_impl import HttpResponseImpl
-from usagelogger.multipart_utils import decode_multipart
+from usagelogger.utils.multipart_decoder import decode_multipart
 
 
 def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None):
@@ -29,6 +29,7 @@ def HttpLoggerForAIOHTTP(url: Optional[str] = None, rules: Optional[str] = None)
                 params=request.query,
                 method=request.method,
                 body=decode_multipart(data__) if is_multipart else data__.decode(),
+                remote_addr=request.remote_addr or None,
             ),
             response=HttpResponseImpl(
                 status=response.status,

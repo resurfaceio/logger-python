@@ -1,7 +1,5 @@
 # coding: utf-8
 # © 2016-2021 Resurface Labs Inc.
-
-
 import time
 from io import BytesIO
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -11,7 +9,7 @@ from werkzeug.wrappers import Request
 from werkzeug.wsgi import ClosingIterator
 
 from usagelogger import HttpLogger, HttpMessage, HttpRequestImpl, HttpResponseImpl
-from usagelogger.multipart_utils import decode_multipart
+from usagelogger.utils.multipart_decoder import decode_multipart
 
 
 class HttpLoggerForFlask:
@@ -33,9 +31,7 @@ class HttpLoggerForFlask:
 
     def finish_response(self, response: ClosingIterator) -> List[bytes]:
         self.interval = 1000.0 * (time.time() - self.start_time)
-        stored_response_chunks: List[bytes] = []
-        for line in response:
-            stored_response_chunks.append(line)
+        stored_response_chunks: List[bytes] = list(response)
         self.response = stored_response_chunks
         return stored_response_chunks
 
@@ -85,6 +81,7 @@ class HttpLoggerForFlask:
                 headers=dict(request.headers),
                 params=params,
                 body=body__,
+                remote_addr=request.remote_addr or None,
             ),
             response=HttpResponseImpl(
                 status=self.status,

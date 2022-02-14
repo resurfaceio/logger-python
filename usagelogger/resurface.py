@@ -8,9 +8,9 @@ from requests.models import DEFAULT_REDIRECT_LIMIT
 from requests.sessions import Session as RequestsSession
 from requests.utils import default_headers
 
-from usagelogger import HttpLogger, HttpMessage
-
-from ._adapter import MiddlewareHTTPAdapter
+from .http_logger import HttpLogger
+from .http_message import HttpMessage
+from .utils import _adapter
 
 
 class Session(RequestsSession):
@@ -41,7 +41,7 @@ class Session(RequestsSession):
 
         middlewares = [ResurfaceHTTPAdapter(url=url, rules=rules)]
 
-        adapter = MiddlewareHTTPAdapter(middlewares)
+        adapter = _adapter.MiddlewareHTTPAdapter(middlewares)
 
         self.mount("https://", adapter)
         self.mount("http://", adapter)
