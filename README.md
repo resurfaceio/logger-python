@@ -132,4 +132,4 @@ but logging rules are easily customized to meet the needs of any application.
 <a href="https://resurface.io/rules.html">Logging rules documentation</a>
 
 ---
-<small>&copy; 2016-2021 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
+<small>&copy; 2016-2022 <a href="https://resurface.io">Resurface Labs Inc.</a></small>

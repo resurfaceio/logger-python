@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2021 Resurface Labs Inc.
+# © 2016-2022 Resurface Labs Inc.
 
 from os import getenv
 from typing import Optional

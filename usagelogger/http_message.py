@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2021 Resurface Labs Inc.
+# © 2016-2022 Resurface Labs Inc.
 from re import match
 from time import time
 from typing import Dict, List, Optional

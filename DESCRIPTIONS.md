@@ -22,4 +22,4 @@ customized to meet the needs of any application.
 
 ---
 
-&copy; 2016-2021 <a href="https://resurface.io">Resurface Labs Inc.</a>
+&copy; 2016-2022 <a href="https://resurface.io">Resurface Labs Inc.</a>
