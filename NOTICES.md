@@ -81,7 +81,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 https://docs.aiohttp.org/<br>Used under APACHE 2.0 License
 
-Copyright 2013-2020 aio-libs collaboration.
+Copyright 2013-2023 aio-libs collaboration.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2021 Resurface Labs Inc.
+# © 2016-2023 Resurface Labs Inc.
 
 
 from tests.test_helper import DEMO_URL, MOCK_AGENT, MOCK_URLS_DENIED, MOCK_URLS_INVALID

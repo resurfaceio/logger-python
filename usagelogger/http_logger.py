@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2021 Resurface Labs Inc.
+# © 2016-2023 Resurface Labs Inc.
 from typing import Dict, List, Optional
 
 from .base_logger import BaseLogger

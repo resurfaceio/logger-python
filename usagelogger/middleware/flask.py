@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2021 Resurface Labs Inc.
+# © 2016-2023 Resurface Labs Inc.
 import time
 from io import BytesIO
 from typing import Dict, Iterable, List, Optional, Tuple
