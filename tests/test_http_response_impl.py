@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2022 Resurface Labs Inc.
+# © 2016-2023 Graylog, Inc.
 
 from tests.test_helper import MOCK_JSON, MOCK_URL
 from usagelogger import HttpResponseImpl

@@ -18,7 +18,7 @@ setup(
     long_description=read_file("DESCRIPTIONS.md"),
     long_description_content_type="text/markdown",
     url="https://resurface.io",
-    author="Resurface Labs",
+    author="resurface.io",
     author_email="admin@resurface.io",
     license="Apache License 2.0",
     classifiers=[
