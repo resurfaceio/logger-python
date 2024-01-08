@@ -22,4 +22,4 @@ customized to meet the needs of any application.
 
 ---
 
-&copy; 2016-2023 <a href="https://resurface.io">Graylog, Inc.</a>
+&copy; 2016-2024 <a href="https://resurface.io">Graylog, Inc.</a>

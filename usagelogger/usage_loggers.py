@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2023 Graylog, Inc.
+# © 2016-2024 Graylog, Inc.
 
 from os import getenv
 from typing import Optional

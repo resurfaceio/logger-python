@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2023 Graylog, Inc.
+# © 2016-2024 Graylog, Inc.
 from re import match
 from time import time
 from typing import Dict, List, Optional

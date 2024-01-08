@@ -1,5 +1,5 @@
 # coding: utf-8
-# © 2016-2023 Graylog, Inc.
+# © 2016-2024 Graylog, Inc.
 import time
 from io import BytesIO
 from typing import Dict, Iterable, List, Optional, Tuple
